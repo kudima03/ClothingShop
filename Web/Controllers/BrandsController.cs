@@ -65,6 +65,7 @@ public class BrandsController : ControllerBase
 
         brand.Id = 0;
 
+        await _shopContext.Brands.AddAsync(brand);
 
         await _shopContext.SaveChangesAsync();
 
