@@ -30,8 +30,6 @@ public interface IRepository<TEntity> : IReadOnlyRepository<TEntity> where TEnti
 
     TEntity? Find(params object[] keyValues);
 
-    ValueTask<TEntity?> FindAsync(params object[] keyValues);
-
     ValueTask<TEntity?> FindAsync(object[] keyValues, CancellationToken cancellationToken = default);
 
     IQueryable<TEntity> GetAll();

@@ -613,39 +613,16 @@ public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class
     #region FindAsync
 
     #region Public
-
-    public async ValueTask<TEntity?> FindAsync(params object[] keyValues)
+    
+    async ValueTask<TEntity?> IRepository<TEntity>.FindAsync(object[] keyValues, CancellationToken cancellationToken = default)
     {
-        return await FindAsync(disableTracking: false, keyValues);
-    }
-
-    async ValueTask<TEntity?> IRepository<TEntity>.FindAsync(object[] keyValues, CancellationToken cancellationToken)
-    {
-        return await FindAsync(disableTracking: false, keyValues, cancellationToken);
+        return await FindAsync(keyValues, disableTracking: false, cancellationToken);
     }
 
     #endregion
 
     #region Private
-
-    private async ValueTask<TEntity?> FindAsync(bool disableTracking = true, params object[] keyValues)
-    {
-        if (disableTracking)
-        {
-            TEntity? entity = await _dbSet.FindAsync(keyValues);
-            if (entity is null)
-            {
-                return null;
-            }
-            _dbSet.Entry(entity).State = EntityState.Detached;
-            return entity;
-        }
-        else
-        {
-            return await _dbSet.FindAsync(keyValues);
-        }
-    }
-
+    
     private async ValueTask<TEntity?> FindAsync(object[] keyValues, bool disableTracking = true, CancellationToken cancellationToken = default)
     {
         if (disableTracking)
@@ -681,13 +658,13 @@ public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class
 
     public async ValueTask<TEntity?> FindNonTrackingAsync(params object[] keyValues)
     {
-        return await FindAsync(disableTracking: true, keyValues);
+        return await FindAsync(keyValues, disableTracking: true);
     }
 
     public async ValueTask<TEntity?> FindNonTrackingAsync(object[] keyValues,
         CancellationToken cancellationToken = default)
     {
-        return await FindAsync(disableTracking: true, keyValues, cancellationToken);
+        return await FindAsync(keyValues, disableTracking: true, cancellationToken);
     }
 
     #endregion
