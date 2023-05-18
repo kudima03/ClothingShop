@@ -795,7 +795,7 @@ public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class
 
     #endregion
 
-    #region Aggregates
+    #region Count
 
     #region Public
 
@@ -803,9 +803,8 @@ public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         return Count(predicate);
     }
-
     async Task<int> IReadOnlyRepository<TEntity>.CountAsync(Expression<Func<TEntity, bool>>? predicate,
-        CancellationToken cancellationToken)
+            CancellationToken cancellationToken)
     {
         return await CountAsync(predicate, cancellationToken);
     }
@@ -819,17 +818,6 @@ public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class
         CancellationToken cancellationToken)
     {
         return await LongCountAsync(predicate, cancellationToken);
-    }
-
-    bool IReadOnlyRepository<TEntity>.Exists(Expression<Func<TEntity, bool>>? predicate)
-    {
-        return Exists(predicate);
-    }
-
-    async Task<bool> IReadOnlyRepository<TEntity>.ExistsAsync(Expression<Func<TEntity, bool>>? selector,
-        CancellationToken cancellationToken)
-    {
-        return await ExistsAsync(selector, cancellationToken);
     }
 
     #endregion
@@ -868,6 +856,27 @@ public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class
             : await _dbSet.LongCountAsync(predicate, cancellationToken);
     }
 
+    #endregion
+
+    #endregion
+
+    #region Exists
+
+    #region Public
+    bool IReadOnlyRepository<TEntity>.Exists(Expression<Func<TEntity, bool>>? predicate)
+    {
+        return Exists(predicate);
+    }
+
+    async Task<bool> IReadOnlyRepository<TEntity>.ExistsAsync(Expression<Func<TEntity, bool>>? selector,
+        CancellationToken cancellationToken)
+    {
+        return await ExistsAsync(selector, cancellationToken);
+    }
+
+    #endregion
+
+    #region Private
     private bool Exists(Expression<Func<TEntity, bool>>? predicate = null)
     {
         return predicate is null
@@ -888,16 +897,100 @@ public class EfRepository<TEntity> : IRepository<TEntity> where TEntity : class
 
     #endregion
 
+    #region Aggregates
+
+    #region Public
+
+    public T? Max<T>(
+        Expression<Func<TEntity, T>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null)
+    {
+        return predicate is null
+            ? _dbSet.Max(selector)
+            : _dbSet.Where(predicate).Max(selector);
+    }
+
+    public Task<T> MaxAsync<T>(
+        Expression<Func<TEntity, T>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default)
+    {
+        return predicate is null
+            ? _dbSet.MaxAsync(selector, cancellationToken)
+            : _dbSet.Where(predicate).MaxAsync(selector, cancellationToken);
+    }
+
+    public T? Min<T>(
+        Expression<Func<TEntity, T>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null)
+    {
+        return predicate is null
+            ? _dbSet.Min(selector)
+            : _dbSet.Where(predicate).Min(selector);
+    }
+
+    public Task<T> MinAsync<T>(
+        Expression<Func<TEntity, T>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default)
+    {
+        return predicate is null
+            ? _dbSet.MinAsync(selector, cancellationToken)
+            : _dbSet.Where(predicate).MinAsync(selector, cancellationToken);
+    }
+
+    public decimal Average(
+        Expression<Func<TEntity, decimal>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null)
+    {
+        return predicate is null
+            ? _dbSet.Average(selector)
+            : _dbSet.Where(predicate).Average(selector);
+    }
+
+    public Task<decimal> AverageAsync(
+        Expression<Func<TEntity, decimal>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default)
+    {
+        return predicate is null
+            ? _dbSet.AverageAsync(selector, cancellationToken)
+            : _dbSet.Where(predicate).AverageAsync(selector, cancellationToken);
+    }
+
+    public decimal Sum(
+        Expression<Func<TEntity, decimal>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null)
+    {
+        return predicate is null
+            ? _dbSet.Sum(selector)
+            : _dbSet.Where(predicate).Sum(selector);
+    }
+
+    public Task<decimal> SumAsync(
+        Expression<Func<TEntity, decimal>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default)
+    {
+        return predicate is null
+            ? _dbSet.SumAsync(selector, cancellationToken)
+            : _dbSet.Where(predicate).SumAsync(selector, cancellationToken);
+    }
+
+    #endregion
+
+    #endregion
+
     #region SaveChanges
 
     #region Public
 
-    void IReadOnlyRepository<TEntity>.SaveChanges()
+    void IRepository<TEntity>.SaveChanges()
     {
         SaveChanges();
     }
 
-    async Task IReadOnlyRepository<TEntity>.SaveChangesAsync()
+    async Task IRepository<TEntity>.SaveChangesAsync()
     {
         await SaveChangesAsync();
     }

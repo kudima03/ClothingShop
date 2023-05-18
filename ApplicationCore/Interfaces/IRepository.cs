@@ -85,4 +85,7 @@ public interface IRepository<TEntity> : IReadOnlyRepository<TEntity> where TEnti
     void Delete(TEntity entity);
 
     void Delete(IEnumerable<TEntity> entities);
+
+    void SaveChanges();
+    Task SaveChangesAsync();
 }

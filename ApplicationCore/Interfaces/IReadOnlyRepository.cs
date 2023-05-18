@@ -85,6 +85,34 @@ public interface IReadOnlyRepository<TEntity> : IDisposable, IAsyncDisposable wh
     Task<bool> ExistsAsync(Expression<Func<TEntity, bool>>? selector = null,
         CancellationToken cancellationToken = default);
 
-    void SaveChanges();
-    Task SaveChangesAsync();
+    T? Max<T>(Expression<Func<TEntity, T>> selector, Expression<Func<TEntity, bool>>? predicate = null);
+
+    Task<T> MaxAsync<T>(
+        Expression<Func<TEntity, T>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default);
+
+    T? Min<T>(Expression<Func<TEntity, T>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null);
+
+    Task<T> MinAsync<T>(
+        Expression<Func<TEntity, T>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default);
+
+    decimal Average(
+        Expression<Func<TEntity, decimal>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null);
+
+    Task<decimal> AverageAsync(
+        Expression<Func<TEntity, decimal>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default);
+
+    decimal Sum(Expression<Func<TEntity, decimal>> selector, Expression<Func<TEntity, bool>>? predicate = null);
+
+    Task<decimal> SumAsync(
+        Expression<Func<TEntity, decimal>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default);
 }
