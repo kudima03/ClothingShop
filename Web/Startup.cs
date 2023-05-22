@@ -1,6 +1,8 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using FluentValidation;
 using Infrastructure.Data;
+using Infrastructure.EntityRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Web.ModelValidators;
@@ -23,6 +25,7 @@ public class Startup
         services.AddControllers();
         services.AddTransient<IValidator<Brand>, BrandValidator>();
         AddCustomDbContext(Configuration, services);
+        services.AddScoped<IRepository<Brand>, EntityFrameworkRepository<Brand>>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -46,7 +49,7 @@ public class Startup
     private static void AddCustomDbContext(IConfiguration configuration, IServiceCollection services)
     {
         services.AddEntityFrameworkNpgsql()
-            .AddDbContext<ShopContext>(options =>
+            .AddDbContext<DbContext, ShopContext>(options =>
             {
                 options.UseNpgsql(configuration["ConnectionStrings:ShopConnection"],
                     sqlOptions =>

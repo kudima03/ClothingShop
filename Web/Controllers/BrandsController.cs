@@ -1,9 +1,8 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
-using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Net.Mime;
 
 namespace Web.Controllers;
@@ -13,11 +12,11 @@ namespace Web.Controllers;
 public class BrandsController : ControllerBase
 {
     private readonly IValidator<Brand> _brandValidator;
-    private readonly ShopContext _shopContext;
+    private readonly IRepository<Brand> _brandsRepository;
 
-    public BrandsController(ShopContext shopContext, IValidator<Brand> brandValidator)
+    public BrandsController(IRepository<Brand> brandsRepository, IValidator<Brand> brandValidator)
     {
-        _shopContext = shopContext;
+        _brandsRepository = brandsRepository;
         _brandValidator = brandValidator;
     }
 
@@ -26,7 +25,7 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<Brand>>> GetAllBrands()
     {
-        return Ok(await _shopContext.Brands.AsNoTracking().ToListAsync());
+        return Ok(await _brandsRepository.GetAllAsync());
     }
 
     [HttpGet("{id:long}")]
@@ -40,7 +39,7 @@ public class BrandsController : ControllerBase
             return BadRequest("Id cannot be less than zero.");
         }
 
-        Brand? brand = await _shopContext.Brands.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
+        Brand? brand = await _brandsRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == id);
 
         if (brand is null)
         {
@@ -65,9 +64,9 @@ public class BrandsController : ControllerBase
 
         brand.Id = 0;
 
-        await _shopContext.Brands.AddAsync(brand);
+        _brandsRepository.Insert(brand);
 
-        await _shopContext.SaveChangesAsync();
+        await _brandsRepository.SaveChangesAsync();
 
         return Ok();
     }
@@ -85,14 +84,14 @@ public class BrandsController : ControllerBase
             return BadRequest(validationResult.ToString());
         }
 
-        if (!await _shopContext.Brands.ContainsAsync(brand))
+        if (!await _brandsRepository.ExistsAsync(x => x.Id == brand.Id))
         {
             return BadRequest($"Brand with id:{brand.Id} doesn't exist.");
         }
 
-        _shopContext.Brands.Update(brand);
+        _brandsRepository.Update(brand);
 
-        await _shopContext.SaveChangesAsync();
+        await _brandsRepository.SaveChangesAsync();
 
         return Ok();
     }
@@ -108,16 +107,16 @@ public class BrandsController : ControllerBase
             return BadRequest("Id cannot be less than zero.");
         }
 
-        Brand? brand = await _shopContext.Brands.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
+        Brand? brand = await _brandsRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == id);
 
         if (brand is null)
         {
             return BadRequest($"Brand with id:{id} doesn't exist.");
         }
 
-        _shopContext.Brands.Remove(brand);
+        _brandsRepository.Delete(brand);
 
-        await _shopContext.SaveChangesAsync();
+        await _brandsRepository.SaveChangesAsync();
 
         return Ok();
     }
