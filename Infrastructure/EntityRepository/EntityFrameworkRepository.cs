@@ -1,15 +1,11 @@
 ﻿using ApplicationCore.Interfaces;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.EntityRepository;
+
 public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEntity : class
 {
     private readonly DbContext _dbContext;
@@ -131,11 +127,6 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
     public TEntity? Find(params object[] keyValues)
     {
         return _dbSet.Find(keyValues);
-    }
-
-    public async ValueTask<TEntity?> FindAsync(params object[] keyValues)
-    {
-        return await _dbSet.FindAsync(keyValues);
     }
 
     public async ValueTask<TEntity?> FindAsync(object[] keyValues,
@@ -273,7 +264,8 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
         _dbSet.AddRange(entities);
     }
 
-    public async ValueTask<EntityEntry<TEntity>> InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public async ValueTask<EntityEntry<TEntity>> InsertAsync(TEntity entity,
+        CancellationToken cancellationToken = default)
     {
         return await _dbSet.AddAsync(entity, cancellationToken);
     }
@@ -432,5 +424,10 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
         return predicate is null
             ? _dbSet.SumAsync(selector, cancellationToken)
             : _dbSet.Where(predicate).SumAsync(selector, cancellationToken);
+    }
+
+    public async ValueTask<TEntity?> FindAsync(params object[] keyValues)
+    {
+        return await _dbSet.FindAsync(keyValues);
     }
 }

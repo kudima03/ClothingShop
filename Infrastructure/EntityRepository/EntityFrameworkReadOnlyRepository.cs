@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
-using System.Threading;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Infrastructure.EntityRepository;
 
@@ -132,6 +130,7 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
         {
             return null;
         }
+
         _dbSet.Entry(entity).State = EntityState.Detached;
         return entity;
     }
@@ -143,6 +142,7 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
         {
             return null;
         }
+
         _dbSet.Entry(entity).State = EntityState.Detached;
         return entity;
     }
@@ -155,6 +155,7 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
         {
             return null;
         }
+
         _dbSet.Entry(entity).State = EntityState.Detached;
         return entity;
     }

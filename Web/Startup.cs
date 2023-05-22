@@ -1,5 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using BusinessServices.Services.Implementations;
+using BusinessServices.Services.Interfaces;
 using FluentValidation;
 using Infrastructure.Data;
 using Infrastructure.EntityRepository;
@@ -26,6 +28,8 @@ public class Startup
         services.AddTransient<IValidator<Brand>, BrandValidator>();
         AddCustomDbContext(Configuration, services);
         services.AddScoped<IRepository<Brand>, EntityFrameworkRepository<Brand>>();
+        services.AddScoped<IReadOnlyRepository<Brand>, EntityFrameworkReadOnlyRepository<Brand>>();
+        services.AddScoped<IBrandsService, BrandsService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
