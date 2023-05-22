@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace ApplicationCore.Interfaces;
 
-public interface IRepository<TEntity> : IReadOnlyRepository<TEntity> where TEntity : class
+public interface IRepository<TEntity> where TEntity : class
 {
     Task<TResult?> GetFirstOrDefaultAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
@@ -86,4 +86,50 @@ public interface IRepository<TEntity> : IReadOnlyRepository<TEntity> where TEnti
 
     void SaveChanges();
     Task SaveChangesAsync();
+
+    int Count(Expression<Func<TEntity, bool>>? predicate = null);
+
+    Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default);
+
+    long LongCount(Expression<Func<TEntity, bool>>? predicate = null);
+
+    Task<long> LongCountAsync(Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default);
+
+    bool Exists(Expression<Func<TEntity, bool>>? predicate = null);
+
+    Task<bool> ExistsAsync(Expression<Func<TEntity, bool>>? selector = null,
+        CancellationToken cancellationToken = default);
+
+    T? Max<T>(Expression<Func<TEntity, T>> selector, Expression<Func<TEntity, bool>>? predicate = null);
+
+    Task<T> MaxAsync<T>(
+        Expression<Func<TEntity, T>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default);
+
+    T? Min<T>(Expression<Func<TEntity, T>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null);
+
+    Task<T> MinAsync<T>(
+        Expression<Func<TEntity, T>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default);
+
+    decimal Average(
+        Expression<Func<TEntity, decimal>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null);
+
+    Task<decimal> AverageAsync(
+        Expression<Func<TEntity, decimal>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default);
+
+    decimal Sum(Expression<Func<TEntity, decimal>> selector, Expression<Func<TEntity, bool>>? predicate = null);
+
+    Task<decimal> SumAsync(
+        Expression<Func<TEntity, decimal>> selector,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        CancellationToken cancellationToken = default);
 }
