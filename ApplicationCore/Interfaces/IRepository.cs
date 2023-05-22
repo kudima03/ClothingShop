@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace ApplicationCore.Interfaces;
 
-public interface IRepository<TEntity> where TEntity : class
+public interface IRepository<TEntity> : IDisposable, IAsyncDisposable where TEntity : class
 {
     Task<TResult?> GetFirstOrDefaultAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,

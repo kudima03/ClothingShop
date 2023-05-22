@@ -13,10 +13,10 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
 
     private readonly DbSet<TEntity> _dbSet;
 
-    public EntityFrameworkReadOnlyRepository(DbContext dbContext, DbSet<TEntity> dbSet)
+    public EntityFrameworkReadOnlyRepository(DbContext dbContext)
     {
         _dbContext = dbContext;
-        _dbSet = dbSet;
+        _dbSet = dbContext.Set<TEntity>();
     }
 
     public void Dispose()

@@ -25,7 +25,7 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<Brand>>> GetAllBrands()
     {
-        return Ok(await _brandsRepository.GetAllNonTrackingAsync());
+        return Ok(await _brandsRepository.GetAllAsync());
     }
 
     [HttpGet("{id:long}")]
@@ -39,7 +39,7 @@ public class BrandsController : ControllerBase
             return BadRequest("Id cannot be less than zero.");
         }
 
-        Brand? brand = await _brandsRepository.GetFirstOrDefaultNonTrackingAsync(predicate: x => x.Id == id);
+        Brand? brand = await _brandsRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == id);
 
         if (brand is null)
         {

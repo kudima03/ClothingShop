@@ -25,7 +25,7 @@ public class Startup
         services.AddControllers();
         services.AddTransient<IValidator<Brand>, BrandValidator>();
         AddCustomDbContext(Configuration, services);
-        services.AddScoped<IRepository<Brand>, EfRepository<Brand>>();
+        services.AddScoped<IRepository<Brand>, EntityFrameworkRepository<Brand>>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

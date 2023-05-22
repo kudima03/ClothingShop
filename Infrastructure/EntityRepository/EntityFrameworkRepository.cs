@@ -10,16 +10,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.EntityRepository;
-internal class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEntity : class
+public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEntity : class
 {
     private readonly DbContext _dbContext;
 
     private readonly DbSet<TEntity> _dbSet;
 
-    public EntityFrameworkRepository(DbContext dbContext, DbSet<TEntity> dbSet)
+    public EntityFrameworkRepository(DbContext dbContext)
     {
         _dbContext = dbContext;
-        _dbSet = dbSet;
+        _dbSet = dbContext.Set<TEntity>();
     }
 
     public void Dispose()
