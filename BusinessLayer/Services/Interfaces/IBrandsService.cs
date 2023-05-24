@@ -1,6 +1,6 @@
 ﻿using ApplicationCore.Entities;
 
-namespace BusinessServices.Services.Interfaces;
+namespace DomainServices.Services.Interfaces;
 
 public interface IBrandsService
 {

@@ -1,5 +1,5 @@
 ﻿using ApplicationCore.Entities;
-using BusinessServices.Services.Interfaces;
+using DomainServices.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;

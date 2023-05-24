@@ -1,7 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
-using BusinessServices.Services.Implementations;
-using BusinessServices.Services.Interfaces;
+using DomainServices.Services.Implementations;
+using DomainServices.Services.Interfaces;
 using FluentValidation;
 using Infrastructure.Data;
 using Infrastructure.EntityRepository;

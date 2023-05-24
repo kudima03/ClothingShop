@@ -1,8 +1,8 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
-using BusinessServices.Services.Interfaces;
+using DomainServices.Services.Interfaces;
 
-namespace BusinessServices.Services.Implementations;
+namespace DomainServices.Services.Implementations;
 
 public class BrandsService : IBrandsService
 {
