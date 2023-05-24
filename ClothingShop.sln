@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainServices", "BusinessLayer\DomainServices.csproj", "{FD1298FC-6149-4AA7-AB15-0090FD587909}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainServices", "DomainServices\DomainServices.csproj", "{93E68D32-4B22-4EC4-A7CC-FFFBA51E61D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,10 +36,10 @@ Global
 		{6F24AA03-1084-421C-A23F-1E46A5FF3AF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F24AA03-1084-421C-A23F-1E46A5FF3AF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F24AA03-1084-421C-A23F-1E46A5FF3AF0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FD1298FC-6149-4AA7-AB15-0090FD587909}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FD1298FC-6149-4AA7-AB15-0090FD587909}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FD1298FC-6149-4AA7-AB15-0090FD587909}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FD1298FC-6149-4AA7-AB15-0090FD587909}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93E68D32-4B22-4EC4-A7CC-FFFBA51E61D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93E68D32-4B22-4EC4-A7CC-FFFBA51E61D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93E68D32-4B22-4EC4-A7CC-FFFBA51E61D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93E68D32-4B22-4EC4-A7CC-FFFBA51E61D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,7 +48,6 @@ Global
 		{4496AE05-BEFD-4852-9A53-55CE73A77D6D} = {84A0F160-F090-4045-AC73-0F4C591E4E88}
 		{00B17EF8-DD92-4672-81A1-456FEADC9A78} = {84A0F160-F090-4045-AC73-0F4C591E4E88}
 		{6F24AA03-1084-421C-A23F-1E46A5FF3AF0} = {84A0F160-F090-4045-AC73-0F4C591E4E88}
-		{FD1298FC-6149-4AA7-AB15-0090FD587909} = {84A0F160-F090-4045-AC73-0F4C591E4E88}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DEC72826-AEEC-4526-8976-AA9F475CE3D4}
