@@ -1,5 +1,5 @@
 ﻿using ApplicationCore.Entities;
-using ApplicationCore.Interfaces;
+using DomainServices.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +11,12 @@ namespace Web.Controllers;
 [Route("[controller]")]
 public class BrandsController : ControllerBase
 {
+    private readonly IBrandsService _brandsService;
     private readonly IValidator<Brand> _brandValidator;
-    private readonly IRepository<Brand> _brandsRepository;
 
-    public BrandsController(IRepository<Brand> brandsRepository, IValidator<Brand> brandValidator)
+    public BrandsController(IBrandsService brandsService, IValidator<Brand> brandValidator)
     {
-        _brandsRepository = brandsRepository;
+        _brandsService = brandsService;
         _brandValidator = brandValidator;
     }
 
@@ -25,7 +25,7 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<Brand>>> GetAllBrands()
     {
-        return Ok(await _brandsRepository.GetAllAsync());
+        return Ok(await _brandsService.GetAllBrandsAsync());
     }
 
     [HttpGet("{id:long}")]
@@ -39,7 +39,7 @@ public class BrandsController : ControllerBase
             return BadRequest("Id cannot be less than zero.");
         }
 
-        Brand? brand = await _brandsRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == id);
+        Brand? brand = await _brandsService.GetBrandByIdAsync(id);
 
         if (brand is null)
         {
@@ -64,9 +64,7 @@ public class BrandsController : ControllerBase
 
         brand.Id = 0;
 
-        _brandsRepository.Insert(brand);
-
-        await _brandsRepository.SaveChangesAsync();
+        await _brandsService.CreateBrandAsync(brand);
 
         return Ok();
     }
@@ -84,14 +82,12 @@ public class BrandsController : ControllerBase
             return BadRequest(validationResult.ToString());
         }
 
-        if (!await _brandsRepository.ExistsAsync(x => x.Id == brand.Id))
+        if (await _brandsService.GetBrandByIdAsync(brand.Id) is null)
         {
             return BadRequest($"Brand with id:{brand.Id} doesn't exist.");
         }
 
-        _brandsRepository.Update(brand);
-
-        await _brandsRepository.SaveChangesAsync();
+        await _brandsService.UpdateBrandAsync(brand);
 
         return Ok();
     }
@@ -107,16 +103,14 @@ public class BrandsController : ControllerBase
             return BadRequest("Id cannot be less than zero.");
         }
 
-        Brand? brand = await _brandsRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == id);
+        Brand? brand = await _brandsService.GetBrandByIdAsync(id);
 
         if (brand is null)
         {
             return BadRequest($"Brand with id:{id} doesn't exist.");
         }
 
-        _brandsRepository.Delete(brand);
-
-        await _brandsRepository.SaveChangesAsync();
+        await _brandsService.DeleteBrandAsync(brand);
 
         return Ok();
     }
