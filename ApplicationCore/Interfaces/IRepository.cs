@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Query;
+﻿using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace ApplicationCore.Interfaces;
@@ -72,7 +71,7 @@ public interface IRepository<TEntity> : IDisposable, IAsyncDisposable where TEnt
 
     void Insert(IEnumerable<TEntity> entities);
 
-    ValueTask<EntityEntry<TEntity>> InsertAsync(TEntity entity, CancellationToken cancellationToken = default);
+    ValueTask<TEntity> InsertAsync(TEntity entity, CancellationToken cancellationToken = default);
 
     Task InsertAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
 

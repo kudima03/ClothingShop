@@ -5,9 +5,10 @@ using DomainServices.Services.Interfaces;
 using FluentValidation;
 using Infrastructure.Data;
 using Infrastructure.EntityRepository;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using Web.ModelValidators;
+using Web.Behaviors;
 
 namespace Web;
 
@@ -25,11 +26,16 @@ public class Startup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddControllers();
-        services.AddTransient<IValidator<Brand>, BrandValidator>();
+        services.AddValidatorsFromAssembly(typeof(Startup).Assembly);
         AddCustomDbContext(Configuration, services);
         services.AddScoped<IRepository<Brand>, EntityFrameworkRepository<Brand>>();
         services.AddScoped<IReadOnlyRepository<Brand>, EntityFrameworkReadOnlyRepository<Brand>>();
         services.AddScoped<IBrandsService, BrandsService>();
+        services.AddMediatR(options =>
+        {
+            options.RegisterServicesFromAssembly(typeof(Startup).Assembly);
+        });
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

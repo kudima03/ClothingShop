@@ -1,29 +1,29 @@
-﻿using ApplicationCore.Entities;
-using FluentValidation;
+﻿using FluentValidation;
+using Web.Features.Brands;
 
-namespace Web.ModelValidators;
+namespace Web.ModelValidators.Brand;
 
-public class BrandValidator : AbstractValidator<Brand>
+public class UpdateBrandValidator : AbstractValidator<UpdateBrand>
 {
-    public BrandValidator()
+    public UpdateBrandValidator()
     {
         RuleFor(x => x)
             .NotNull()
             .WithMessage("Brand cannot be null.");
 
-        RuleFor(x => x.Id)
+        RuleFor(x => x.Brand.Id)
             .GreaterThanOrEqualTo(0)
             .WithMessage("Id cannot be less than zero.");
 
-        RuleFor(x => x.Id)
+        RuleFor(x => x.Brand.Id)
             .LessThanOrEqualTo(long.MaxValue)
             .WithMessage($"Id cannot be greater than {long.MaxValue}.");
 
-        RuleFor(x => x.Name)
+        RuleFor(x => x.Brand.Name)
             .NotEmpty()
             .WithMessage("Name cannot be null or empty.");
 
-        RuleFor(x => x.Products)
+        RuleFor(x => x.Brand.Products)
             .NotNull()
             .WithMessage("Products cannot be null.");
     }

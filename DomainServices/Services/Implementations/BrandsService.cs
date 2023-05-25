@@ -27,7 +27,7 @@ public class BrandsService : IBrandsService
 
     public async Task<Brand> CreateBrandAsync(Brand brand)
     {
-        Brand entity = (await _brandsRepository.InsertAsync(brand)).Entity;
+        Brand entity = await _brandsRepository.InsertAsync(brand);
         await _brandsRepository.SaveChangesAsync();
         return entity;
     }

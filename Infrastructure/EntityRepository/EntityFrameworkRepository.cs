@@ -1,6 +1,5 @@
 ﻿using ApplicationCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
@@ -264,10 +263,10 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
         _dbSet.AddRange(entities);
     }
 
-    public async ValueTask<EntityEntry<TEntity>> InsertAsync(TEntity entity,
+    public async ValueTask<TEntity> InsertAsync(TEntity entity,
         CancellationToken cancellationToken = default)
     {
-        return await _dbSet.AddAsync(entity, cancellationToken);
+        return (await _dbSet.AddAsync(entity, cancellationToken)).Entity;
     }
 
     public async Task InsertAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
