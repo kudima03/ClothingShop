@@ -16,7 +16,7 @@ public class CreateBrandHandler : IRequestHandler<CreateBrand, Brand>
     public async Task<Brand> Handle(CreateBrand request, CancellationToken cancellationToken)
     {
         Brand? entity = await _brandsRepository.InsertAsync(request.Brand, cancellationToken);
-        await _brandsRepository.SaveChangesAsync();
+        await _brandsRepository.SaveChangesAsync(cancellationToken);
         return entity;
     }
 }

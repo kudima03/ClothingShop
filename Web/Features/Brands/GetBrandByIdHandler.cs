@@ -15,6 +15,6 @@ public class GetBrandByIdHandler : IRequestHandler<GetBrandById, Brand?>
 
     public async Task<Brand?> Handle(GetBrandById request, CancellationToken cancellationToken)
     {
-        return await _brandsRepository.GetFirstOrDefaultNonTrackingAsync(predicate: brand => brand.Id == request.Id);
+        return await _brandsRepository.GetFirstOrDefaultNonTrackingAsync(predicate: brand => brand.Id == request.Id, cancellationToken: cancellationToken);
     }
 }

@@ -8,10 +8,12 @@ public interface IReadOnlyRepository<TEntity> : IDisposable, IAsyncDisposable wh
     Task<TResult?> GetFirstOrDefaultNonTrackingAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default);
 
     Task<TEntity?> GetFirstOrDefaultNonTrackingAsync(Expression<Func<TEntity, bool>>? predicate = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default);
 
     TResult? GetFirstOrDefaultNonTracking<TResult>(
         Expression<Func<TEntity, TResult>> selector,
@@ -25,12 +27,11 @@ public interface IReadOnlyRepository<TEntity> : IDisposable, IAsyncDisposable wh
     Task<TResult?> GetFirstOrDefaultNonTrackingAsync<TResult>(
         Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default);
 
     TEntity? FindNonTracking(params object[] keyValues);
-
-    ValueTask<TEntity?> FindNonTrackingAsync(params object[] keyValues);
-
+    
     ValueTask<TEntity?> FindNonTrackingAsync(object[] keyValues, CancellationToken cancellationToken = default);
 
 
@@ -54,21 +55,24 @@ public interface IReadOnlyRepository<TEntity> : IDisposable, IAsyncDisposable wh
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
 
-    Task<IList<TEntity>> GetAllNonTrackingAsync();
+    Task<IList<TEntity>> GetAllNonTrackingAsync(CancellationToken cancellationToken = default);
 
     Task<IList<TResult>> GetAllNonTrackingAsync<TResult>(
-        Expression<Func<TEntity, TResult>> selector);
+        Expression<Func<TEntity, TResult>> selector,
+        CancellationToken cancellationToken = default);
 
     Task<IList<TEntity>> GetAllNonTrackingAsync(
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default);
 
     Task<IList<TResult>> GetAllNonTrackingAsync<TResult>(
         Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default);
 
     int Count(Expression<Func<TEntity, bool>>? predicate = null);
 

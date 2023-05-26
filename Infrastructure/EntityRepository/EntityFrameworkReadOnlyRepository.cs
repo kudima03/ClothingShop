@@ -30,7 +30,8 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
     public async Task<TResult?> GetFirstOrDefaultNonTrackingAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet.AsNoTracking();
 
@@ -45,12 +46,13 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
         }
 
         return orderBy is not null
-            ? await orderBy(query).Select(selector).FirstOrDefaultAsync()
-            : await query.Select(selector).FirstOrDefaultAsync();
+            ? await orderBy(query).Select(selector).FirstOrDefaultAsync(cancellationToken)
+            : await query.Select(selector).FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<TEntity?> GetFirstOrDefaultNonTrackingAsync(Expression<Func<TEntity, bool>>? predicate = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet.AsNoTracking();
 
@@ -64,7 +66,7 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
             query = query.Where(predicate);
         }
 
-        return await query.FirstOrDefaultAsync();
+        return await query.FirstOrDefaultAsync(cancellationToken);
     }
 
     public TResult? GetFirstOrDefaultNonTracking<TResult>(Expression<Func<TEntity, TResult>> selector,
@@ -106,7 +108,8 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
 
     public async Task<TResult?> GetFirstOrDefaultNonTrackingAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet.AsNoTracking();
 
@@ -120,7 +123,7 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
             query = query.Where(predicate);
         }
 
-        return await query.Select(selector).FirstOrDefaultAsync();
+        return await query.Select(selector).FirstOrDefaultAsync(cancellationToken);
     }
 
     public TEntity? FindNonTracking(params object[] keyValues)
@@ -134,19 +137,7 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
         _dbSet.Entry(entity).State = EntityState.Detached;
         return entity;
     }
-
-    public async ValueTask<TEntity?> FindNonTrackingAsync(params object[] keyValues)
-    {
-        TEntity? entity = await _dbSet.FindAsync(keyValues);
-        if (entity is null)
-        {
-            return null;
-        }
-
-        _dbSet.Entry(entity).State = EntityState.Detached;
-        return entity;
-    }
-
+    
     public async ValueTask<TEntity?> FindNonTrackingAsync(object[] keyValues,
         CancellationToken cancellationToken = default)
     {
@@ -226,19 +217,21 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
             : query.Select(selector);
     }
 
-    public async Task<IList<TEntity>> GetAllNonTrackingAsync()
+    public async Task<IList<TEntity>> GetAllNonTrackingAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbSet.AsNoTracking().ToListAsync();
+        return await _dbSet.AsNoTracking().ToListAsync(cancellationToken);
     }
 
-    public async Task<IList<TResult>> GetAllNonTrackingAsync<TResult>(Expression<Func<TEntity, TResult>> selector)
+    public async Task<IList<TResult>> GetAllNonTrackingAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
+        CancellationToken cancellationToken = default)
     {
-        return await _dbSet.AsNoTracking().Select(selector).ToListAsync();
+        return await _dbSet.AsNoTracking().Select(selector).ToListAsync(cancellationToken);
     }
 
     public async Task<IList<TEntity>> GetAllNonTrackingAsync(Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet.AsNoTracking();
 
@@ -253,14 +246,15 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
         }
 
         return orderBy is not null
-            ? await orderBy(query).ToListAsync()
-            : await query.ToListAsync();
+            ? await orderBy(query).ToListAsync(cancellationToken)
+            : await query.ToListAsync(cancellationToken);
     }
 
     public async Task<IList<TResult>> GetAllNonTrackingAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet.AsNoTracking();
 
@@ -275,8 +269,8 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
         }
 
         return orderBy is not null
-            ? await orderBy(query).Select(selector).ToListAsync()
-            : await query.Select(selector).ToListAsync();
+            ? await orderBy(query).Select(selector).ToListAsync(cancellationToken)
+            : await query.Select(selector).ToListAsync(cancellationToken);
     }
 
     public int Count(Expression<Func<TEntity, bool>>? predicate = null)

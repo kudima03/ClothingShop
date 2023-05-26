@@ -20,7 +20,7 @@ public class DeleteBrandHandler : IRequestHandler<DeleteBrand>
     {
         Brand? brandToDelete =
             await _readOnlyBrandsRepository.GetFirstOrDefaultNonTrackingAsync(predicate: brand =>
-                brand.Id == request.BrandId);
+                brand.Id == request.BrandId, cancellationToken: cancellationToken);
 
         if (brandToDelete is null)
         {
@@ -28,6 +28,6 @@ public class DeleteBrandHandler : IRequestHandler<DeleteBrand>
         }
 
         _brandsRepository.Delete(brandToDelete);
-        await _brandsRepository.SaveChangesAsync();
+        await _brandsRepository.SaveChangesAsync(cancellationToken);
     }
 }

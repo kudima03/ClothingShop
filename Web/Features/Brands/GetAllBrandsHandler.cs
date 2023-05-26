@@ -15,6 +15,6 @@ public class GetAllBrandsHandler : IRequestHandler<GetAllBrands, IEnumerable<Bra
 
     public async Task<IEnumerable<Brand>> Handle(GetAllBrands request, CancellationToken cancellationToken)
     {
-        return await _brandsRepository.GetAllNonTrackingAsync();
+        return await _brandsRepository.GetAllNonTrackingAsync(cancellationToken);
     }
 }

@@ -16,6 +16,6 @@ public class UpdateBrandHandler : IRequestHandler<UpdateBrand>
     public async Task Handle(UpdateBrand request, CancellationToken cancellationToken)
     {
         _brandsRepository.Update(request.Brand);
-        await _brandsRepository.SaveChangesAsync();
+        await _brandsRepository.SaveChangesAsync(cancellationToken);
     }
 }
