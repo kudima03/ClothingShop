@@ -1,9 +1,9 @@
 ﻿using ApplicationCore.Entities;
-using DomainServices.Features.Brands.Commands.Create;
-using DomainServices.Features.Brands.Commands.Delete;
-using DomainServices.Features.Brands.Commands.Update;
-using DomainServices.Features.Brands.Queries.GetAll;
-using DomainServices.Features.Brands.Queries.GetById;
+using DomainServices.Features.Sections.Commands.Create;
+using DomainServices.Features.Sections.Commands.Delete;
+using DomainServices.Features.Sections.Commands.Update;
+using DomainServices.Features.Sections.Queries.GetAll;
+using DomainServices.Features.Sections.Queries.GetById;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -13,25 +13,25 @@ namespace Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class BrandsController : ControllerBase
+public class SectionsController : ControllerBase
 {
-    private readonly ILogger<BrandsController> _logger;
+    private readonly ILogger<SectionsController> _logger;
     private readonly IMediator _mediator;
 
-    public BrandsController(IMediator mediator, ILogger<BrandsController> logger)
+    public SectionsController(IMediator mediator, ILogger<SectionsController> logger)
     {
         _mediator = mediator;
         _logger = logger;
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<Brand>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Section>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<Brand>>> GetAllBrands()
+    public async Task<ActionResult<IEnumerable<Section>>> GetAllSections()
     {
         try
         {
-            return Ok(await _mediator.Send(new GetAllBrandsQuery()));
+            return Ok(await _mediator.Send(new GetAllSectionsQuery()));
         }
         catch (Exception e)
         {
@@ -41,14 +41,14 @@ public class BrandsController : ControllerBase
     }
 
     [HttpGet("{id:long}")]
-    [ProducesResponseType(typeof(IEnumerable<Brand>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<Section>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<Brand>>> GetBrandById([FromRoute] long id)
+    public async Task<ActionResult<Section>> GetSectionById([FromRoute] long id)
     {
         try
         {
-            return Ok(await _mediator.Send(new GetBrandByIdQuery(id)));
+            return Ok(await _mediator.Send(new GetSectionByIdQuery(id)));
         }
         catch (ValidationException e)
         {
@@ -66,12 +66,11 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> CreateBrand([FromBody] Brand brand)
+    public async Task<ActionResult> CreateSection([FromBody] Section section)
     {
         try
         {
-            brand.Id = 0;
-            await _mediator.Send(new CreateBrandCommand(brand));
+            await _mediator.Send(new CreateSectionCommand(section));
             return Ok();
         }
         catch (ValidationException e)
@@ -90,11 +89,11 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> UpdateBrand([FromBody] Brand brand)
+    public async Task<ActionResult> UpdateSection([FromBody] Section section)
     {
         try
         {
-            await _mediator.Send(new UpdateBrandCommand(brand));
+            await _mediator.Send(new UpdateSectionCommand(section));
             return Ok();
         }
         catch (ValidationException e)
@@ -115,7 +114,7 @@ public class BrandsController : ControllerBase
     {
         try
         {
-            await _mediator.Send(new DeleteBrandCommand(id));
+            await _mediator.Send(new DeleteSectionCommand(id));
             return Ok();
         }
         catch (ValidationException e)

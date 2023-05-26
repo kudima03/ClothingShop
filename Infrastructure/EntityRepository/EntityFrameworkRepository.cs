@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
@@ -25,6 +26,25 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
     public async ValueTask DisposeAsync()
     {
         await _dbContext.DisposeAsync();
+    }
+
+    public IQueryable<TResult> ApplySpecification<TResult>(ISpecification<TEntity, TResult> specification)
+    {
+        IQueryable<TEntity> query = _dbSet.AsNoTracking();
+
+        if (specification.Include is not null)
+        {
+            query = specification.Include(query);
+        }
+
+        if (specification.Predicate is not null)
+        {
+            query = query.Where(specification.Predicate);
+        }
+
+        return specification.OrderBy is not null
+            ? specification.OrderBy(query).Select(specification.Selector)
+            : query.Select(specification.Selector);
     }
 
     public async Task<TResult?> GetFirstOrDefaultAsync<TResult>(Expression<Func<TEntity, TResult>> selector,

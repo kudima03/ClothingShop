@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using ApplicationCore.Specifications;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace ApplicationCore.Interfaces;
 
 public interface IReadOnlyRepository<TEntity> : IDisposable, IAsyncDisposable where TEntity : class
 {
+    IQueryable<TResult> ApplySpecification<TResult>(ISpecification<TEntity, TResult> specification);
+
     Task<TResult?> GetFirstOrDefaultNonTrackingAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
@@ -31,7 +34,7 @@ public interface IReadOnlyRepository<TEntity> : IDisposable, IAsyncDisposable wh
         CancellationToken cancellationToken = default);
 
     TEntity? FindNonTracking(params object[] keyValues);
-    
+
     ValueTask<TEntity?> FindNonTrackingAsync(object[] keyValues, CancellationToken cancellationToken = default);
 
 

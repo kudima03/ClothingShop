@@ -1,14 +1,13 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
-using DomainServices.Services.Implementations;
-using DomainServices.Services.Interfaces;
+using DomainServices.Behaviors;
 using FluentValidation;
 using Infrastructure.Data;
 using Infrastructure.EntityRepository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using Web.Behaviors;
+using System.Text.Json.Serialization;
 
 namespace Web;
 
@@ -25,15 +24,14 @@ public class Startup
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddControllers();
-        services.AddValidatorsFromAssembly(typeof(Startup).Assembly);
+        services.AddControllers().AddJsonOptions(options =>
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+        services.AddValidatorsFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
         AddCustomDbContext(Configuration, services);
-        services.AddScoped<IRepository<Brand>, EntityFrameworkRepository<Brand>>();
-        services.AddScoped<IReadOnlyRepository<Brand>, EntityFrameworkReadOnlyRepository<Brand>>();
-        services.AddScoped<IBrandsService, BrandsService>();
+        AddCustomRepositories(services);
         services.AddMediatR(options =>
         {
-            options.RegisterServicesFromAssembly(typeof(Startup).Assembly);
+            options.RegisterServicesFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
         });
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
     }
@@ -68,5 +66,17 @@ public class Startup
                         sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
                     });
             });
+    }
+
+    private static void AddCustomRepositories(IServiceCollection services)
+    {
+        services.AddScoped<IRepository<Brand>, EntityFrameworkRepository<Brand>>();
+        services.AddScoped<IReadOnlyRepository<Brand>, EntityFrameworkReadOnlyRepository<Brand>>();
+
+        services.AddScoped<IRepository<Section>, EntityFrameworkRepository<Section>>();
+        services.AddScoped<IReadOnlyRepository<Section>, EntityFrameworkReadOnlyRepository<Section>>();
+
+        services.AddScoped<IRepository<Category>, EntityFrameworkRepository<Category>>();
+        services.AddScoped<IReadOnlyRepository<Category>, EntityFrameworkReadOnlyRepository<Category>>();
     }
 }
