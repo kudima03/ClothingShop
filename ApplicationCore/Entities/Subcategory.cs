@@ -1,9 +1,11 @@
-﻿namespace ApplicationCore.Entities;
+﻿using ApplicationCore.Entities.Interfaces;
 
-public class Subcategory
+namespace ApplicationCore.Entities;
+
+public class Subcategory : IStorable
 {
-    public long Id { get; set; }
     public string Name { get; set; }
     public virtual List<Category> CategoriesBelongsTo { get; } = new();
     public virtual List<Product> Products { get; } = new();
+    public long Id { get; set; }
 }

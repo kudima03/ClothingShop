@@ -1,8 +1,9 @@
-﻿namespace ApplicationCore.Entities;
+﻿using ApplicationCore.Entities.Interfaces;
 
-public class ProductOption
+namespace ApplicationCore.Entities;
+
+public class ProductOption : IStorable
 {
-    public long Id { get; set; }
     public long ProductId { get; set; }
     public virtual Product Product { get; set; }
     public long ProductColorId { get; set; }
@@ -11,4 +12,5 @@ public class ProductOption
     public int Quantity { get; set; }
     public decimal Price { get; set; }
     public virtual List<Order> Orders { get; } = new();
+    public long Id { get; set; }
 }

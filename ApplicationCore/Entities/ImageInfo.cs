@@ -1,9 +1,11 @@
-﻿namespace ApplicationCore.Entities;
+﻿using ApplicationCore.Entities.Interfaces;
 
-public class ImageInfo
+namespace ApplicationCore.Entities;
+
+public class ImageInfo : IStorable
 {
-    public long Id { get; set; }
     public string Url { get; set; }
     public long ProductColorId { get; set; }
     public virtual ProductColor ProductColor { get; set; }
+    public long Id { get; set; }
 }

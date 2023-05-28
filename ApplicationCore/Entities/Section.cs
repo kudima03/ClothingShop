@@ -1,8 +1,10 @@
-﻿namespace ApplicationCore.Entities;
+﻿using ApplicationCore.Entities.Interfaces;
 
-public class Section
+namespace ApplicationCore.Entities;
+
+public class Section : IStorable
 {
-    public long Id { get; set; }
     public string Name { get; set; }
     public virtual List<Category> Categories { get; } = new();
+    public long Id { get; set; }
 }

@@ -1,9 +1,10 @@
 ﻿#nullable enable
+using ApplicationCore.Entities.Interfaces;
+
 namespace ApplicationCore.Entities;
 
-public class Review
+public class Review : IStorable
 {
-    public long Id { get; set; }
     public int Rate { get; set; }
     public DateTime DateTime { get; set; }
     public string? Comment { get; set; }
@@ -11,4 +12,5 @@ public class Review
     public virtual User User { get; set; }
     public long ProductId { get; set; }
     public virtual Product Product { get; set; }
+    public long Id { get; set; }
 }

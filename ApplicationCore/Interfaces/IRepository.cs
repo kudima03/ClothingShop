@@ -1,12 +1,13 @@
-﻿using ApplicationCore.Specifications;
+﻿using ApplicationCore.Entities.Interfaces;
+using ApplicationCore.Specifications;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace ApplicationCore.Interfaces;
 
-public interface IRepository<TEntity> : IDisposable, IAsyncDisposable where TEntity : class
+public interface IRepository<TEntity> : IDisposable, IAsyncDisposable where TEntity : IStorable
 {
-    IQueryable<TResult> ApplySpecification<TResult>(ISpecification<TEntity, TResult> specification);
+    IQueryable<TResult> ApplySpecification<TResult>(Specification<TEntity, TResult> specification);
 
     Task<TResult?> GetFirstOrDefaultAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,

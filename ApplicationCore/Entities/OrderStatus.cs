@@ -1,8 +1,10 @@
-﻿namespace ApplicationCore.Entities;
+﻿using ApplicationCore.Entities.Interfaces;
 
-public class OrderStatus
+namespace ApplicationCore.Entities;
+
+public class OrderStatus : IStorable
 {
-    public long Id { get; set; }
     public string Name { get; set; }
     public virtual List<Order> Orders { get; } = new();
+    public long Id { get; set; }
 }

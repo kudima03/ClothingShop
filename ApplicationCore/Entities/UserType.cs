@@ -1,8 +1,10 @@
-﻿namespace ApplicationCore.Entities;
+﻿using ApplicationCore.Entities.Interfaces;
 
-public class UserType
+namespace ApplicationCore.Entities;
+
+public class UserType : IStorable
 {
-    public long Id { get; set; }
     public string Name { get; set; }
     public virtual List<User> Users { get; } = new();
+    public long Id { get; set; }
 }

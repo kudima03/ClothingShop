@@ -86,9 +86,11 @@ namespace Infrastructure.Data.ShopContextMigrations
 
             modelBuilder.Entity("ApplicationCore.Entities.CustomerInfo", b =>
                 {
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("user_id");
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Address")
                         .HasColumnType("text")
@@ -110,7 +112,14 @@ namespace Infrastructure.Data.ShopContextMigrations
                         .HasColumnType("text")
                         .HasColumnName("surname");
 
-                    b.HasKey("UserId");
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("customers_info", (string)null);
                 });

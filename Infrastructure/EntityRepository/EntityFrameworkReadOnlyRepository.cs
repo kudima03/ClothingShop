@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Interfaces;
+﻿using ApplicationCore.Entities.Interfaces;
+using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -6,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace Infrastructure.EntityRepository;
 
-public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TEntity> where TEntity : class
+public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TEntity> where TEntity : class, IStorable
 {
     private readonly DbContext _dbContext;
 
@@ -28,7 +29,7 @@ public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TE
         await _dbContext.DisposeAsync();
     }
 
-    public IQueryable<TResult> ApplySpecification<TResult>(ISpecification<TEntity, TResult> specification)
+    public IQueryable<TResult> ApplySpecification<TResult>(Specification<TEntity, TResult> specification)
     {
         IQueryable<TEntity> query = _dbSet.AsNoTracking();
 
