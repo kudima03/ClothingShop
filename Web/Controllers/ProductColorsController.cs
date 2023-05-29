@@ -1,5 +1,5 @@
 ﻿using ApplicationCore.Entities;
-using DomainServices.Features.ProductsOptions.Queries;
+using DomainServices.Features.ProductColors.Queries;
 using DomainServices.Features.Templates.Commands.Create;
 using DomainServices.Features.Templates.Commands.Delete;
 using DomainServices.Features.Templates.Commands.Update;
@@ -30,7 +30,7 @@ public class ProductColorsController : ControllerBase
     {
         try
         {
-            //return Ok(await _mediator.Send(new GetAllProductsOptionsQuery()));
+            return Ok(await _mediator.Send(new GetAllProductColorsQuery()));
         }
         catch (Exception e)
         {
@@ -47,7 +47,7 @@ public class ProductColorsController : ControllerBase
     {
         try
         {
-            //return Ok(await _mediator.Send(new GetProductOptionById(id)));
+            return Ok(await _mediator.Send(new GetProductColorByIdQuery(id)));
         }
         catch (ValidationException e)
         {

@@ -1,5 +1,6 @@
 ﻿using ApplicationCore.Entities.Interfaces;
 using ApplicationCore.Interfaces;
+using DomainServices.Features.Templates.BusinessRulesValidators;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
@@ -8,16 +9,24 @@ namespace DomainServices.Features.Templates.Commands.Update;
 
 public class UpdateCommandHandler<TEntity> : IRequestHandler<UpdateCommand<TEntity>, Unit> where TEntity : IStorable
 {
-    private readonly IRepository<TEntity> _repository;
+    protected readonly IBusinessRulesValidator<UpdateCommand<TEntity>>? BusinessValidator;
+    protected readonly IRepository<TEntity> Repository;
 
-    public UpdateCommandHandler(IRepository<TEntity> repository)
+    public UpdateCommandHandler(IRepository<TEntity> repository,
+        IBusinessRulesValidator<UpdateCommand<TEntity>>? businessValidator = null)
     {
-        _repository = repository;
+        Repository = repository;
+        BusinessValidator = businessValidator;
     }
 
     public virtual async Task<Unit> Handle(UpdateCommand<TEntity> request, CancellationToken cancellationToken)
     {
-        bool exists = await _repository.ExistsAsync(x => x.Id == request.Entity.Id,
+        if (BusinessValidator is not null)
+        {
+            await BusinessValidator.ValidateAsync(request, cancellationToken);
+        }
+
+        bool exists = await Repository.ExistsAsync(x => x.Id == request.Entity.Id,
             cancellationToken);
         if (!exists)
         {
@@ -25,8 +34,8 @@ public class UpdateCommandHandler<TEntity> : IRequestHandler<UpdateCommand<TEnti
                 new[] { new ValidationFailure(nameof(request.Entity.Id), "Entity to update doesn't exists") });
         }
 
-        _repository.Update(request.Entity);
-        await _repository.SaveChangesAsync(cancellationToken);
+        Repository.Update(request.Entity);
+        await Repository.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }
 }

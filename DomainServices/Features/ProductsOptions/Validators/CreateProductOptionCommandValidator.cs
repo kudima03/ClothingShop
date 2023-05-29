@@ -1,13 +1,9 @@
 ﻿using ApplicationCore.Entities;
 using DomainServices.Features.Templates.Commands.Create;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DomainServices.Features.ProductsOptions.Validators;
+
 public class CreateProductOptionCommandValidator : AbstractValidator<CreateCommand<ProductOption>>
 {
     public CreateProductOptionCommandValidator()

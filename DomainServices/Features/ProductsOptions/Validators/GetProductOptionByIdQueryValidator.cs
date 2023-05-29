@@ -1,13 +1,9 @@
 ﻿using DomainServices.Features.ProductsOptions.Queries;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DomainServices.Features.ProductsOptions.Validators;
-public class GetProductOptionByIdQueryValidator : AbstractValidator<GetProductOptionById>
+
+public class GetProductOptionByIdQueryValidator : AbstractValidator<GetProductOptionByIdQuery>
 {
     public GetProductOptionByIdQueryValidator()
     {

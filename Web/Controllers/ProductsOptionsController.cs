@@ -1,5 +1,4 @@
 ﻿using ApplicationCore.Entities;
-using DomainServices.Features.Products.Queries;
 using DomainServices.Features.ProductsOptions.Queries;
 using DomainServices.Features.Templates.Commands.Create;
 using DomainServices.Features.Templates.Commands.Delete;
@@ -48,7 +47,7 @@ public class ProductsOptionsController : ControllerBase
     {
         try
         {
-            return Ok(await _mediator.Send(new GetProductOptionById(id)));
+            return Ok(await _mediator.Send(new GetProductOptionByIdQuery(id)));
         }
         catch (ValidationException e)
         {

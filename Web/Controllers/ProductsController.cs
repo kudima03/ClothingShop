@@ -60,7 +60,7 @@ public class ProductsController : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpGet("bySubcategory")]
     [ProducesResponseType(typeof(IEnumerable<Product>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubcategory([FromQuery] long subcategoryId)
@@ -69,6 +69,10 @@ public class ProductsController : ControllerBase
         {
             return Ok(await _mediator.Send(new GetProductsBySubcategoryIdQuery(subcategoryId)));
         }
+        catch (ValidationException e)
+        {
+            return BadRequest(e.Errors);
+        }
         catch (Exception e)
         {
             _logger.LogError(e.StackTrace);
@@ -76,7 +80,7 @@ public class ProductsController : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpGet("byBrand")]
     [ProducesResponseType(typeof(IEnumerable<Product>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Product>>> GetProductByBrand([FromQuery] long brandId)
@@ -84,6 +88,10 @@ public class ProductsController : ControllerBase
         try
         {
             return Ok(await _mediator.Send(new GetProductsByBrandIdQuery(brandId)));
+        }
+        catch (ValidationException e)
+        {
+            return BadRequest(e.Errors);
         }
         catch (Exception e)
         {
