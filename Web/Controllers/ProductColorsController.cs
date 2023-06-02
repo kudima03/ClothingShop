@@ -44,7 +44,6 @@ public class ProductColorsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] ProductColor productColor)
     {
-        productColor.Id = 0;
         await _mediator.Send(new CreateCommand<ProductColor>(productColor));
         return Ok();
     }

@@ -44,7 +44,6 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Review review)
     {
-        review.Id = 0;
         await _mediator.Send(new CreateCommand<Review>(review));
         return Ok();
     }

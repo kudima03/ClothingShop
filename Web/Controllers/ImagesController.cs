@@ -44,7 +44,6 @@ public class ImagesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] ImageInfo imageInfo)
     {
-        imageInfo.Id = 0;
         await _mediator.Send(new CreateCommand<ImageInfo>(imageInfo));
         return Ok();
     }

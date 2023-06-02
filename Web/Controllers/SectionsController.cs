@@ -46,7 +46,6 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Section section)
     {
-        section.Id = 0;
         await _mediator.Send(new CreateCommand<Section>(section));
         return Ok();
     }

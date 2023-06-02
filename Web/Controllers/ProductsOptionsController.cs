@@ -44,7 +44,6 @@ public class ProductsOptionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] ProductOption productOption)
     {
-        productOption.Id = 0;
         await _mediator.Send(new CreateCommand<ProductOption>(productOption));
         return Ok();
     }

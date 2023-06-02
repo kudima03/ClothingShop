@@ -46,7 +46,6 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Category category)
     {
-        category.Id = 0;
         await _mediator.Send(new CreateCommand<Category>(category));
         return Ok();
     }

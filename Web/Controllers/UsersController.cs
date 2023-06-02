@@ -44,7 +44,6 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] User user)
     {
-        user.Id = 0;
         await _mediator.Send(new CreateCommand<User>(user));
         return Ok();
     }

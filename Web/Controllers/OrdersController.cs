@@ -44,7 +44,6 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Order order)
     {
-        order.Id = 0;
         await _mediator.Send(new CreateCommand<Order>(order));
         return Ok();
     }

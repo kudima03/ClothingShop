@@ -44,7 +44,6 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Subcategory subcategory)
     {
-        subcategory.Id = 0;
         await _mediator.Send(new CreateCommand<Subcategory>(subcategory));
         return Ok();
     }

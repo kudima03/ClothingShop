@@ -44,7 +44,6 @@ public class CustomersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] CustomerInfo customerInfo)
     {
-        customerInfo.Id = 0;
         await _mediator.Send(new CreateCommand<CustomerInfo>(customerInfo));
         return Ok();
     }
