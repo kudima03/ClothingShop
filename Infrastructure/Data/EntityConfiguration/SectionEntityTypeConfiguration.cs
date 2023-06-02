@@ -22,7 +22,7 @@ internal class SectionEntityTypeConfiguration
             .HasColumnName("name")
             .IsRequired();
         builder.HasMany(x => x.Categories)
-            .WithMany(x => x.SectionsBelongsTo)
+            .WithMany(x => x.Sections)
             .UsingEntity("sections_categories",
                 l => l.HasOne(typeof(Section)).WithMany().HasForeignKey("section_id"),
                 r => r.HasOne(typeof(Category)).WithMany().HasForeignKey("category_id"));

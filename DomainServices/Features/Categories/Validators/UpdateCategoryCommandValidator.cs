@@ -16,11 +16,11 @@ public class UpdateCategoryCommandValidator : AbstractValidator<UpdateCommand<Ca
             .NotEmpty()
             .WithMessage("Message cannot be null or empty");
 
-        RuleForEach(x => x.Entity.SectionsBelongsTo)
+        RuleForEach(x => x.Entity.Sections)
             .NotNull().WithMessage("Section, category belongs to, can't be null");
 
         RuleFor(x => x.Entity)
-            .Must(category => category.SectionsBelongsTo.Count == category.SectionsBelongsTo
+            .Must(category => category.Sections.Count == category.Sections
                 .DistinctBy(section => section.Id).Count())
             .WithMessage("Sections category belongs to cannot contain duplicates.");
 

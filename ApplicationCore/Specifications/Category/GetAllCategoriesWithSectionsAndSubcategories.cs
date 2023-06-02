@@ -8,7 +8,7 @@ public class GetAllCategoriesWithSectionsAndSubcategories : Specification<Entiti
         : base(category => category, null,
             x => x.OrderBy(category => category.Id),
             x => x.Include(category => category.Subcategories)
-                .Include(category => category.SectionsBelongsTo))
+                .Include(category => category.Sections))
     {
     }
 }

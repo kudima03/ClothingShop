@@ -9,7 +9,7 @@ public class GetCategoryByIdWithSectionsAndSubcategories
         : base(category => category, category => category.Id == id,
             x => x.OrderBy(category => category.Id),
             x => x.Include(category => category.Subcategories)
-                .Include(category => category.SectionsBelongsTo))
+                .Include(category => category.Sections))
     {
     }
 }

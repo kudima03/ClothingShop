@@ -22,12 +22,12 @@ internal class CategoryEntityTypeConfiguration : IEntityTypeConfiguration<Catego
             .IsRequired();
         builder
             .HasMany(x => x.Subcategories)
-            .WithMany(x => x.CategoriesBelongsTo)
+            .WithMany(x => x.Categories)
             .UsingEntity("category_subcategories",
                 l => l.HasOne(typeof(Category)).WithMany().HasForeignKey("category_id"),
                 r => r.HasOne(typeof(Subcategory)).WithMany().HasForeignKey("subcategory_id"));
 
-        builder.HasMany(x => x.SectionsBelongsTo)
+        builder.HasMany(x => x.Sections)
             .WithMany(x => x.Categories)
             .UsingEntity("sections_categories",
                 l => l.HasOne(typeof(Section)).WithMany().HasForeignKey("section_id"),

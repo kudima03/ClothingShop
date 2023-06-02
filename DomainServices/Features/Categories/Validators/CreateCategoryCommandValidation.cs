@@ -16,13 +16,13 @@ internal class CreateCategoryCommandValidation : AbstractValidator<CreateCommand
             .NotEmpty()
             .WithMessage("Message cannot be null or empty");
 
-        RuleForEach(x => x.Entity.SectionsBelongsTo)
+        RuleForEach(x => x.Entity.Sections)
             .NotNull().WithMessage("Section, category belongs to, can't be null");
 
-        RuleFor(x => x.Entity.SectionsBelongsTo)
+        RuleFor(x => x.Entity.Sections)
             .Empty()
             .WithMessage(x =>
-                $"When creating new category, {nameof(x.Entity.SectionsBelongsTo)} must be empty. Associate in another request");
+                $"When creating new category, {nameof(x.Entity.Sections)} must be empty. Associate in another request");
 
         RuleFor(x => x.Entity.Subcategories)
             .Empty()

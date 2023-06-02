@@ -17,14 +17,14 @@ public class CreateSubcategoryCommandValidator : AbstractValidator<CreateCommand
             .NotEmpty()
             .WithMessage(x => $"{nameof(x.Entity.Name)} cannot be null or empty");
 
-        RuleForEach(x => x.Entity.CategoriesBelongsTo)
+        RuleForEach(x => x.Entity.Categories)
             .NotNull()
-            .WithMessage(x => $"{nameof(x.Entity.CategoriesBelongsTo)} can't be null");
+            .WithMessage(x => $"{nameof(x.Entity.Categories)} can't be null");
 
-        RuleFor(x => x.Entity.CategoriesBelongsTo)
+        RuleFor(x => x.Entity.Categories)
             .Empty()
             .WithMessage(x =>
-                $"When creating new {x.Entity.GetType().Name},{nameof(x.Entity.CategoriesBelongsTo)} must be empty. Associate in another request");
+                $"When creating new {x.Entity.GetType().Name},{nameof(x.Entity.Categories)} must be empty. Associate in another request");
 
         RuleFor(x => x.Entity.Products)
             .Empty()

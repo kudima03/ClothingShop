@@ -21,7 +21,7 @@ internal class SubcategoryEntityTypeConfiguration
         builder.Property(x => x.Name)
             .HasColumnName("name")
             .IsRequired();
-        builder.HasMany(x => x.CategoriesBelongsTo)
+        builder.HasMany(x => x.Categories)
             .WithMany(x => x.Subcategories)
             .UsingEntity("category_subcategories",
                 l => l.HasOne(typeof(Category)).WithMany().HasForeignKey("category_id"),
