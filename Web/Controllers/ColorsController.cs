@@ -3,7 +3,6 @@ using DomainServices.Features.Colors.Queries;
 using DomainServices.Features.Templates.Commands.Create;
 using DomainServices.Features.Templates.Commands.Delete;
 using DomainServices.Features.Templates.Commands.Update;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -14,13 +13,11 @@ namespace Web.Controllers;
 [Route("[controller]")]
 public class ColorsController : ControllerBase
 {
-    private readonly ILogger<ColorsController> _logger;
     private readonly IMediator _mediator;
 
-    public ColorsController(IMediator mediator, ILogger<ColorsController> logger)
+    public ColorsController(IMediator mediator)
     {
         _mediator = mediator;
-        _logger = logger;
     }
 
     [HttpGet]
@@ -28,15 +25,7 @@ public class ColorsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Color>>> GetAll()
     {
-        try
-        {
-            return Ok(await _mediator.Send(new GetAllColorsQuery()));
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        return Ok(await _mediator.Send(new GetAllColorsQuery()));
     }
 
     [HttpGet("{id:long}")]
@@ -45,19 +34,7 @@ public class ColorsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Color>> GetById([FromRoute] long id)
     {
-        try
-        {
-            return Ok(await _mediator.Send(new GetColorByIdQuery(id)));
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        return Ok(await _mediator.Send(new GetColorByIdQuery(id)));
     }
 
     [HttpPost]
@@ -67,21 +44,9 @@ public class ColorsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Color brand)
     {
-        try
-        {
-            brand.Id = 0;
-            await _mediator.Send(new CreateCommand<Color>(brand));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        brand.Id = 0;
+        await _mediator.Send(new CreateCommand<Color>(brand));
+        return Ok();
     }
 
     [HttpPut]
@@ -91,20 +56,8 @@ public class ColorsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] Color brand)
     {
-        try
-        {
-            await _mediator.Send(new UpdateCommand<Color>(brand));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        await _mediator.Send(new UpdateCommand<Color>(brand));
+        return Ok();
     }
 
     [HttpDelete("{id:long}")]
@@ -113,19 +66,7 @@ public class ColorsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        try
-        {
-            await _mediator.Send(new DeleteCommand<Color>(id));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        await _mediator.Send(new DeleteCommand<Color>(id));
+        return Ok();
     }
 }

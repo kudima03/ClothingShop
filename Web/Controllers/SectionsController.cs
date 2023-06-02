@@ -5,7 +5,6 @@ using DomainServices.Features.Sections.Queries;
 using DomainServices.Features.Templates.Commands.Create;
 using DomainServices.Features.Templates.Commands.Delete;
 using DomainServices.Features.Templates.Commands.Update;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -16,13 +15,11 @@ namespace Web.Controllers;
 [Route("[controller]")]
 public class SectionsController : ControllerBase
 {
-    private readonly ILogger<SectionsController> _logger;
     private readonly IMediator _mediator;
 
-    public SectionsController(IMediator mediator, ILogger<SectionsController> logger)
+    public SectionsController(IMediator mediator)
     {
         _mediator = mediator;
-        _logger = logger;
     }
 
     [HttpGet]
@@ -30,15 +27,7 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Section>>> GetAll()
     {
-        try
-        {
-            return Ok(await _mediator.Send(new GetAllSectionsQuery()));
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        return Ok(await _mediator.Send(new GetAllSectionsQuery()));
     }
 
     [HttpGet("{id:long}")]
@@ -47,19 +36,7 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Section>> GetById([FromRoute] long id)
     {
-        try
-        {
-            return Ok(await _mediator.Send(new GetSectionByIdQuery(id)));
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        return Ok(await _mediator.Send(new GetSectionByIdQuery(id)));
     }
 
     [HttpPost]
@@ -69,21 +46,9 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Section section)
     {
-        try
-        {
-            section.Id = 0;
-            await _mediator.Send(new CreateCommand<Section>(section));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        section.Id = 0;
+        await _mediator.Send(new CreateCommand<Section>(section));
+        return Ok();
     }
 
     [HttpPut]
@@ -93,20 +58,8 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] Section section)
     {
-        try
-        {
-            await _mediator.Send(new UpdateCommand<Section>(section));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        await _mediator.Send(new UpdateCommand<Section>(section));
+        return Ok();
     }
 
     [HttpDelete("{id:long}")]
@@ -115,20 +68,8 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        try
-        {
-            await _mediator.Send(new DeleteCommand<Section>(id));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        await _mediator.Send(new DeleteCommand<Section>(id));
+        return Ok();
     }
 
     [HttpGet("associate")]
@@ -137,20 +78,8 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> AddCategoryToSection([FromQuery] long categoryId, [FromQuery] long sectionId)
     {
-        try
-        {
-            await _mediator.Send(new AssociateCategoryWithSectionCommand(categoryId, sectionId));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        await _mediator.Send(new AssociateCategoryWithSectionCommand(categoryId, sectionId));
+        return Ok();
     }
 
     [HttpGet("deassociate")]
@@ -160,19 +89,7 @@ public class SectionsController : ControllerBase
     public async Task<ActionResult> DeleteCategoryFromSection([FromQuery] long categoryId,
         [FromQuery] long sectionId)
     {
-        try
-        {
-            await _mediator.Send(new DeassociateCategoryWithSectionCommand(categoryId, sectionId));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        await _mediator.Send(new DeassociateCategoryWithSectionCommand(categoryId, sectionId));
+        return Ok();
     }
 }

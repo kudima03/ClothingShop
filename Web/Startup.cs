@@ -39,6 +39,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Web.Middlewares;
 
 namespace Web;
 
@@ -66,6 +67,7 @@ public class Startup
         });
         AddMediatRServices(services);
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        services.AddScoped<GlobalExceptionHandlingMiddleware>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -80,6 +82,8 @@ public class Startup
         app.UseHttpsRedirection();
 
         app.UseRouting();
+
+        app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
         app.UseAuthorization();
 

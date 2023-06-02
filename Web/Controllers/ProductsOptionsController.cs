@@ -3,7 +3,6 @@ using DomainServices.Features.ProductsOptions.Queries;
 using DomainServices.Features.Templates.Commands.Create;
 using DomainServices.Features.Templates.Commands.Delete;
 using DomainServices.Features.Templates.Commands.Update;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -14,13 +13,11 @@ namespace Web.Controllers;
 [Route("[controller]")]
 public class ProductsOptionsController : ControllerBase
 {
-    private readonly ILogger<ProductsOptionsController> _logger;
     private readonly IMediator _mediator;
 
-    public ProductsOptionsController(IMediator mediator, ILogger<ProductsOptionsController> logger)
+    public ProductsOptionsController(IMediator mediator)
     {
         _mediator = mediator;
-        _logger = logger;
     }
 
     [HttpGet]
@@ -28,15 +25,7 @@ public class ProductsOptionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<ProductOption>>> GetAll()
     {
-        try
-        {
-            return Ok(await _mediator.Send(new GetAllProductsOptionsQuery()));
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        return Ok(await _mediator.Send(new GetAllProductsOptionsQuery()));
     }
 
     [HttpGet("{id:long}")]
@@ -45,19 +34,7 @@ public class ProductsOptionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<ProductOption>> GetById([FromRoute] long id)
     {
-        try
-        {
-            return Ok(await _mediator.Send(new GetProductOptionByIdQuery(id)));
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        return Ok(await _mediator.Send(new GetProductOptionByIdQuery(id)));
     }
 
     [HttpPost]
@@ -67,21 +44,9 @@ public class ProductsOptionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] ProductOption productOption)
     {
-        try
-        {
-            productOption.Id = 0;
-            await _mediator.Send(new CreateCommand<ProductOption>(productOption));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        productOption.Id = 0;
+        await _mediator.Send(new CreateCommand<ProductOption>(productOption));
+        return Ok();
     }
 
     [HttpPut]
@@ -91,20 +56,8 @@ public class ProductsOptionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] ProductOption productOption)
     {
-        try
-        {
-            await _mediator.Send(new UpdateCommand<ProductOption>(productOption));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        await _mediator.Send(new UpdateCommand<ProductOption>(productOption));
+        return Ok();
     }
 
     [HttpDelete("{id:long}")]
@@ -113,19 +66,7 @@ public class ProductsOptionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        try
-        {
-            await _mediator.Send(new DeleteCommand<ProductOption>(id));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        await _mediator.Send(new DeleteCommand<ProductOption>(id));
+        return Ok();
     }
 }

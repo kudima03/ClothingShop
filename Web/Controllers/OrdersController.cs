@@ -3,7 +3,6 @@ using DomainServices.Features.Orders.Queries;
 using DomainServices.Features.Templates.Commands.Create;
 using DomainServices.Features.Templates.Commands.Delete;
 using DomainServices.Features.Templates.Commands.Update;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -12,15 +11,13 @@ namespace Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class OrdersController : Controller
+public class OrdersController : ControllerBase
 {
-    private readonly ILogger<OrdersController> _logger;
     private readonly IMediator _mediator;
 
-    public OrdersController(IMediator mediator, ILogger<OrdersController> logger)
+    public OrdersController(IMediator mediator)
     {
         _mediator = mediator;
-        _logger = logger;
     }
 
     [HttpGet]
@@ -28,15 +25,7 @@ public class OrdersController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Order>>> GetAll()
     {
-        try
-        {
-            return Ok(await _mediator.Send(new GetAllOrdersQuery()));
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        return Ok(await _mediator.Send(new GetAllOrdersQuery()));
     }
 
     [HttpGet("{id:long}")]
@@ -45,19 +34,7 @@ public class OrdersController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Order>> GetById([FromRoute] long id)
     {
-        try
-        {
-            return Ok(await _mediator.Send(new GetOrderByIdQuery(id)));
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        return Ok(await _mediator.Send(new GetOrderByIdQuery(id)));
     }
 
     [HttpPost]
@@ -67,21 +44,9 @@ public class OrdersController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Order order)
     {
-        try
-        {
-            order.Id = 0;
-            await _mediator.Send(new CreateCommand<Order>(order));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        order.Id = 0;
+        await _mediator.Send(new CreateCommand<Order>(order));
+        return Ok();
     }
 
     [HttpPut]
@@ -91,20 +56,8 @@ public class OrdersController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] Order order)
     {
-        try
-        {
-            await _mediator.Send(new UpdateCommand<Order>(order));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        await _mediator.Send(new UpdateCommand<Order>(order));
+        return Ok();
     }
 
     [HttpDelete("{id:long}")]
@@ -113,19 +66,7 @@ public class OrdersController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        try
-        {
-            await _mediator.Send(new DeleteCommand<Order>(id));
-            return Ok();
-        }
-        catch (ValidationException e)
-        {
-            return BadRequest(e.Errors);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.StackTrace);
-            return StatusCode(StatusCodes.Status503ServiceUnavailable);
-        }
+        await _mediator.Send(new DeleteCommand<Order>(id));
+        return Ok();
     }
 }
