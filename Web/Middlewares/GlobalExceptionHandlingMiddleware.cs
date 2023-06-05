@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using ApplicationCore.Exceptions;
+using FluentValidation;
 
 namespace Web.Middlewares;
 
@@ -17,6 +18,16 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
         {
             await next(context);
         }
+        catch (EntityNotFoundException e)
+        {
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            await context.Response.WriteAsync(e.Message);
+        }
+        catch (OperationFailureException e)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsync(e.Message);
+        }
         catch (ValidationException e)
         {
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -24,7 +35,7 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
         }
         catch (Exception e)
         {
-            _logger.LogError(e.StackTrace);
+            _logger.LogError(e, e.Message);
             context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
         }
     }

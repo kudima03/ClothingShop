@@ -9,7 +9,7 @@ public class Product : IStorable
     public long SubcategoryId { get; set; }
     public virtual Subcategory Subcategory { get; set; }
     public string Name { get; set; }
-    public virtual List<ProductOption> ProductOptions { get; } = new();
-    public virtual List<Review> Reviews { get; } = new();
+    public virtual List<ProductOption> ProductOptions { get; init; } = new();
+    public virtual List<Review> Reviews { get; init; } = new();
     public long Id { get; set; }
 }

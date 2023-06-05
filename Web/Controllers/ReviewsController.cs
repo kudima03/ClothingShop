@@ -1,8 +1,7 @@
 ﻿using ApplicationCore.Entities;
-using DomainServices.Features.Reviews.Queries;
-using DomainServices.Features.Templates.Commands.Create;
-using DomainServices.Features.Templates.Commands.Delete;
-using DomainServices.Features.Templates.Commands.Update;
+using DomainServices.Features.Reviews.Commands.Create;
+using DomainServices.Features.Reviews.Commands.Delete;
+using DomainServices.Features.Reviews.Commands.Update;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -20,23 +19,6 @@ public class ReviewsController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<Review>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<Review>>> GetAll()
-    {
-        return Ok(await _mediator.Send(new GetAllReviewsQuery()));
-    }
-
-    [HttpGet("{id:long}")]
-    [ProducesResponseType(typeof(Review), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<Review>> GetById([FromRoute] long id)
-    {
-        return Ok(await _mediator.Send(new GetReviewByIdQuery(id)));
-    }
-
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -44,7 +26,7 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Review review)
     {
-        await _mediator.Send(new CreateCommand<Review>(review));
+        await _mediator.Send(new CreateReviewCommand(review));
         return Ok();
     }
 
@@ -55,7 +37,7 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] Review review)
     {
-        await _mediator.Send(new UpdateCommand<Review>(review));
+        await _mediator.Send(new UpdateReviewCommand(review));
         return Ok();
     }
 
@@ -65,7 +47,7 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        await _mediator.Send(new DeleteCommand<Review>(id));
+        await _mediator.Send(new DeleteReviewCommand(id));
         return Ok();
     }
 }

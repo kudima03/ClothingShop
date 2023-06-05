@@ -1,8 +1,9 @@
 ﻿using ApplicationCore.Entities;
-using DomainServices.Features.Templates.Commands.Create;
-using DomainServices.Features.Templates.Commands.Delete;
-using DomainServices.Features.Templates.Commands.Update;
-using DomainServices.Features.Users.Queries;
+using DomainServices.Features.Users.Commands.Create;
+using DomainServices.Features.Users.Commands.Delete;
+using DomainServices.Features.Users.Commands.Update;
+using DomainServices.Features.Users.Queries.GetAll;
+using DomainServices.Features.Users.Queries.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -44,7 +45,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] User user)
     {
-        await _mediator.Send(new CreateCommand<User>(user));
+        await _mediator.Send(new CreateUserCommand(user));
         return Ok();
     }
 
@@ -55,7 +56,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] User user)
     {
-        await _mediator.Send(new UpdateCommand<User>(user));
+        await _mediator.Send(new UpdateUserCommand(user));
         return Ok();
     }
 
@@ -65,7 +66,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        await _mediator.Send(new DeleteCommand<User>(id));
+        await _mediator.Send(new DeleteUserCommand(id));
         return Ok();
     }
 }

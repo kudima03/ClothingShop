@@ -1,8 +1,9 @@
 ﻿using ApplicationCore.Entities;
-using DomainServices.Features.Brands.Queries;
-using DomainServices.Features.Templates.Commands.Create;
-using DomainServices.Features.Templates.Commands.Delete;
-using DomainServices.Features.Templates.Commands.Update;
+using DomainServices.Features.Brands.Commands.Create;
+using DomainServices.Features.Brands.Commands.Delete;
+using DomainServices.Features.Brands.Commands.Update;
+using DomainServices.Features.Brands.Queries.GetAll;
+using DomainServices.Features.Brands.Queries.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -44,7 +45,7 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Brand brand)
     {
-        await _mediator.Send(new CreateCommand<Brand>(brand));
+        await _mediator.Send(new CreateBrandCommand(brand));
         return Ok();
     }
 
@@ -55,7 +56,7 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] Brand brand)
     {
-        await _mediator.Send(new UpdateCommand<Brand>(brand));
+        await _mediator.Send(new UpdateBrandCommand(brand));
         return Ok();
     }
 
@@ -65,7 +66,7 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        await _mediator.Send(new DeleteCommand<Brand>(id));
+        await _mediator.Send(new DeleteBrandCommand(id));
         return Ok();
     }
 }

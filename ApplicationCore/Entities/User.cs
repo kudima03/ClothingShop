@@ -8,7 +8,7 @@ public class User : IStorable
     public string Password { get; set; }
     public long UserTypeId { get; set; }
     public virtual UserType UserType { get; set; }
-    public virtual List<Review> Reviews { get; } = new();
-    public virtual List<Order> Orders { get; } = new();
+    public virtual List<Review> Reviews { get; init; } = new();
+    public virtual List<Order> Orders { get; init; } = new();
     public long Id { get; set; }
 }

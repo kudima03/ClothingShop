@@ -1,8 +1,9 @@
 ﻿using ApplicationCore.Entities;
-using DomainServices.Features.Subcategories.Queries;
-using DomainServices.Features.Templates.Commands.Create;
-using DomainServices.Features.Templates.Commands.Delete;
-using DomainServices.Features.Templates.Commands.Update;
+using DomainServices.Features.Subcategories.Commands.Create;
+using DomainServices.Features.Subcategories.Commands.Delete;
+using DomainServices.Features.Subcategories.Commands.Update;
+using DomainServices.Features.Subcategories.Queries.GetAll;
+using DomainServices.Features.Subcategories.Queries.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -44,7 +45,7 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Subcategory subcategory)
     {
-        await _mediator.Send(new CreateCommand<Subcategory>(subcategory));
+        await _mediator.Send(new CreateSubcategoryCommand(subcategory));
         return Ok();
     }
 
@@ -55,7 +56,7 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] Subcategory subcategory)
     {
-        await _mediator.Send(new UpdateCommand<Subcategory>(subcategory));
+        await _mediator.Send(new UpdateSubcategoryCommand(subcategory));
         return Ok();
     }
 
@@ -65,7 +66,7 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        await _mediator.Send(new DeleteCommand<Subcategory>(id));
+        await _mediator.Send(new DeleteSubcategoryCommand(id));
         return Ok();
     }
 }

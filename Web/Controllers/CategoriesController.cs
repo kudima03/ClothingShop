@@ -1,10 +1,9 @@
 ﻿using ApplicationCore.Entities;
-using DomainServices.Features.Categories.Commands.AssociateSubcategory;
-using DomainServices.Features.Categories.Commands.DeassociateSubcategory;
-using DomainServices.Features.Categories.Queries;
-using DomainServices.Features.Templates.Commands.Create;
-using DomainServices.Features.Templates.Commands.Delete;
-using DomainServices.Features.Templates.Commands.Update;
+using DomainServices.Features.Categories.Commands.Create;
+using DomainServices.Features.Categories.Commands.Delete;
+using DomainServices.Features.Categories.Commands.Update;
+using DomainServices.Features.Categories.Queries.GetAll;
+using DomainServices.Features.Categories.Queries.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -46,7 +45,7 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Category category)
     {
-        await _mediator.Send(new CreateCommand<Category>(category));
+        await _mediator.Send(new CreateCategoryCommand(category));
         return Ok();
     }
 
@@ -57,7 +56,7 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] Category category)
     {
-        await _mediator.Send(new UpdateCommand<Category>(category));
+        await _mediator.Send(new UpdateCategoryCommand(category));
         return Ok();
     }
 
@@ -67,29 +66,7 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        await _mediator.Send(new DeleteCommand<Category>(id));
-        return Ok();
-    }
-
-    [HttpGet("associate")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> AddSubcategoryToCategory([FromQuery] long categoryId,
-        [FromQuery] long subcategoryId)
-    {
-        await _mediator.Send(new AssociateSubcategoryWithCategoryCommand(categoryId, subcategoryId));
-        return Ok();
-    }
-
-    [HttpGet("deassociate")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> DeleteSubcategoryFromCategory([FromQuery] long categoryId,
-        [FromQuery] long subcategoryId)
-    {
-        await _mediator.Send(new DeassociateSubcategoryWithCategoryCommand(categoryId, subcategoryId));
+        await _mediator.Send(new DeleteCategoryCommand(id));
         return Ok();
     }
 }

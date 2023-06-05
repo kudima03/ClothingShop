@@ -1,8 +1,11 @@
 ﻿using ApplicationCore.Entities;
-using DomainServices.Features.Products.Queries;
-using DomainServices.Features.Templates.Commands.Create;
-using DomainServices.Features.Templates.Commands.Delete;
-using DomainServices.Features.Templates.Commands.Update;
+using DomainServices.Features.Products.Commands.Create;
+using DomainServices.Features.Products.Commands.Delete;
+using DomainServices.Features.Products.Commands.Update;
+using DomainServices.Features.Products.Queries.GetAll;
+using DomainServices.Features.Products.Queries.GetByBrandId;
+using DomainServices.Features.Products.Queries.GetById;
+using DomainServices.Features.Products.Queries.GetBySubcategoryId;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -60,7 +63,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> CreateProduct([FromBody] Product product)
     {
-        await _mediator.Send(new CreateCommand<Product>(product));
+        await _mediator.Send(new CreateProductCommand(product));
         return Ok();
     }
 
@@ -71,7 +74,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> UpdateProduct([FromBody] Product product)
     {
-        await _mediator.Send(new UpdateCommand<Product>(product));
+        await _mediator.Send(new UpdateProductCommand(product));
         return Ok();
     }
 
@@ -81,7 +84,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> DeleteProduct([FromRoute] long id)
     {
-        await _mediator.Send(new DeleteCommand<Product>(id));
+        await _mediator.Send(new DeleteProductCommand(id));
         return Ok();
     }
 }

@@ -15,4 +15,8 @@
     <ProjectReference Include="..\ApplicationCore\ApplicationCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Subcategories\Validators\" />
+  </ItemGroup>
+
 </Project>

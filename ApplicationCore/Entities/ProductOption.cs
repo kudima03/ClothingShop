@@ -11,6 +11,6 @@ public class ProductOption : IStorable
     public string Size { get; set; }
     public int Quantity { get; set; }
     public decimal Price { get; set; }
-    public virtual List<Order> Orders { get; } = new();
+    public virtual List<Order> Orders { get; init; } = new();
     public long Id { get; set; }
 }

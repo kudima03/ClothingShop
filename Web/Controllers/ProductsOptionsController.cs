@@ -1,8 +1,6 @@
 ﻿using ApplicationCore.Entities;
-using DomainServices.Features.ProductsOptions.Queries;
-using DomainServices.Features.Templates.Commands.Create;
-using DomainServices.Features.Templates.Commands.Delete;
-using DomainServices.Features.Templates.Commands.Update;
+using DomainServices.Features.ProductsOptions.Commands.Delete;
+using DomainServices.Features.ProductsOptions.Commands.Update;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -20,34 +18,6 @@ public class ProductsOptionsController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ProductOption>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<ProductOption>>> GetAll()
-    {
-        return Ok(await _mediator.Send(new GetAllProductsOptionsQuery()));
-    }
-
-    [HttpGet("{id:long}")]
-    [ProducesResponseType(typeof(ProductOption), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<ProductOption>> GetById([FromRoute] long id)
-    {
-        return Ok(await _mediator.Send(new GetProductOptionByIdQuery(id)));
-    }
-
-    [HttpPost]
-    [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] ProductOption productOption)
-    {
-        await _mediator.Send(new CreateCommand<ProductOption>(productOption));
-        return Ok();
-    }
-
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -55,7 +25,7 @@ public class ProductsOptionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] ProductOption productOption)
     {
-        await _mediator.Send(new UpdateCommand<ProductOption>(productOption));
+        await _mediator.Send(new UpdateProductOptionCommand(productOption));
         return Ok();
     }
 
@@ -65,7 +35,7 @@ public class ProductsOptionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        await _mediator.Send(new DeleteCommand<ProductOption>(id));
+        await _mediator.Send(new DeleteProductOptionCommand(id));
         return Ok();
     }
 }

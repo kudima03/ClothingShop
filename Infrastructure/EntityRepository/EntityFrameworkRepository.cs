@@ -31,7 +31,7 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
 
     public IQueryable<TResult> ApplySpecification<TResult>(Specification<TEntity, TResult> specification)
     {
-        IQueryable<TEntity> query = _dbSet.AsNoTracking();
+        IQueryable<TEntity> query = _dbSet;
 
         if (specification.Include is not null)
         {
