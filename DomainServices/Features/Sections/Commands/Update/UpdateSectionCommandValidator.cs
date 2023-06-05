@@ -18,10 +18,5 @@ public class UpdateSectionCommandValidator : AbstractValidator<UpdateSectionComm
         RuleForEach(x => x.Section.Categories)
             .NotNull()
             .WithMessage(x => $"{nameof(x.Section.Categories)} can't be null");
-
-        RuleFor(x => x.Section.Categories)
-            .Empty()
-            .WithMessage(x =>
-                $"When updating new {x.Section.GetType().Name},{nameof(x.Section.Categories)} must be empty. Associate in another request");
     }
 }

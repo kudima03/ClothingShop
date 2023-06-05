@@ -2,6 +2,7 @@
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Customers.Commands.Create;
 
@@ -23,7 +24,7 @@ public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerComman
             await _customersInfoRepository.SaveChangesAsync(cancellationToken);
             return customer;
         }
-        catch (Exception)
+        catch (DbUpdateException)
         {
             throw new OperationFailureException(
                 $"Unable to perform create {nameof(CustomerInfo)} operation. Check input.");

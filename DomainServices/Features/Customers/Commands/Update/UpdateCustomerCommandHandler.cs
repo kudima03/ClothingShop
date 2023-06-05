@@ -2,6 +2,7 @@
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Customers.Commands.Update;
 
@@ -32,7 +33,15 @@ public class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerComman
         customerInfo.Address = request.CustomerInfo.Address;
         customerInfo.Phone = request.CustomerInfo.Phone;
 
-        await _customersInfoRepository.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _customersInfoRepository.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            throw new OperationFailureException(
+                $"Unable to perform create {nameof(CustomerInfo)} operation. Check input.");
+        }
 
         return Unit.Value;
     }

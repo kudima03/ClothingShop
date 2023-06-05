@@ -2,6 +2,7 @@
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Colors.Commands.Update;
 
@@ -26,7 +27,16 @@ public class UpdateColorCommandHandler : IRequestHandler<UpdateColorCommand, Uni
 
         color.Hex = request.Color.Hex;
         color.Name = request.Color.Name;
-        await _colorsRepository.SaveChangesAsync(cancellationToken);
+        
+        try
+        {
+            await _colorsRepository.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            throw new OperationFailureException($"Unable to perform update {nameof(Color)} operation. Check input.");
+        }
+
         return Unit.Value;
     }
 }
