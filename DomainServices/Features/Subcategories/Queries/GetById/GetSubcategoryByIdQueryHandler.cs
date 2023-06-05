@@ -1,10 +1,11 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using MediatR;
 
 namespace DomainServices.Features.Subcategories.Queries.GetById;
 
-public class GetSubcategoryByIdQueryHandler : IRequestHandler<GetSubcategoryByIdQuery, Subcategory?>
+public class GetSubcategoryByIdQueryHandler : IRequestHandler<GetSubcategoryByIdQuery, Subcategory>
 {
     private readonly IReadOnlyRepository<Subcategory> _subcategoriesRepository;
 
@@ -13,9 +14,9 @@ public class GetSubcategoryByIdQueryHandler : IRequestHandler<GetSubcategoryById
         _subcategoriesRepository = subcategoriesRepository;
     }
 
-    public async Task<Subcategory?> Handle(GetSubcategoryByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Subcategory> Handle(GetSubcategoryByIdQuery request, CancellationToken cancellationToken)
     {
         return await _subcategoriesRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.Id,
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken) ?? throw new EntityNotFoundException($"{nameof(Subcategory)} with id:{request.Id} doesn't exist."); ;
     }
 }

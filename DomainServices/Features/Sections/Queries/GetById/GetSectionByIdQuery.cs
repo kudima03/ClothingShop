@@ -4,7 +4,7 @@ using MediatR;
 
 namespace DomainServices.Features.Sections.Queries.GetById;
 
-public class GetSectionByIdQuery : IRequest<Section?>
+public class GetSectionByIdQuery : IRequest<Section>
 {
     public GetSectionByIdQuery(long id)
     {

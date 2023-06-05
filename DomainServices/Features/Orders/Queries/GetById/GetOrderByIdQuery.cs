@@ -4,7 +4,7 @@ using MediatR;
 
 namespace DomainServices.Features.Orders.Queries.GetById;
 
-public class GetOrderByIdQuery : IRequest<Order?>
+public class GetOrderByIdQuery : IRequest<Order>
 {
     public GetOrderByIdQuery(long id)
     {

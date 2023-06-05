@@ -1,11 +1,12 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Orders.Queries.GetById;
 
-public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order?>
+public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order>
 {
     private readonly IReadOnlyRepository<Order> _ordersRepository;
 
@@ -14,8 +15,10 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
         _ordersRepository = ordersRepository;
     }
 
-    public async Task<Order?> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Order> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _ordersRepository.ApplySpecification(request.Specification).FirstOrDefaultAsync(cancellationToken);
+        return await _ordersRepository.ApplySpecification(request.Specification)
+                   .FirstOrDefaultAsync(cancellationToken) ??
+               throw new EntityNotFoundException($"{nameof(Order)} with id:{request.Id} doesn't exist.");
     }
 }

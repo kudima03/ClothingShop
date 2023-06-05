@@ -4,7 +4,7 @@ using MediatR;
 
 namespace DomainServices.Features.Categories.Queries.GetById;
 
-public class GetCategoryByIdQuery : IRequest<Category?>
+public class GetCategoryByIdQuery : IRequest<Category>
 {
     public GetCategoryByIdQuery(long id)
     {

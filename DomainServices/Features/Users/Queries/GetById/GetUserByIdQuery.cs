@@ -3,7 +3,7 @@ using MediatR;
 
 namespace DomainServices.Features.Users.Queries.GetById;
 
-public class GetUserByIdQuery : IRequest<User?>
+public class GetUserByIdQuery : IRequest<User>
 {
     public GetUserByIdQuery(long id)
     {

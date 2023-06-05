@@ -4,7 +4,7 @@ using MediatR;
 
 namespace DomainServices.Features.Customers.Queries.GetById;
 
-public class GetCustomerByIdQuery : IRequest<CustomerInfo?>
+public class GetCustomerByIdQuery : IRequest<CustomerInfo>
 {
     public GetCustomerByIdQuery(long id)
     {

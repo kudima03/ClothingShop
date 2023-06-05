@@ -3,7 +3,7 @@ using MediatR;
 
 namespace DomainServices.Features.Products.Queries.GetById;
 
-public class GetProductByIdQuery : IRequest<Product?>
+public class GetProductByIdQuery : IRequest<Product>
 {
     public GetProductByIdQuery(long id)
     {
