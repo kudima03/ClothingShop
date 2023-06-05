@@ -18,22 +18,23 @@ public class ProductColorsController : ControllerBase
     {
         _mediator = mediator;
     }
-    
+
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] ProductColor productColor)
     {
-        await _mediator.Send(new CreateProductColorCommand(productColor));
-        return Ok();
+        ProductColor createdProductColor = await _mediator.Send(new CreateProductColorCommand(productColor));
+        return Ok(createdProductColor.Id);
     }
 
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] ProductColor productColor)
     {

@@ -26,33 +26,37 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Brand>>> GetAll()
     {
-        return Ok(await _mediator.Send(new GetAllBrandsQuery()));
+        IEnumerable<Brand> brands = await _mediator.Send(new GetAllBrandsQuery());
+        return Ok(brands);
     }
 
     [HttpGet("{id:long}")]
     [ProducesResponseType(typeof(Brand), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Brand>> GetById([FromRoute] long id)
     {
-        return Ok(await _mediator.Send(new GetBrandByIdQuery(id)));
+        Brand brand = await _mediator.Send(new GetBrandByIdQuery(id));
+        return Ok(brand);
     }
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Brand brand)
     {
-        await _mediator.Send(new CreateBrandCommand(brand));
-        return Ok();
+        Brand createdBrand = await _mediator.Send(new CreateBrandCommand(brand));
+        return Ok(createdBrand.Id);
     }
 
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] Brand brand)
     {

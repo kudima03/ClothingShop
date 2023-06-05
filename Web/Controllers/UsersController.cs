@@ -26,27 +26,31 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<User>>> GetAll()
     {
-        return Ok(await _mediator.Send(new GetAllUsersQuery()));
+        IEnumerable<User> users = await _mediator.Send(new GetAllUsersQuery());
+        return Ok(users);
     }
 
     [HttpGet("{id:long}")]
     [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<User>> GetById([FromRoute] long id)
     {
-        return Ok(await _mediator.Send(new GetUserByIdQuery(id)));
+        User user = await _mediator.Send(new GetUserByIdQuery(id));
+        return Ok(user);
     }
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] User user)
     {
-        await _mediator.Send(new CreateUserCommand(user));
-        return Ok();
+        User createdUser = await _mediator.Send(new CreateUserCommand(user));
+        return Ok(createdUser.Id);
     }
 
     [HttpPut]

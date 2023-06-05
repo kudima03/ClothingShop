@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace Infrastructure.EntityRepository;
 
-public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TEntity> where TEntity :  StorableEntity
+public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TEntity> where TEntity : StorableEntity
 {
     private readonly DbContext _dbContext;
 

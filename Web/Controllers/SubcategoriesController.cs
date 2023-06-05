@@ -26,33 +26,37 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Subcategory>>> GetAll()
     {
-        return Ok(await _mediator.Send(new GetAllSubcategoriesQuery()));
+        IEnumerable<Subcategory> subcategories = await _mediator.Send(new GetAllSubcategoriesQuery());
+        return Ok(subcategories);
     }
 
     [HttpGet("{id:long}")]
     [ProducesResponseType(typeof(Subcategory), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Subcategory>> GetById([FromRoute] long id)
     {
-        return Ok(await _mediator.Send(new GetSubcategoryByIdQuery(id)));
+        Subcategory subcategory = await _mediator.Send(new GetSubcategoryByIdQuery(id));
+        return Ok(subcategory);
     }
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Subcategory subcategory)
     {
-        await _mediator.Send(new CreateSubcategoryCommand(subcategory));
-        return Ok();
+        Subcategory createdCategory = await _mediator.Send(new CreateSubcategoryCommand(subcategory));
+        return Ok(createdCategory.Id);
     }
 
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] Subcategory subcategory)
     {

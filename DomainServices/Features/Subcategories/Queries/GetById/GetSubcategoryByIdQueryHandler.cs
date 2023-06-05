@@ -17,6 +17,8 @@ public class GetSubcategoryByIdQueryHandler : IRequestHandler<GetSubcategoryById
     public async Task<Subcategory> Handle(GetSubcategoryByIdQuery request, CancellationToken cancellationToken)
     {
         return await _subcategoriesRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.Id,
-            cancellationToken: cancellationToken) ?? throw new EntityNotFoundException($"{nameof(Subcategory)} with id:{request.Id} doesn't exist."); ;
+                   cancellationToken: cancellationToken) ??
+               throw new EntityNotFoundException($"{nameof(Subcategory)} with id:{request.Id} doesn't exist.");
+        ;
     }
 }

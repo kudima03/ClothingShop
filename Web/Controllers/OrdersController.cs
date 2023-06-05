@@ -26,33 +26,37 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Order>>> GetAll()
     {
-        return Ok(await _mediator.Send(new GetAllOrdersQuery()));
+        IEnumerable<Order> orders = await _mediator.Send(new GetAllOrdersQuery());
+        return Ok(orders);
     }
 
     [HttpGet("{id:long}")]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Order>> GetById([FromRoute] long id)
     {
-        return Ok(await _mediator.Send(new GetOrderByIdQuery(id)));
+        Order order = await _mediator.Send(new GetOrderByIdQuery(id));
+        return Ok(order);
     }
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Order order)
     {
-        await _mediator.Send(new CreateOrderCommand(order));
-        return Ok();
+        Order createdOrder = await _mediator.Send(new CreateOrderCommand(order));
+        return Ok(createdOrder.Id);
     }
 
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] Order order)
     {

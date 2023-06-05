@@ -1,299 +1,298 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿#nullable disable
+
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-#nullable disable
+namespace Infrastructure.Data.ShopContextMigrations;
 
-namespace Infrastructure.Data.ShopContextMigrations
+/// <inheritdoc />
+public partial class IdColumnsMarkedAsIdentityByDefault : Migration
 {
     /// <inheritdoc />
-    public partial class IdColumnsMarkedAsIdentityByDefault : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "users",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "users",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "user_types",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "user_types",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "subcategories",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "subcategories",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "sections",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "sections",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "reviews",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "reviews",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "products",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "products",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "product_option",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "product_option",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "order_statuses",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "order_statuses",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "order",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "order",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "images_urls",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "images_urls",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "Id",
-                table: "customers_info",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "Id",
+                "customers_info",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "colors",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "colors",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "categories",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "categories",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "brands",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "brands",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-        }
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "users",
-                type: "bigint",
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "users",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "user_types",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "user_types",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "subcategories",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "subcategories",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "sections",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "sections",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "reviews",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "reviews",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "products",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "products",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "product_option",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "product_option",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "order_statuses",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "order_statuses",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "order",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "order",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "images_urls",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "images_urls",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "Id",
-                table: "customers_info",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "Id",
+                "customers_info",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "colors",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "colors",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "categories",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "categories",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
 
-            migrationBuilder.AlterColumn<long>(
-                name: "id",
-                table: "brands",
-                type: "bigint",
+        migrationBuilder.AlterColumn<long>(
+                "id",
+                "brands",
+                "bigint",
                 nullable: false,
                 oldClrType: typeof(long),
                 oldType: "bigint")
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
-        }
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+            .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
     }
 }

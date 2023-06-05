@@ -26,33 +26,37 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Category>>> GetAll()
     {
-        return Ok(await _mediator.Send(new GetAllCategoriesQuery()));
+        IEnumerable<Category> categories = await _mediator.Send(new GetAllCategoriesQuery());
+        return Ok(categories);
     }
 
     [HttpGet("{id:long}")]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Category>> GetById([FromRoute] long id)
     {
-        return Ok(await _mediator.Send(new GetCategoryByIdQuery(id)));
+        Category category = await _mediator.Send(new GetCategoryByIdQuery(id));
+        return Ok(category);
     }
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Category category)
     {
-        await _mediator.Send(new CreateCategoryCommand(category));
-        return Ok();
+        Category createdCategory = await _mediator.Send(new CreateCategoryCommand(category));
+        return Ok(createdCategory.Id);
     }
 
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] Category category)
     {

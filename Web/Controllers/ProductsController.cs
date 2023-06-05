@@ -28,49 +28,59 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
     {
-        return Ok(await _mediator.Send(new GetAllProductsQuery()));
+        IEnumerable<Product> products = await _mediator.Send(new GetAllProductsQuery());
+        return Ok(products);
     }
 
     [HttpGet("{id:long}")]
     [ProducesResponseType(typeof(Brand), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Product>> GetProductById([FromRoute] long id)
     {
-        return Ok(await _mediator.Send(new GetProductByIdQuery(id)));
+        Product product = await _mediator.Send(new GetProductByIdQuery(id));
+        return Ok(product);
     }
 
     [HttpGet("bySubcategory")]
     [ProducesResponseType(typeof(IEnumerable<Product>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubcategory([FromQuery] long subcategoryId)
     {
-        return Ok(await _mediator.Send(new GetProductsBySubcategoryIdQuery(subcategoryId)));
+        IEnumerable<Product> product = await _mediator.Send(new GetProductsBySubcategoryIdQuery(subcategoryId));
+        return Ok(product);
     }
 
     [HttpGet("byBrand")]
     [ProducesResponseType(typeof(IEnumerable<Product>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Product>>> GetProductByBrand([FromQuery] long brandId)
     {
-        return Ok(await _mediator.Send(new GetProductsByBrandIdQuery(brandId)));
+        IEnumerable<Product> product = await _mediator.Send(new GetProductsByBrandIdQuery(brandId));
+        return Ok(product);
     }
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> CreateProduct([FromBody] Product product)
     {
-        await _mediator.Send(new CreateProductCommand(product));
-        return Ok();
+        Product createdProduct = await _mediator.Send(new CreateProductCommand(product));
+        return Ok(createdProduct.Id);
     }
 
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> UpdateProduct([FromBody] Product product)
     {

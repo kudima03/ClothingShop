@@ -11,5 +11,6 @@ public class CategoryWithSectionsAndSubcategories : Specification<Entities.Categ
             categories => categories.OrderBy(category => category.Id),
             categories => categories.Include(category => category.Subcategories)
                 .Include(category => category.Sections))
-    { }
+    {
+    }
 }

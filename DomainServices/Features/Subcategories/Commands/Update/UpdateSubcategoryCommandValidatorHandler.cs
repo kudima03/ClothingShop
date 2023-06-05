@@ -1,5 +1,4 @@
-﻿using ApplicationCore.Entities;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace DomainServices.Features.Subcategories.Commands.Update;
 

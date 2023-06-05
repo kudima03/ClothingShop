@@ -26,33 +26,37 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Section>>> GetAll()
     {
-        return Ok(await _mediator.Send(new GetAllSectionsQuery()));
+        IEnumerable<Section> sections = await _mediator.Send(new GetAllSectionsQuery());
+        return Ok(sections);
     }
 
     [HttpGet("{id:long}")]
     [ProducesResponseType(typeof(Section), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Section>> GetById([FromRoute] long id)
     {
-        return Ok(await _mediator.Send(new GetSectionByIdQuery(id)));
+        Section section = await _mediator.Send(new GetSectionByIdQuery(id));
+        return Ok(section);
     }
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] Section section)
     {
-        await _mediator.Send(new CreateSectionCommand(section));
-        return Ok();
+        Section createdSection = await _mediator.Send(new CreateSectionCommand(section));
+        return Ok(createdSection.Id);
     }
 
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] Section section)
     {

@@ -18,6 +18,8 @@ public class GetSectionByIdQueryHandler : IRequestHandler<GetSectionByIdQuery, S
     public async Task<Section> Handle(GetSectionByIdQuery request, CancellationToken cancellationToken)
     {
         return await _sectionsRepository.ApplySpecification(request.Specification)
-            .FirstOrDefaultAsync(cancellationToken) ?? throw new EntityNotFoundException($"{nameof(Section)} with id:{request.Id} doesn't exist."); ;
+                   .FirstOrDefaultAsync(cancellationToken) ??
+               throw new EntityNotFoundException($"{nameof(Section)} with id:{request.Id} doesn't exist.");
+        ;
     }
 }
