@@ -1,8 +1,8 @@
-﻿using ApplicationCore.Entities.Interfaces;
+﻿using ApplicationCore.Entities.BaseEntity;
 
 namespace ApplicationCore.Entities;
 
-public class User : IStorable
+public class User : StorableEntity
 {
     public string Email { get; set; }
     public string Password { get; set; }

@@ -1,8 +1,8 @@
-﻿using ApplicationCore.Entities.Interfaces;
+﻿using ApplicationCore.Entities.BaseEntity;
 
 namespace ApplicationCore.Entities;
 
-public class Product : IStorable
+public class Product : StorableEntity
 {
     public long BrandId { get; set; }
     public virtual Brand Brand { get; set; }

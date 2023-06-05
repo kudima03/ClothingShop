@@ -1,11 +1,11 @@
-﻿using ApplicationCore.Entities.Interfaces;
+﻿using ApplicationCore.Entities.BaseEntity;
 using ApplicationCore.Specifications;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace ApplicationCore.Interfaces;
 
-public interface IReadOnlyRepository<TEntity> : IDisposable, IAsyncDisposable where TEntity : IStorable
+public interface IReadOnlyRepository<TEntity> : IDisposable, IAsyncDisposable where TEntity : StorableEntity
 {
     IQueryable<TResult> ApplySpecification<TResult>(Specification<TEntity, TResult> specification);
 

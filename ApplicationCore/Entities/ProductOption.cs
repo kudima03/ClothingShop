@@ -1,8 +1,8 @@
-﻿using ApplicationCore.Entities.Interfaces;
+﻿using ApplicationCore.Entities.BaseEntity;
 
 namespace ApplicationCore.Entities;
 
-public class ProductOption : IStorable
+public class ProductOption : StorableEntity
 {
     public long ProductId { get; set; }
     public virtual Product Product { get; set; }

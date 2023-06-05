@@ -1,8 +1,8 @@
-﻿using ApplicationCore.Entities.Interfaces;
+﻿using ApplicationCore.Entities.BaseEntity;
 
 namespace ApplicationCore.Entities;
 
-public class ProductColor : IStorable
+public class ProductColor : StorableEntity
 {
     public long ColorId { get; set; }
     public virtual Color Color { get; set; }

@@ -1,9 +1,9 @@
 ﻿#nullable enable
-using ApplicationCore.Entities.Interfaces;
+using ApplicationCore.Entities.BaseEntity;
 
 namespace ApplicationCore.Entities;
 
-public class Review : IStorable
+public class Review : StorableEntity
 {
     public int Rate { get; set; }
     public DateTime DateTime { get; set; }

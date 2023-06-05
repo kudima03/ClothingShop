@@ -1,8 +1,8 @@
-﻿using ApplicationCore.Entities.Interfaces;
+﻿using ApplicationCore.Entities.BaseEntity;
 
 namespace ApplicationCore.Entities;
 
-public class ImageInfo : IStorable
+public class ImageInfo : StorableEntity
 {
     public string Url { get; set; }
     public long ProductColorId { get; set; }

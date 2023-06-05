@@ -1,8 +1,8 @@
-﻿using ApplicationCore.Entities.Interfaces;
+﻿using ApplicationCore.Entities.BaseEntity;
 
 namespace ApplicationCore.Entities;
 
-public class Order : IStorable
+public class Order : StorableEntity
 {
     public long UserId { get; set; }
     public virtual User User { get; set; }

@@ -1,8 +1,8 @@
-﻿using ApplicationCore.Entities.Interfaces;
+﻿using ApplicationCore.Entities.BaseEntity;
 
 namespace ApplicationCore.Entities;
 
-public class Color : IStorable
+public class Color : StorableEntity
 {
     public string Name { get; set; }
     public string Hex { get; set; }

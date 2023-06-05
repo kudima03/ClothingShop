@@ -1,4 +1,4 @@
-﻿using ApplicationCore.Entities.Interfaces;
+﻿using ApplicationCore.Entities.BaseEntity;
 using ApplicationCore.Interfaces;
 using ApplicationCore.Specifications;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace Infrastructure.EntityRepository;
 
-public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TEntity> where TEntity : class, IStorable
+public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TEntity> where TEntity :  StorableEntity
 {
     private readonly DbContext _dbContext;
 
