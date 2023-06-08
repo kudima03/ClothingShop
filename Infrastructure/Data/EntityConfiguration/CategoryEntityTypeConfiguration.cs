@@ -17,6 +17,8 @@ internal class CategoryEntityTypeConfiguration : IEntityTypeConfiguration<Catego
             .ValueGeneratedOnAdd()
             .Metadata
             .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        builder.HasIndex(x => x.Name)
+            .IsUnique();
         builder.Property(x => x.Name)
             .HasColumnName("name")
             .IsRequired();

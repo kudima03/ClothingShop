@@ -19,6 +19,8 @@ internal class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.UserTypeId)
             .HasColumnName("user_type_id")
             .IsRequired();
+        builder.HasIndex(x => x.Email)
+            .IsUnique();
         builder.Property(x => x.Email)
             .HasColumnName("email")
             .IsRequired();
