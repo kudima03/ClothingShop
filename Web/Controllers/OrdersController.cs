@@ -1,6 +1,5 @@
 ﻿using ApplicationCore.Entities;
 using DomainServices.Features.Orders.Commands.Create;
-using DomainServices.Features.Orders.Commands.Delete;
 using DomainServices.Features.Orders.Commands.Update;
 using DomainServices.Features.Orders.Queries.GetAll;
 using DomainServices.Features.Orders.Queries.GetById;
@@ -61,16 +60,6 @@ public class OrdersController : ControllerBase
     public async Task<ActionResult> Update([FromBody] Order order)
     {
         await _mediator.Send(new UpdateOrderCommand(order));
-        return Ok();
-    }
-
-    [HttpDelete("{id:long}")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Delete([FromRoute] long id)
-    {
-        await _mediator.Send(new DeleteOrderCommand(id));
         return Ok();
     }
 }

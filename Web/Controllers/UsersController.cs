@@ -1,6 +1,5 @@
 ﻿using ApplicationCore.Entities;
 using DomainServices.Features.Users.Commands.Create;
-using DomainServices.Features.Users.Commands.Delete;
 using DomainServices.Features.Users.Commands.Update;
 using DomainServices.Features.Users.Queries.GetAll;
 using DomainServices.Features.Users.Queries.GetById;
@@ -61,16 +60,6 @@ public class UsersController : ControllerBase
     public async Task<ActionResult> Update([FromBody] User user)
     {
         await _mediator.Send(new UpdateUserCommand(user));
-        return Ok();
-    }
-
-    [HttpDelete("{id:long}")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Delete([FromRoute] long id)
-    {
-        await _mediator.Send(new DeleteUserCommand(id));
         return Ok();
     }
 }
