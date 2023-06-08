@@ -11,4 +11,5 @@ public class User : StorableEntity
     public virtual List<Review> Reviews { get; init; } = new();
     public virtual List<Order> Orders { get; init; } = new();
     public long Id { get; set; }
+    public DateTime? DeletionDateTime { get; set; }
 }
