@@ -7,5 +7,4 @@ public class ImageInfo : StorableEntity
     public string Url { get; set; }
     public long ProductColorId { get; set; }
     public virtual ProductColor ProductColor { get; set; }
-    public long Id { get; set; }
 }

@@ -12,5 +12,4 @@ public class CustomerInfo : StorableEntity
     public string? Patronymic { get; set; }
     public string? Address { get; set; }
     public string? Phone { get; set; }
-    public long Id { get; set; }
 }

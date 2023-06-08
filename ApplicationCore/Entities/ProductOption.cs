@@ -12,5 +12,4 @@ public class ProductOption : StorableEntity
     public int Quantity { get; set; }
     public decimal Price { get; set; }
     public virtual List<Order> Orders { get; init; } = new();
-    public long Id { get; set; }
 }

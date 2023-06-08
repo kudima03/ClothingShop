@@ -8,5 +8,4 @@ public class ProductColor : StorableEntity
     public virtual Color Color { get; set; }
     public virtual List<ImageInfo> ImagesInfos { get; init; } = new();
     public virtual List<ProductOption> ProductOptions { get; init; } = new();
-    public long Id { get; set; }
 }

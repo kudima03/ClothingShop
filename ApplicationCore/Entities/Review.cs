@@ -12,5 +12,4 @@ public class Review : StorableEntity
     public virtual User User { get; set; }
     public long ProductId { get; set; }
     public virtual Product Product { get; set; }
-    public long Id { get; set; }
 }

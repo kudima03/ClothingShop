@@ -11,5 +11,4 @@ public class Product : StorableEntity
     public string Name { get; set; }
     public virtual List<ProductOption> ProductOptions { get; init; } = new();
     public virtual List<Review> Reviews { get; init; } = new();
-    public long Id { get; set; }
 }
