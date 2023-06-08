@@ -20,9 +20,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRepository<Category>, EntityFrameworkRepository<Category>>();
         services.AddScoped<IReadOnlyRepository<Category>, EntityFrameworkReadOnlyRepository<Category>>();
 
-        services.AddScoped<IRepository<Color>, EntityFrameworkRepository<Color>>();
-        services.AddScoped<IReadOnlyRepository<Color>, EntityFrameworkReadOnlyRepository<Color>>();
-
         services.AddScoped<IRepository<CustomerInfo>, EntityFrameworkRepository<CustomerInfo>>();
         services.AddScoped<IReadOnlyRepository<CustomerInfo>, EntityFrameworkReadOnlyRepository<CustomerInfo>>();
 

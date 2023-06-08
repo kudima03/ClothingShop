@@ -17,12 +17,8 @@ internal class ProductColorEntityConfiguration : IEntityTypeConfiguration<Produc
             .ValueGeneratedOnAdd()
             .Metadata
             .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
-        builder.Property(x => x.ColorId)
-            .HasColumnName("color_id")
-            .IsRequired();
-        builder.HasOne(x => x.Color)
-            .WithMany(x => x.ProductColors)
-            .HasForeignKey(x => x.Id)
+        builder.Property(x => x.ColorHex)
+            .HasColumnName("color_hex")
             .IsRequired();
         builder.HasMany(x => x.ImagesInfos)
             .WithOne(x => x.ProductColor)

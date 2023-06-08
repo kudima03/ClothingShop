@@ -28,7 +28,6 @@ public class UpdateProductColorCommandHandler : IRequestHandler<UpdateProductCol
                 $"{nameof(ProductColor)} with id:{request.ProductColor.Id} doesn't exist.");
         }
 
-        productColor.ColorId = request.ProductColor.Id;
         productColor.ImagesInfos.Clear();
         productColor.ImagesInfos.AddRange(request.ProductColor.ImagesInfos);
 
