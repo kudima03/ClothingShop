@@ -33,7 +33,6 @@ internal class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
         builder.HasMany(x => x.ProductsOptions).WithMany(x => x.Orders)
             .UsingEntity("orders_product_options",
                 l => l.HasOne(typeof(Order)).WithMany().HasForeignKey("order_id"),
-                r => r.HasOne(typeof(ProductOption)).WithMany().HasForeignKey("product_option_id"),
-                amount => amount.Property(typeof(int), "amount"));
+                r => r.HasOne(typeof(ProductOption)).WithMany().HasForeignKey("product_option_id"));
     }
 }
