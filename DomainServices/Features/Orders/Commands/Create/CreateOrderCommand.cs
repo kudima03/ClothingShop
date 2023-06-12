@@ -5,10 +5,7 @@ namespace DomainServices.Features.Orders.Commands.Create;
 
 public class CreateOrderCommand : IRequest<Order>
 {
-    public CreateOrderCommand(Order order)
-    {
-        Order = order;
-    }
+    public long UserId { get; init; }
 
-    public Order Order { get; init; }
+    public ProductOptionIdAndQuantity[] ProductOptionsIdsAndQuantity { get; init; }
 }

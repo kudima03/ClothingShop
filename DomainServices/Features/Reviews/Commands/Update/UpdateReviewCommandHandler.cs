@@ -17,19 +17,10 @@ public class UpdateReviewCommandHandler : IRequestHandler<UpdateReviewCommand, U
 
     public async Task<Unit> Handle(UpdateReviewCommand request, CancellationToken cancellationToken)
     {
-        Review? review = await _repository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.Review.Id,
-            cancellationToken: cancellationToken);
+        Review review = await ValidateAndGetReviewAsync(request.Id, cancellationToken);
 
-        if (review is null)
-        {
-            throw new EntityNotFoundException($"{nameof(Review)} with id:{request.Review.Id} doesn't exist.");
-        }
-
-        review.ProductId = request.Review.ProductId;
-        review.Comment = request.Review.Comment;
-        review.DateTime = request.Review.DateTime;
-        review.Rate = request.Review.Rate;
-        review.UserId = request.Review.UserId;
+        review.Comment = request.Comment;
+        review.Rate = request.Rate;
 
         try
         {
@@ -41,5 +32,18 @@ public class UpdateReviewCommandHandler : IRequestHandler<UpdateReviewCommand, U
         }
 
         return Unit.Value;
+    }
+
+    private async Task<Review> ValidateAndGetReviewAsync(long reviewId, CancellationToken cancellationToken = default)
+    {
+        Review? review = await _repository.GetFirstOrDefaultAsync(predicate: x => x.Id == reviewId,
+            cancellationToken: cancellationToken);
+
+        if (review is null)
+        {
+            throw new EntityNotFoundException($"{nameof(Review)} with id:{reviewId} doesn't exist.");
+        }
+
+        return review;
     }
 }

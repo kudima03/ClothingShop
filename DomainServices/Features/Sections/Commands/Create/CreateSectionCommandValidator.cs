@@ -6,17 +6,9 @@ public class CreateSectionCommandValidator : AbstractValidator<CreateSectionComm
 {
     public CreateSectionCommandValidator()
     {
-        RuleFor(x => x.Section)
-            .NotNull()
-            .WithMessage("Object cannot be null");
-
-        RuleFor(x => x.Section.Name)
+        RuleFor(x => x.Name)
             .NotNull()
             .NotEmpty()
-            .WithMessage(x => $"{nameof(x.Section.Name)} cannot be null or empty");
-
-        RuleForEach(x => x.Section.Categories)
-            .NotNull()
-            .WithMessage(x => $"{nameof(x.Section.Categories)} can't be null");
+            .WithMessage(x => $"{nameof(x.Name)} cannot be null or empty");
     }
 }

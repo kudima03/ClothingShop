@@ -18,10 +18,15 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
 
     public async Task<Product> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _repository
-                   .ApplySpecification(new ProductWithBrandSubcategoryOptionsReviews(x => x.Id == request.Id))
-                   .SingleOrDefaultAsync(cancellationToken) ??
-               throw new EntityNotFoundException($"{nameof(Product)} with id:{request.Id} doesn't exist.");
-        ;
+        Product? product = await _repository
+            .ApplySpecification(new ProductWithBrandSubcategoryReviewsOptionsColorsImages(x => x.Id == request.Id))
+            .SingleOrDefaultAsync(cancellationToken);
+
+        if (product is null)
+        {
+            throw new EntityNotFoundException($"{nameof(Product)} with id:{request.Id} doesn't exist.");
+        }
+
+        return product;
     }
 }

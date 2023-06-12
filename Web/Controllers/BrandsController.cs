@@ -46,9 +46,9 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] Brand brand)
+    public async Task<ActionResult> Create([FromBody] CreateBrandCommand createCommand)
     {
-        Brand createdBrand = await _mediator.Send(new CreateBrandCommand(brand));
+        Brand createdBrand = await _mediator.Send(createCommand);
         return Ok(createdBrand.Id);
     }
 
@@ -58,9 +58,9 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Update([FromBody] Brand brand)
+    public async Task<ActionResult> Update([FromBody] UpdateBrandCommand updateCommand)
     {
-        await _mediator.Send(new UpdateBrandCommand(brand));
+        await _mediator.Send(updateCommand);
         return Ok();
     }
 

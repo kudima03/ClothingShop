@@ -5,10 +5,9 @@ namespace DomainServices.Features.Products.Commands.Update;
 
 public class UpdateProductCommand : IRequest<Unit>
 {
-    public UpdateProductCommand(Product product)
-    {
-        Product = product;
-    }
-
-    public Product Product { get; init; }
+    public long Id { get; init; }
+    public long BrandId { get; init; }
+    public long SubcategoryId { get; init; }
+    public string Name { get; init; }
+    public virtual List<ProductOption> ProductOptions { get; init; } = new();
 }

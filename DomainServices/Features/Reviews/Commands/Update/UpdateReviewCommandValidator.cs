@@ -6,21 +6,13 @@ public class UpdateReviewCommandValidator : AbstractValidator<UpdateReviewComman
 {
     public UpdateReviewCommandValidator()
     {
-        RuleFor(x => x.Review)
-            .NotNull()
-            .WithMessage("Object cannot be null");
-
-        RuleFor(x => x.Review.ProductId)
+        RuleFor(x => x.Id)
             .InclusiveBetween(1, long.MaxValue)
-            .WithMessage(x => $"{nameof(x.Review.ProductId)} out of possible range.");
+            .WithMessage(x => $"{nameof(x.Id)} out of possible range.");
 
-        RuleFor(x => x.Review.UserId)
-            .InclusiveBetween(1, long.MaxValue)
-            .WithMessage(x => $"{nameof(x.Review.UserId)} out of possible range.");
-
-        RuleFor(x => x.Review.Rate)
+        RuleFor(x => x.Rate)
             .GreaterThanOrEqualTo(0)
             .WithMessage(x =>
-                $"{nameof(x.Review.Rate)} must be equal or greater than 0.");
+                $"{nameof(x.Rate)} must be equal or greater than 0.");
     }
 }

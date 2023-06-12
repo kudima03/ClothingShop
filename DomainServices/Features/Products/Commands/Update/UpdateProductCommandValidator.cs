@@ -6,39 +6,39 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProductComm
 {
     public UpdateProductCommandValidator()
     {
-        RuleFor(x => x.Product)
-            .NotNull()
-            .WithMessage("Object cannot be null");
-
-        RuleFor(x => x.Product.Name)
+        RuleFor(x => x.Name)
             .NotNull()
             .NotEmpty()
-            .WithMessage(x => $"{nameof(x.Product.Name)} cannot be null or empty");
+            .WithMessage(x => $"{nameof(x.Name)} cannot be null or empty");
 
-        RuleFor(x => x.Product.Id)
-            .InclusiveBetween(1, long.MaxValue)
-            .WithMessage(x => $"{nameof(x.Product.Id)} out of possible range.");
-
-        RuleFor(x => x.Product.SubcategoryId)
-            .InclusiveBetween(1, long.MaxValue)
-            .WithMessage(x => $"{nameof(x.Product.SubcategoryId)} out of possible range.");
-
-        RuleFor(x => x.Product.BrandId)
-            .InclusiveBetween(1, long.MaxValue)
-            .WithMessage(x => $"{nameof(x.Product.BrandId)} out of possible range.");
-
-        RuleFor(x => x.Product.Reviews)
-            .Empty()
-            .WithMessage(x =>
-                $"When updating {x.Product.GetType().Name},{nameof(x.Product.Reviews)} must be empty. Update in appropriate endpoint");
-
-        RuleForEach(x => x.Product.ProductOptions)
-            .ChildRules(c =>
+        RuleForEach(x => x.ProductOptions)
+            .NotNull()
+            .ChildRules(x =>
             {
-                c.RuleFor(v => v.Orders).Empty();
-                c.RuleFor(v => v.Price).GreaterThanOrEqualTo(0);
-                c.RuleFor(v => v.Quantity).GreaterThanOrEqualTo(0);
-                c.RuleFor(v => v.Size).NotNull().NotEmpty();
+                x.RuleFor(c => c.Quantity)
+                    .InclusiveBetween(1, int.MaxValue);
+                x.RuleFor(c => c.Price)
+                    .InclusiveBetween(1, decimal.MaxValue);
+                x.RuleFor(c => c.Size)
+                    .NotNull()
+                    .NotEmpty();
+                x.RuleFor(c => c.ProductColor)
+                    .NotNull()
+                    .ChildRules(v =>
+                    {
+                        v.RuleFor(b => b.ColorHex)
+                            .NotNull()
+                            .NotEmpty();
+
+                        v.RuleForEach(n => n.ImagesInfos)
+                            .NotNull()
+                            .ChildRules(a =>
+                            {
+                                a.RuleFor(s => s.Url)
+                                    .NotNull()
+                                    .NotEmpty();
+                            });
+                    });
             });
     }
 }

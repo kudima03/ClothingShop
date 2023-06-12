@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications.Brand;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,8 +18,15 @@ public class GetBrandByIdQueryHandler : IRequestHandler<GetBrandByIdQuery, Brand
 
     public async Task<Brand> Handle(GetBrandByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _brandsRepository.ApplySpecification(request.Specification)
-                   .FirstOrDefaultAsync(cancellationToken) ??
-               throw new EntityNotFoundException($"{nameof(Brand)} with id:{request.Id} doesn't exist.");
+        Brand? brand = await _brandsRepository
+            .ApplySpecification(new GetBrandWithProducts(brand => brand.Id == request.Id))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (brand is null)
+        {
+            throw new EntityNotFoundException($"{nameof(Brand)} with id:{request.Id} doesn't exist.");
+        }
+
+        return brand;
     }
 }

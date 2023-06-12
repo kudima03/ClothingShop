@@ -1,29 +1,27 @@
-﻿using System;
+﻿#nullable disable
+
 using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
+namespace Infrastructure.Data.ShopContextMigrations;
 
-namespace Infrastructure.Data.ShopContextMigrations
+/// <inheritdoc />
+public partial class DeletionDateTimeAddedToUser : Migration
 {
     /// <inheritdoc />
-    public partial class DeletionDateTimeAddedToUser : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<DateTime>(
-                name: "deletion_date_time",
-                table: "users",
-                type: "timestamp with time zone",
-                nullable: true);
-        }
+        migrationBuilder.AddColumn<DateTime>(
+            "deletion_date_time",
+            "users",
+            "timestamp with time zone",
+            nullable: true);
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "deletion_date_time",
-                table: "users");
-        }
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropColumn(
+            "deletion_date_time",
+            "users");
     }
 }

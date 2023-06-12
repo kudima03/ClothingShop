@@ -6,17 +6,13 @@ public class UpdateSectionCommandValidator : AbstractValidator<UpdateSectionComm
 {
     public UpdateSectionCommandValidator()
     {
-        RuleFor(x => x.Section)
-            .NotNull()
-            .WithMessage("Object cannot be null");
+        RuleFor(x => x.Id)
+            .InclusiveBetween(1, long.MaxValue)
+            .WithMessage(x => $"{nameof(x.Id)} out of possible range.");
 
-        RuleFor(x => x.Section.Name)
+        RuleFor(x => x.Name)
             .NotNull()
             .NotEmpty()
-            .WithMessage(x => $"{nameof(x.Section.Name)} cannot be null or empty");
-
-        RuleForEach(x => x.Section.Categories)
-            .NotNull()
-            .WithMessage(x => $"{nameof(x.Section.Categories)} can't be null");
+            .WithMessage(x => $"{nameof(x.Name)} cannot be null or empty");
     }
 }

@@ -17,18 +17,9 @@ public class UpdateSectionCommandHandler : IRequestHandler<UpdateSectionCommand,
 
     public async Task<Unit> Handle(UpdateSectionCommand request, CancellationToken cancellationToken)
     {
-        Section? section = await _sectionRepository.GetFirstOrDefaultAsync(x => x.Id == request.Section.Id,
-            sections => sections.Include(section1 => section1.Categories),
-            cancellationToken);
+        Section section = await ValidateAndGetSectionAsync(request.Id, cancellationToken);
 
-        if (section is null)
-        {
-            throw new EntityNotFoundException($"{nameof(Section)} with id:{request.Section.Id} doesn't exist.");
-        }
-
-        section.Name = request.Section.Name;
-        section.Categories.Clear();
-        section.Categories.AddRange(request.Section.Categories);
+        section.Name = request.Name;
 
         try
         {
@@ -40,5 +31,20 @@ public class UpdateSectionCommandHandler : IRequestHandler<UpdateSectionCommand,
         }
 
         return Unit.Value;
+    }
+
+    private async Task<Section> ValidateAndGetSectionAsync(long sectionId,
+        CancellationToken cancellationToken = default)
+    {
+        Section? section = await _sectionRepository.GetFirstOrDefaultAsync(x => x.Id == sectionId,
+            sections => sections.Include(section1 => section1.Categories),
+            cancellationToken);
+
+        if (section is null)
+        {
+            throw new EntityNotFoundException($"{nameof(Section)} with id:{sectionId} doesn't exist.");
+        }
+
+        return section;
     }
 }

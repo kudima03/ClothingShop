@@ -1,14 +1,10 @@
-﻿using ApplicationCore.Entities;
-using MediatR;
+﻿using MediatR;
 
 namespace DomainServices.Features.Reviews.Commands.Update;
 
 public class UpdateReviewCommand : IRequest<Unit>
 {
-    public UpdateReviewCommand(Review review)
-    {
-        Review = review;
-    }
-
-    public Review Review { get; init; }
+    public long Id { get; init; }
+    public int Rate { get; init; }
+    public string? Comment { get; init; }
 }

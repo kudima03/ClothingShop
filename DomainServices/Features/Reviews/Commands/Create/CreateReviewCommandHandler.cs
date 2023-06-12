@@ -17,9 +17,18 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, R
 
     public async Task<Review> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
     {
+        Review newReview = new()
+        {
+            Comment = request.Comment,
+            DateTime = DateTime.Now,
+            ProductId = request.ProductId,
+            Rate = request.Rate,
+            UserId = request.UserId
+        };
+
         try
         {
-            Review? review = await _repository.InsertAsync(request.Review, cancellationToken);
+            Review? review = await _repository.InsertAsync(newReview, cancellationToken);
             await _repository.SaveChangesAsync(cancellationToken);
             return review;
         }

@@ -46,9 +46,9 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] Category category)
+    public async Task<ActionResult> Create([FromBody] CreateCategoryCommand createCommand)
     {
-        Category createdCategory = await _mediator.Send(new CreateCategoryCommand(category));
+        Category createdCategory = await _mediator.Send(createCommand);
         return Ok(createdCategory.Id);
     }
 
@@ -58,9 +58,9 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Update([FromBody] Category category)
+    public async Task<ActionResult> Update([FromBody] UpdateCategoryCommand updateCommand)
     {
-        await _mediator.Send(new UpdateCategoryCommand(category));
+        await _mediator.Send(updateCommand);
         return Ok();
     }
 

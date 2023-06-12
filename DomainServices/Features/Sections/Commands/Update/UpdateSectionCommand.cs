@@ -1,14 +1,9 @@
-﻿using ApplicationCore.Entities;
-using MediatR;
+﻿using MediatR;
 
 namespace DomainServices.Features.Sections.Commands.Update;
 
 public class UpdateSectionCommand : IRequest<Unit>
 {
-    public UpdateSectionCommand(Section section)
-    {
-        Section = section;
-    }
-
-    public Section Section { get; init; }
+    public long Id { get; init; }
+    public string Name { get; init; }
 }

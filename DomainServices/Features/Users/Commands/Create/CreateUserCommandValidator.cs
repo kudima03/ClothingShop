@@ -6,23 +6,19 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
 {
     public CreateUserCommandValidator()
     {
-        RuleFor(x => x.User)
-            .NotNull()
-            .WithMessage("Object cannot be null");
-
-        RuleFor(x => x.User.Email)
+        RuleFor(x => x.Email)
             .NotNull()
             .NotEmpty()
-            .WithMessage(x => $"{nameof(x.User.Email)} cannot be null or empty");
+            .WithMessage(x => $"{nameof(x.Email)} cannot be null or empty");
 
-        RuleFor(x => x.User.Password)
+        RuleFor(x => x.Password)
             .NotNull()
             .NotEmpty()
-            .WithMessage(x => $"{nameof(x.User.Password)} cannot be null or empty");
+            .WithMessage(x => $"{nameof(x.Password)} cannot be null or empty");
 
-        RuleFor(x => x.User.UserTypeId)
+        RuleFor(x => x.UserTypeId)
             .InclusiveBetween(1, long.MaxValue)
             .WithMessage(x =>
-                $"{nameof(x.User.UserTypeId)} must be greater than 0.");
+                $"{nameof(x.UserTypeId)} must be greater than 0.");
     }
 }

@@ -1,14 +1,15 @@
-﻿using ApplicationCore.Entities;
-using MediatR;
+﻿using MediatR;
 
 namespace DomainServices.Features.Brands.Commands.Update;
 
 public class UpdateBrandCommand : IRequest<Unit>
 {
-    public UpdateBrandCommand(Brand brand)
+    public UpdateBrandCommand(long id, string name)
     {
-        Brand = brand;
+        Name = name;
+        Id = id;
     }
 
-    public Brand Brand { get; init; }
+    public long Id { get; }
+    public string Name { get; }
 }

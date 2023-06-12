@@ -24,9 +24,9 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] Review review)
+    public async Task<ActionResult> Create([FromBody] CreateReviewCommand createCommand)
     {
-        Review createdReview = await _mediator.Send(new CreateReviewCommand(review));
+        Review createdReview = await _mediator.Send(createCommand);
         return Ok(createdReview.Id);
     }
 
@@ -36,9 +36,9 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Update([FromBody] Review review)
+    public async Task<ActionResult> Update([FromBody] UpdateReviewCommand updateCommand)
     {
-        await _mediator.Send(new UpdateReviewCommand(review));
+        await _mediator.Send(updateCommand);
         return Ok();
     }
 

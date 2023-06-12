@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications.CustomerInfo;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,8 +18,15 @@ public class GetCustomerByIdQueryHandler : IRequestHandler<GetCustomerByIdQuery,
 
     public async Task<CustomerInfo> Handle(GetCustomerByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _customersInfoRepository.ApplySpecification(request.Specification)
-                   .FirstOrDefaultAsync(cancellationToken) ??
-               throw new EntityNotFoundException($"{nameof(CustomerInfo)} with id:{request.Id} doesn't exist.");
+        CustomerInfo? customer = await _customersInfoRepository
+            .ApplySpecification(new CustomerInfoWithUser(customerInfo => customerInfo.Id == request.Id))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (customer is null)
+        {
+            throw new EntityNotFoundException($"{nameof(CustomerInfo)} with id:{request.Id} doesn't exist.");
+        }
+
+        return customer;
     }
 }

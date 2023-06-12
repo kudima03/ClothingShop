@@ -46,9 +46,9 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] Section section)
+    public async Task<ActionResult> Create([FromBody] CreateSectionCommand createCommand)
     {
-        Section createdSection = await _mediator.Send(new CreateSectionCommand(section));
+        Section createdSection = await _mediator.Send(createCommand);
         return Ok(createdSection.Id);
     }
 
@@ -58,9 +58,9 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Update([FromBody] Section section)
+    public async Task<ActionResult> Update([FromBody] UpdateSectionCommand updateCommand)
     {
-        await _mediator.Send(new UpdateSectionCommand(section));
+        await _mediator.Send(updateCommand);
         return Ok();
     }
 

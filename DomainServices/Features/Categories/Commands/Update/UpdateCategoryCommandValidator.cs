@@ -6,21 +6,24 @@ public class UpdateCategoryCommandValidator : AbstractValidator<UpdateCategoryCo
 {
     public UpdateCategoryCommandValidator()
     {
-        RuleFor(x => x.Category)
-            .NotNull()
-            .WithMessage("Object cannot be null");
-        RuleFor(x => x.Category.Name)
+        RuleFor(x => x.Id)
+            .InclusiveBetween(1, long.MaxValue)
+            .WithMessage(x => $"{nameof(x.Id)} out of possible range.");
+
+        RuleFor(x => x.Name)
             .NotNull()
             .NotEmpty()
-            .WithMessage(x => $"{nameof(x.Category.Name)} cannot be null or empty");
+            .WithMessage(x => $"{nameof(x.Name)} cannot be null or empty.");
 
-        RuleFor(x => x.Category.Sections)
-            .Empty()
-            .WithMessage(x => $"{nameof(x.Category.Sections)} must be empty. Update in appropriate endpoint.");
+        RuleFor(x => x.SectionsIds)
+            .NotNull();
 
-        RuleFor(x => x.Category.Subcategories)
-            .Must(subcategories =>
-                subcategories.Count == subcategories.DistinctBy(subcategory => subcategory.Id).Count())
-            .WithMessage(x => $"{nameof(x.Category.Subcategories)} must be unique.");
+        RuleForEach(x => x.SectionsIds)
+            .NotNull()
+            .ChildRules(c =>
+            {
+                c.RuleFor(id => id).InclusiveBetween(1, long.MaxValue)
+                    .WithMessage("Section id out of possible range.");
+            });
     }
 }

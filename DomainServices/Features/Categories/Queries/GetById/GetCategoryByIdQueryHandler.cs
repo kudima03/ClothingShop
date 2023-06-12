@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications.Category;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,8 +18,15 @@ public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery,
 
     public async Task<Category> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _categoriesRepository.ApplySpecification(request.Specification)
-                   .FirstOrDefaultAsync(cancellationToken) ??
-               throw new EntityNotFoundException($"{nameof(Category)} with id:{request.Id} doesn't exist.");
+        Category? category = await _categoriesRepository
+            .ApplySpecification(new CategoryWithSectionsAndSubcategories(category => category.Id == request.Id))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (category is null)
+        {
+            throw new EntityNotFoundException($"{nameof(Category)} with id:{request.Id} doesn't exist.");
+        }
+
+        return category;
     }
 }

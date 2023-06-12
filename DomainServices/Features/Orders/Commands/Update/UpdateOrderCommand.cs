@@ -1,14 +1,11 @@
-﻿using ApplicationCore.Entities;
+﻿using DomainServices.Features.Orders.Commands.Create;
 using MediatR;
 
 namespace DomainServices.Features.Orders.Commands.Update;
 
 public class UpdateOrderCommand : IRequest<Unit>
 {
-    public UpdateOrderCommand(Order order)
-    {
-        Order = order;
-    }
+    public long OrderId { get; init; }
 
-    public Order Order { get; init; }
+    public ProductOptionIdAndQuantity[] ProductOptionsIdsAndQuantity { get; init; }
 }

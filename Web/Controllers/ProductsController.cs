@@ -70,9 +70,9 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> CreateProduct([FromBody] Product product)
+    public async Task<ActionResult> CreateProduct([FromBody] CreateProductCommand createCommand)
     {
-        Product createdProduct = await _mediator.Send(new CreateProductCommand(product));
+        Product createdProduct = await _mediator.Send(createCommand);
         return Ok(createdProduct.Id);
     }
 
@@ -82,9 +82,9 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> UpdateProduct([FromBody] Product product)
+    public async Task<ActionResult> UpdateProduct([FromBody] UpdateProductCommand updateCommand)
     {
-        await _mediator.Send(new UpdateProductCommand(product));
+        await _mediator.Send(updateCommand);
         return Ok();
     }
 

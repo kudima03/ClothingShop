@@ -1,5 +1,4 @@
-﻿using ApplicationCore.Entities;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace DomainServices.Features.Brands.Commands.Update;
 
@@ -7,17 +6,13 @@ public class UpdateBrandValidator : AbstractValidator<UpdateBrandCommand>
 {
     public UpdateBrandValidator()
     {
-        RuleFor(x => x.Brand)
-            .NotNull()
-            .WithMessage($"{nameof(Brand)} cannot be null.");
+        RuleFor(x => x.Id)
+            .InclusiveBetween(1, long.MaxValue)
+            .WithMessage(x => $"{nameof(x.Id)} out of possible range.");
 
-        RuleFor(x => x.Brand.Name)
+        RuleFor(x => x.Name)
             .NotNull()
             .NotEmpty()
-            .WithMessage(x => $"{nameof(x.Brand.Name)} cannot be null or empty.");
-
-        RuleFor(x => x.Brand.Products)
-            .Empty()
-            .WithMessage(x => $"{nameof(x.Brand.Products)} must be empty. Update products in appropriate endpoint.");
+            .WithMessage(x => $"{nameof(x.Name)} cannot be null or empty.");
     }
 }

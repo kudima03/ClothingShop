@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications.Order;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,8 +18,15 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
 
     public async Task<Order> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _ordersRepository.ApplySpecification(request.Specification)
-                   .FirstOrDefaultAsync(cancellationToken) ??
-               throw new EntityNotFoundException($"{nameof(Order)} with id:{request.Id} doesn't exist.");
+        Order? order = await _ordersRepository
+            .ApplySpecification(new OrderWithStatusAndProductOptions(order => order.Id == request.Id))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (order is null)
+        {
+            throw new EntityNotFoundException($"{nameof(Order)} with id:{request.Id} doesn't exist.");
+        }
+
+        return order;
     }
 }

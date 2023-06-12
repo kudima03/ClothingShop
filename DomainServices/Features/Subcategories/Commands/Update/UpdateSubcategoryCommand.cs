@@ -1,14 +1,10 @@
-﻿using ApplicationCore.Entities;
-using MediatR;
+﻿using MediatR;
 
 namespace DomainServices.Features.Subcategories.Commands.Update;
 
 public class UpdateSubcategoryCommand : IRequest<Unit>
 {
-    public UpdateSubcategoryCommand(Subcategory subcategory)
-    {
-        Subcategory = subcategory;
-    }
-
-    public Subcategory Subcategory { get; init; }
+    public long Id { get; init; }
+    public string Name { get; init; }
+    public long[] CategoriesIds { get; init; }
 }

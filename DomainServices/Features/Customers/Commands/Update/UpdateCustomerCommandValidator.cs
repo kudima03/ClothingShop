@@ -6,12 +6,8 @@ public class UpdateCustomerCommandValidator : AbstractValidator<UpdateCustomerCo
 {
     public UpdateCustomerCommandValidator()
     {
-        RuleFor(x => x.CustomerInfo)
-            .NotNull()
-            .WithMessage("Object cannot be null");
-
-        RuleFor(x => x.CustomerInfo.Id)
+        RuleFor(x => x.Id)
             .InclusiveBetween(1, long.MaxValue)
-            .WithMessage(x => $"{nameof(x.CustomerInfo.Id)} out of possible range.");
+            .WithMessage(x => $"{nameof(x.Id)} out of possible range.");
     }
 }

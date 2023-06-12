@@ -3,14 +3,17 @@ using System.Linq.Expressions;
 
 namespace ApplicationCore.Specifications.Product;
 
-public class ProductWithBrandSubcategoryOptionsReviews : Specification<Entities.Product, Entities.Product>
+public class ProductWithBrandSubcategoryReviewsOptionsColorsImages : Specification<Entities.Product, Entities.Product>
 {
-    public ProductWithBrandSubcategoryOptionsReviews(Expression<Func<Entities.Product, bool>>? predicate = null)
+    public ProductWithBrandSubcategoryReviewsOptionsColorsImages(
+        Expression<Func<Entities.Product, bool>>? predicate = null)
         : base(x => x,
             predicate,
             include: x =>
                 x.Include(z => z.Brand)
                     .Include(z => z.ProductOptions)
+                    .ThenInclude(z => z.ProductColor)
+                    .ThenInclude(z => z.ImagesInfos)
                     .Include(z => z.Subcategory)
                     .Include(z => z.Reviews))
     {

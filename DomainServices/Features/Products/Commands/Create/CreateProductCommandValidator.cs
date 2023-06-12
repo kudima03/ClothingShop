@@ -6,18 +6,39 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProductComm
 {
     public CreateProductCommandValidator()
     {
-        RuleFor(x => x.Product)
-            .NotNull()
-            .WithMessage("Object cannot be null");
-
-        RuleFor(x => x.Product.Name)
+        RuleFor(x => x.Name)
             .NotNull()
             .NotEmpty()
-            .WithMessage(x => $"{nameof(x.Product.Name)} cannot be null or empty");
+            .WithMessage(x => $"{nameof(x.Name)} cannot be null or empty");
 
-        RuleFor(x => x.Product.Reviews)
-            .Empty()
-            .WithMessage(x =>
-                $"When creating new {x.Product.GetType().Name},{nameof(x.Product.Reviews)} must be empty. Create in another request");
+        RuleForEach(x => x.ProductOptions)
+            .NotNull()
+            .ChildRules(x =>
+            {
+                x.RuleFor(c => c.Quantity)
+                    .InclusiveBetween(1, int.MaxValue);
+                x.RuleFor(c => c.Price)
+                    .InclusiveBetween(1, decimal.MaxValue);
+                x.RuleFor(c => c.Size)
+                    .NotNull()
+                    .NotEmpty();
+                x.RuleFor(c => c.ProductColor)
+                    .NotNull()
+                    .ChildRules(v =>
+                    {
+                        v.RuleFor(b => b.ColorHex)
+                            .NotNull()
+                            .NotEmpty();
+
+                        v.RuleForEach(n => n.ImagesInfos)
+                            .NotNull()
+                            .ChildRules(a =>
+                            {
+                                a.RuleFor(s => s.Url)
+                                    .NotNull()
+                                    .NotEmpty();
+                            });
+                    });
+            });
     }
 }

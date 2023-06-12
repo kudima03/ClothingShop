@@ -16,8 +16,14 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, User>
 
     public async Task<User> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _userRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.Id,
-                   cancellationToken: cancellationToken) ??
-               throw new EntityNotFoundException($"{nameof(User)} with id:{request.Id} doesn't exist.");
+        User? user = await _userRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.Id,
+            cancellationToken: cancellationToken);
+
+        if (user is null)
+        {
+            throw new EntityNotFoundException($"{nameof(User)} with id:{request.Id} doesn't exist.");
+        }
+
+        return user;
     }
 }

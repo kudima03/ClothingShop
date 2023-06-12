@@ -46,9 +46,9 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] Subcategory subcategory)
+    public async Task<ActionResult> Create([FromBody] CreateSubcategoryCommand createCommand)
     {
-        Subcategory createdCategory = await _mediator.Send(new CreateSubcategoryCommand(subcategory));
+        Subcategory createdCategory = await _mediator.Send(createCommand);
         return Ok(createdCategory.Id);
     }
 
@@ -58,9 +58,9 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Update([FromBody] Subcategory subcategory)
+    public async Task<ActionResult> Update([FromBody] UpdateSubcategoryCommand updateCommand)
     {
-        await _mediator.Send(new UpdateSubcategoryCommand(subcategory));
+        await _mediator.Send(updateCommand);
         return Ok();
     }
 

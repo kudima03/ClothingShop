@@ -5,10 +5,5 @@ namespace DomainServices.Features.Brands.Commands.Create;
 
 public class CreateBrandCommand : IRequest<Brand>
 {
-    public CreateBrandCommand(Brand brand)
-    {
-        Brand = brand;
-    }
-
-    public Brand Brand { get; init; }
+    public string Name { get; init; }
 }

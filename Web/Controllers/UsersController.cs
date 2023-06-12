@@ -46,9 +46,9 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] User user)
+    public async Task<ActionResult> Create([FromBody] CreateUserCommand createCommand)
     {
-        User createdUser = await _mediator.Send(new CreateUserCommand(user));
+        User createdUser = await _mediator.Send(createCommand);
         return Ok(createdUser.Id);
     }
 

@@ -6,20 +6,16 @@ public class CreateReviewCommandValidator : AbstractValidator<CreateReviewComman
 {
     public CreateReviewCommandValidator()
     {
-        RuleFor(x => x.Review)
-            .NotNull()
-            .WithMessage("Object cannot be null");
-
-        RuleFor(x => x.Review.ProductId)
+        RuleFor(x => x.ProductId)
             .InclusiveBetween(1, long.MaxValue)
-            .WithMessage(x => $"{nameof(x.Review.ProductId)} out of possible range.");
+            .WithMessage(x => $"{nameof(x.ProductId)} out of possible range.");
 
-        RuleFor(x => x.Review.UserId)
+        RuleFor(x => x.UserId)
             .InclusiveBetween(1, long.MaxValue)
-            .WithMessage(x => $"{nameof(x.Review.UserId)} out of possible range.");
+            .WithMessage(x => $"{nameof(x.UserId)} out of possible range.");
 
-        RuleFor(x => x.Review.Rate)
+        RuleFor(x => x.Rate)
             .GreaterThanOrEqualTo(0)
-            .WithMessage(x => $"{nameof(x.Review.Rate)} out of possible range.");
+            .WithMessage(x => $"{nameof(x.Rate)} out of possible range.");
     }
 }

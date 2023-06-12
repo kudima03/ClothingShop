@@ -18,20 +18,20 @@ public class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerComman
     public async Task<Unit> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
     {
         CustomerInfo? customerInfo =
-            await _customersInfoRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.CustomerInfo.Id,
+            await _customersInfoRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.Id,
                 cancellationToken: cancellationToken);
 
         if (customerInfo is null)
         {
             throw new EntityNotFoundException(
-                $"{nameof(CustomerInfo)} with id:{request.CustomerInfo.Id} doesn't exist.");
+                $"{nameof(CustomerInfo)} with id:{request.Id} doesn't exist.");
         }
 
-        customerInfo.Name = request.CustomerInfo.Name;
-        customerInfo.Surname = request.CustomerInfo.Surname;
-        customerInfo.Patronymic = request.CustomerInfo.Patronymic;
-        customerInfo.Address = request.CustomerInfo.Address;
-        customerInfo.Phone = request.CustomerInfo.Phone;
+        customerInfo.Name = request.Name;
+        customerInfo.Surname = request.Surname;
+        customerInfo.Patronymic = request.Patronymic;
+        customerInfo.Address = request.Address;
+        customerInfo.Phone = request.Phone;
 
         try
         {

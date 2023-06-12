@@ -45,9 +45,9 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] Order order)
+    public async Task<ActionResult> Create([FromBody] CreateOrderCommand createCommand)
     {
-        Order createdOrder = await _mediator.Send(new CreateOrderCommand(order));
+        Order createdOrder = await _mediator.Send(createCommand);
         return Ok(createdOrder.Id);
     }
 
@@ -57,9 +57,9 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Update([FromBody] Order order)
+    public async Task<ActionResult> Update([FromBody] UpdateOrderCommand updateCommand)
     {
-        await _mediator.Send(new UpdateOrderCommand(order));
+        await _mediator.Send(updateCommand);
         return Ok();
     }
 }

@@ -6,27 +6,24 @@ public class UpdateSubcategoryCommandValidatorHandler : AbstractValidator<Update
 {
     public UpdateSubcategoryCommandValidatorHandler()
     {
-        RuleFor(x => x.Subcategory)
-            .NotNull()
-            .WithMessage("Object cannot be null");
+        RuleFor(x => x.Id)
+            .InclusiveBetween(1, long.MaxValue)
+            .WithMessage(x => $"{nameof(x.Id)} out of possible range.");
 
-        RuleFor(x => x.Subcategory.Name)
+        RuleFor(x => x.Name)
             .NotNull()
             .NotEmpty()
-            .WithMessage(x => $"{nameof(x.Subcategory.Name)} cannot be null or empty");
+            .WithMessage(x => $"{nameof(x.Name)} cannot be null or empty.");
 
-        RuleForEach(x => x.Subcategory.Categories)
+        RuleFor(x => x.CategoriesIds)
+            .NotNull();
+
+        RuleForEach(x => x.CategoriesIds)
             .NotNull()
-            .WithMessage(x => $"{nameof(x.Subcategory.Categories)} can't be null");
-
-        RuleFor(x => x.Subcategory.Categories)
-            .Empty()
-            .WithMessage(x =>
-                $"When updating new {x.Subcategory.GetType().Name},{nameof(x.Subcategory.Categories)} must be empty. Associate in another request");
-
-        RuleFor(x => x.Subcategory.Products)
-            .Empty()
-            .WithMessage(x =>
-                $"When updating new {x.Subcategory.GetType().Name},{nameof(x.Subcategory.Products)} must be empty. Associate in another request");
+            .ChildRules(c =>
+            {
+                c.RuleFor(id => id).InclusiveBetween(1, long.MaxValue)
+                    .WithMessage("Section id out of possible range.");
+            });
     }
 }
