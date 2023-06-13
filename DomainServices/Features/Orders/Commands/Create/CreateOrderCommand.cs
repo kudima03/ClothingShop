@@ -7,5 +7,5 @@ public class CreateOrderCommand : IRequest<Order>
 {
     public long UserId { get; init; }
 
-    public ProductOptionIdAndQuantity[] ProductOptionsIdsAndQuantity { get; init; }
+    public ICollection<ProductOptionIdAndQuantity> ProductOptionsIdsAndQuantity { get; init; }
 }

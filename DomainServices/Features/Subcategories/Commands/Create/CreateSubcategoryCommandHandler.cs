@@ -11,17 +11,25 @@ namespace DomainServices.Features.Subcategories.Commands.Create;
 public class CreateSubcategoryCommandHandler : IRequestHandler<CreateSubcategoryCommand, Subcategory>
 {
     private readonly IRepository<Subcategory> _subcategoriesRepository;
+    private readonly IRepository<Category> _categoriesRepository;
 
-    public CreateSubcategoryCommandHandler(IRepository<Subcategory> subcategoriesRepository)
+    public CreateSubcategoryCommandHandler(IRepository<Subcategory> subcategoriesRepository, IRepository<Category> categoriesRepository)
     {
         _subcategoriesRepository = subcategoriesRepository;
+        _categoriesRepository = categoriesRepository;
     }
 
     public async Task<Subcategory> Handle(CreateSubcategoryCommand request, CancellationToken cancellationToken)
     {
         await ValidateSubcategoryNameAsync(request.Name, cancellationToken);
 
-        Subcategory newSubcategory = new() { Name = request.Name };
+        List<Category> categories = await ValidateAndGetCategoriesAsync(request.CategoriesIds, cancellationToken);
+
+        Subcategory newSubcategory = new()
+        {
+            Name = request.Name,
+            Categories = categories
+        };
 
         try
         {
@@ -47,5 +55,18 @@ public class CreateSubcategoryCommandHandler : IRequestHandler<CreateSubcategory
                 new ValidationFailure("Subcategory.Name", "Such subcategory name already exists!")
             });
         }
+    }
+
+    private async Task<List<Category>> ValidateAndGetCategoriesAsync(ICollection<long> categoriesIds,
+        CancellationToken cancellationToken = default)
+    {
+        IList<Category>? existingSections = await _categoriesRepository
+            .GetAllAsync(predicate: x => categoriesIds.Contains(x.Id), cancellationToken: cancellationToken);
+        if (existingSections.Count != categoriesIds.Count)
+        {
+            throw new EntityNotFoundException("One of categories doesn't exist");
+        }
+
+        return existingSections.ToList();
     }
 }

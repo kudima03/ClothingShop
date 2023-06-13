@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using AutoMapper;
 using DomainServices.Features.Products.Commands.Create;
 using DomainServices.Features.Products.Commands.Delete;
 using DomainServices.Features.Products.Commands.Update;
@@ -9,6 +10,7 @@ using DomainServices.Features.Products.Queries.GetBySubcategoryId;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using Web.DTOs;
 
 namespace Web.Controllers;
 
@@ -17,10 +19,12 @@ namespace Web.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IMapper _mapper;
 
-    public ProductsController(IMediator mediator)
+    public ProductsController(IMediator mediator, IMapper mapper)
     {
         _mediator = mediator;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -28,7 +32,8 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
     {
-        IEnumerable<Product> products = await _mediator.Send(new GetAllProductsQuery());
+        GetAllProductsQuery query = new GetAllProductsQuery();
+        IEnumerable<Product> products = await _mediator.Send(query);
         return Ok(products);
     }
 
@@ -39,7 +44,8 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Product>> GetProductById([FromRoute] long id)
     {
-        Product product = await _mediator.Send(new GetProductByIdQuery(id));
+        GetProductByIdQuery query = new GetProductByIdQuery(id);
+        Product product = await _mediator.Send(query);
         return Ok(product);
     }
 
@@ -50,7 +56,8 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubcategory([FromQuery] long subcategoryId)
     {
-        IEnumerable<Product> product = await _mediator.Send(new GetProductsBySubcategoryIdQuery(subcategoryId));
+        GetProductsBySubcategoryIdQuery query = new GetProductsBySubcategoryIdQuery(subcategoryId);
+        IEnumerable<Product> product = await _mediator.Send(query);
         return Ok(product);
     }
 
@@ -61,7 +68,8 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Product>>> GetProductByBrand([FromQuery] long brandId)
     {
-        IEnumerable<Product> product = await _mediator.Send(new GetProductsByBrandIdQuery(brandId));
+        GetProductsByBrandIdQuery query = new GetProductsByBrandIdQuery(brandId);
+        IEnumerable<Product> product = await _mediator.Send(query);
         return Ok(product);
     }
 
@@ -70,8 +78,9 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> CreateProduct([FromBody] CreateProductCommand createCommand)
+    public async Task<ActionResult> CreateProduct([FromBody] ProductDTO product)
     {
+        CreateProductCommand createCommand = _mapper.Map<CreateProductCommand>(product);
         Product createdProduct = await _mediator.Send(createCommand);
         return Ok(createdProduct.Id);
     }
@@ -82,8 +91,9 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> UpdateProduct([FromBody] UpdateProductCommand updateCommand)
+    public async Task<ActionResult> UpdateProduct([FromBody] ProductDTO product)
     {
+        UpdateProductCommand updateCommand = _mapper.Map<UpdateProductCommand>(product);
         await _mediator.Send(updateCommand);
         return Ok();
     }
@@ -94,7 +104,8 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> DeleteProduct([FromRoute] long id)
     {
-        await _mediator.Send(new DeleteProductCommand(id));
+        DeleteProductCommand command = new DeleteProductCommand(id);
+        await _mediator.Send(command);
         return Ok();
     }
 }

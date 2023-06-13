@@ -18,7 +18,10 @@ public class CreateBrandCommandHandler : IRequestHandler<CreateBrandCommand, Bra
     public async Task<Brand> Handle(CreateBrandCommand request, CancellationToken cancellationToken)
     {
         await ValidateBrandNameAsync(request.Name, cancellationToken);
-        Brand newBrand = new() { Name = request.Name };
+        Brand newBrand = new()
+        {
+            Name = request.Name
+        };
         Brand? insertedBrand = await _brandsRepository.InsertAsync(newBrand, cancellationToken);
         await _brandsRepository.SaveChangesAsync(cancellationToken);
         return insertedBrand;

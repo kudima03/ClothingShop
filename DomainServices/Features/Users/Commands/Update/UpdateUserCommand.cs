@@ -1,14 +1,11 @@
-﻿using ApplicationCore.Entities;
-using MediatR;
+﻿using MediatR;
 
 namespace DomainServices.Features.Users.Commands.Update;
 
 public class UpdateUserCommand : IRequest<Unit>
 {
-    public UpdateUserCommand(User user)
-    {
-        User = user;
-    }
-
-    public User User { get; init; }
+    public long Id { get; init; }
+    public string Email { get; init; }
+    public string Password { get; init; }
+    public long UserTypeId { get; init; }
 }

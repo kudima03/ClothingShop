@@ -1,6 +1,6 @@
 ﻿namespace ApplicationCore.Constants;
 
-public class OrderStatusName
+public static class OrderStatusName
 {
     public const string InReview = "In review";
     public const string InDelivery = "In delivery";

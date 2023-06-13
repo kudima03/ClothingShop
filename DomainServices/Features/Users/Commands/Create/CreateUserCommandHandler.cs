@@ -23,7 +23,12 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, User>
     {
         await ValidateEmailAsync(request.Email, cancellationToken);
 
-        User newUser = new() { Email = request.Email, Password = request.Password, UserTypeId = request.UserTypeId };
+        User newUser = new()
+        {
+            Email = request.Email,
+            Password = request.Password,
+            UserTypeId = request.UserTypeId
+        };
 
         CustomerInfo newCustomerInfo = new()
         {
@@ -37,11 +42,9 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, User>
 
         try
         {
-            User? user = await _userRepository.InsertAsync(newUser, cancellationToken);
-            await _userRepository.SaveChangesAsync(cancellationToken);
-            await _customersRepository.InsertAsync(newCustomerInfo, cancellationToken);
+            CustomerInfo? customerInfo = await _customersRepository.InsertAsync(newCustomerInfo, cancellationToken);
             await _customersRepository.SaveChangesAsync(cancellationToken);
-            return user;
+            return customerInfo.User;
         }
         catch (DbUpdateException)
         {

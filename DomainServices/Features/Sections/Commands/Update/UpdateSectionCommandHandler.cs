@@ -1,6 +1,8 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
+using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +21,11 @@ public class UpdateSectionCommandHandler : IRequestHandler<UpdateSectionCommand,
     {
         Section section = await ValidateAndGetSectionAsync(request.Id, cancellationToken);
 
+        if (section.Name != request.Name)
+        {
+            await ValidateSectionNameAsync(request.Name, cancellationToken);
+        }
+
         section.Name = request.Name;
 
         try
@@ -36,9 +43,8 @@ public class UpdateSectionCommandHandler : IRequestHandler<UpdateSectionCommand,
     private async Task<Section> ValidateAndGetSectionAsync(long sectionId,
         CancellationToken cancellationToken = default)
     {
-        Section? section = await _sectionRepository.GetFirstOrDefaultAsync(x => x.Id == sectionId,
-            sections => sections.Include(section1 => section1.Categories),
-            cancellationToken);
+        Section? section = await _sectionRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == sectionId,
+            cancellationToken: cancellationToken);
 
         if (section is null)
         {
@@ -46,5 +52,14 @@ public class UpdateSectionCommandHandler : IRequestHandler<UpdateSectionCommand,
         }
 
         return section;
+    }
+
+    private async Task ValidateSectionNameAsync(string name, CancellationToken cancellationToken = default)
+    {
+        bool nameExists = await _sectionRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+        if (nameExists)
+        {
+            throw new ValidationException(new[] { new ValidationFailure("Brand.Name", "Such brand already exists!") });
+        }
     }
 }

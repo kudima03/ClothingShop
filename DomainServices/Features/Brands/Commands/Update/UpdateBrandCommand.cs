@@ -4,12 +4,6 @@ namespace DomainServices.Features.Brands.Commands.Update;
 
 public class UpdateBrandCommand : IRequest<Unit>
 {
-    public UpdateBrandCommand(long id, string name)
-    {
-        Name = name;
-        Id = id;
-    }
-
-    public long Id { get; }
-    public string Name { get; }
+    public long Id { get; init; }
+    public string Name { get; init; }
 }

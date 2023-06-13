@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.EqualityComparers;
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using FluentValidation;
@@ -139,7 +140,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             modifiedImagesInfos.Where(x => !productColor.ImagesInfos.Select(x => x.Id).Contains(x.Id)).ToList();
 
         IEnumerable<ImageInfo> imagesToRemove =
-            productColor.ImagesInfos.Except(modifiedImagesInfos, new ImageInfoEqualityComparer()).ToList();
+            productColor.ImagesInfos.Except(modifiedImagesInfos, new ImageInfoEqualityComparerById()).ToList();
 
         productColor.ImagesInfos.RemoveAll(imageInfo => imagesToRemove.Contains(imageInfo));
 
@@ -195,7 +196,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         IEnumerable<ProductOption> optionsToAdd = modifiedProductOptions.Where(x => x.Id == 0).ToList();
 
         IEnumerable<ProductOption> optionsToRemove = product.ProductOptions
-            .Except(modifiedProductOptions, new ProductOptionEqualityComparer()).ToList();
+            .Except(modifiedProductOptions, new ProductOptionEqualityComparerById()).ToList();
 
         await CreateOrUpdateRelatedProductColors(product, modifiedProductOptions, cancellationToken);
 
@@ -204,69 +205,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         product.ProductOptions.RemoveAll(productOption => optionsToRemove.Contains(productOption));
     }
 
-    private class ProductOptionEqualityComparer : IEqualityComparer<ProductOption>
-    {
-        public bool Equals(ProductOption? x, ProductOption? y)
-        {
-            if (ReferenceEquals(x, y))
-            {
-                return true;
-            }
+    
 
-            if (ReferenceEquals(x, null))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(y, null))
-            {
-                return false;
-            }
-
-            if (x.GetType() != y.GetType())
-            {
-                return false;
-            }
-
-            return x.Id == y.Id;
-        }
-
-        public int GetHashCode(ProductOption obj)
-        {
-            return obj.Id.GetHashCode();
-        }
-    }
-
-    private class ImageInfoEqualityComparer : IEqualityComparer<ImageInfo>
-    {
-        public bool Equals(ImageInfo? x, ImageInfo? y)
-        {
-            if (ReferenceEquals(x, y))
-            {
-                return true;
-            }
-
-            if (ReferenceEquals(x, null))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(y, null))
-            {
-                return false;
-            }
-
-            if (x.GetType() != y.GetType())
-            {
-                return false;
-            }
-
-            return x.Id == y.Id;
-        }
-
-        public int GetHashCode(ImageInfo obj)
-        {
-            return obj.Id.GetHashCode();
-        }
-    }
+    
 }

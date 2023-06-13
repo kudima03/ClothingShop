@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using ApplicationCore.EqualityComparers;
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using FluentValidation;
@@ -35,10 +36,10 @@ public class UpdateSubcategoryCommandHandler : IRequestHandler<UpdateSubcategory
             await ValidateAndGetCategoriesAsync(request.CategoriesIds, cancellationToken);
 
         IEnumerable<Category> categoriesToAdd =
-            existingCategories.Except(existingSubcategory.Categories, new CategoryEqualityComparer());
+            existingCategories.Except(existingSubcategory.Categories, new CategoryEqualityComparerById());
 
         IEnumerable<Category> categoriesToRemove =
-            existingSubcategory.Categories.Except(existingCategories, new CategoryEqualityComparer());
+            existingSubcategory.Categories.Except(existingCategories, new CategoryEqualityComparerById());
 
         existingSubcategory.Categories.RemoveAll(section => categoriesToRemove.Contains(section));
 
@@ -85,49 +86,16 @@ public class UpdateSubcategoryCommandHandler : IRequestHandler<UpdateSubcategory
         }
     }
 
-    private async Task<IList<Category>> ValidateAndGetCategoriesAsync(long[] categoriesIds,
+    private async Task<IList<Category>> ValidateAndGetCategoriesAsync(ICollection<long> categoriesIds,
         CancellationToken cancellationToken = default)
     {
         IList<Category>? existingSections = await _categoriesRepository
             .GetAllAsync(predicate: x => categoriesIds.Contains(x.Id), cancellationToken: cancellationToken);
-        if (existingSections.Count != categoriesIds.Count())
+        if (existingSections.Count != categoriesIds.Count)
         {
             throw new EntityNotFoundException("One of categories doesn't exist");
         }
 
         return existingSections;
-    }
-
-    private class CategoryEqualityComparer : IEqualityComparer<Category>
-    {
-        public bool Equals(Category? x, Category? y)
-        {
-            if (ReferenceEquals(x, y))
-            {
-                return true;
-            }
-
-            if (ReferenceEquals(x, null))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(y, null))
-            {
-                return false;
-            }
-
-            if (x.GetType() != y.GetType())
-            {
-                return false;
-            }
-
-            return x.Id == y.Id;
-        }
-
-        public int GetHashCode(Category obj)
-        {
-            return obj.Id.GetHashCode();
-        }
     }
 }

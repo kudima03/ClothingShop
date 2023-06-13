@@ -1,4 +1,4 @@
-﻿namespace DomainServices.Features.Orders.Commands.Create;
+﻿namespace ApplicationCore.Entities;
 
 public class ProductOptionIdAndQuantity
 {

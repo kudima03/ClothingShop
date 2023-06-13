@@ -6,10 +6,6 @@ public class GetProductsBySubcategoryIdQueryValidator : AbstractValidator<GetPro
 {
     public GetProductsBySubcategoryIdQueryValidator()
     {
-        RuleFor(x => x)
-            .NotNull()
-            .WithMessage("Object cannot be null");
-
         RuleFor(x => x.SubcategoryId)
             .InclusiveBetween(1, long.MaxValue)
             .WithMessage(x => $"{nameof(x.SubcategoryId)} out of possible range.");

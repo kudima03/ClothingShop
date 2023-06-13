@@ -26,7 +26,8 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<User>>> GetAll()
     {
-        IEnumerable<User> users = await _mediator.Send(new GetAllUsersQuery());
+        GetAllUsersQuery? query = new GetAllUsersQuery();
+        IEnumerable<User> users = await _mediator.Send(query);
         return Ok(users);
     }
 
@@ -37,7 +38,8 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<User>> GetById([FromRoute] long id)
     {
-        User user = await _mediator.Send(new GetUserByIdQuery(id));
+        GetUserByIdQuery? query = new GetUserByIdQuery(id);
+        User user = await _mediator.Send(query);
         return Ok(user);
     }
 
@@ -58,9 +60,9 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Update([FromBody] User user)
+    public async Task<ActionResult> Update([FromBody] UpdateUserCommand updateCommand)
     {
-        await _mediator.Send(new UpdateUserCommand(user));
+        await _mediator.Send(updateCommand);
         return Ok();
     }
 
@@ -70,7 +72,8 @@ public class UsersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        await _mediator.Send(new DeleteUserCommand(id));
+        DeleteUserCommand? command = new DeleteUserCommand(id);
+        await _mediator.Send(command);
         return Ok();
     }
 }

@@ -1,7 +1,4 @@
-﻿using DomainServices.Behaviors;
-using FluentValidation;
-using MediatR;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Web.Extensions;
 using Web.Middlewares;
 
@@ -22,14 +19,10 @@ public class Startup
         services.AddSwaggerGen();
         services.AddControllers().AddJsonOptions(options =>
             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-        services.AddValidatorsFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
         services.AddCustomDbContext(Configuration);
+        services.AddMediatRServices();
         services.AddCustomRepositories();
-        services.AddMediatR(options =>
-        {
-            options.RegisterServicesFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
-        });
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        services.AddAutoMapper();
         services.AddScoped<GlobalExceptionHandlingMiddleware>();
     }
 

@@ -6,4 +6,5 @@ namespace DomainServices.Features.Categories.Commands.Create;
 public class CreateCategoryCommand : IRequest<Category>
 {
     public string Name { get; init; }
+    public ICollection<long> SectionsIds { get; init; }
 }

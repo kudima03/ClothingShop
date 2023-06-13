@@ -34,7 +34,10 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
 
         Product newProduct = new()
         {
-            Brand = brand, Name = request.Name, ProductOptions = request.ProductOptions, Subcategory = subcategory
+            Brand = brand,
+            Name = request.Name,
+            ProductOptions = request.ProductOptions,
+            Subcategory = subcategory
         };
 
         IEnumerable<ProductColor> distinctProductColors =

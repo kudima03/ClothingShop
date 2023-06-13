@@ -1,9 +1,14 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using AutoMapper;
+using DomainServices.Behaviors;
+using FluentValidation;
 using Infrastructure.Data;
 using Infrastructure.EntityRepository;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Web.AutoMapperProfiles;
 
 namespace Web.Extensions;
 
@@ -69,5 +74,27 @@ public static class ServiceCollectionExtensions
                         sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
                     });
             });
+    }
+
+    public static void AddMediatRServices(this IServiceCollection services)
+    {
+        services.AddValidatorsFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
+        services.AddMediatR(options =>
+        {
+            options.RegisterServicesFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
+        });
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+    }
+
+    public static void AddAutoMapper(this IServiceCollection services)
+    {
+        services.AddAutoMapper(x =>
+        {
+            x.AddProfiles(new Profile[]
+            {
+                new ImageInfoMapperConfiguration(), new ProductColorDTOMapperConfiguration(),
+                new ProductDTOMapperConfiguration(), new ProductOptionDTOMapperConfiguration()
+            });
+        });
     }
 }

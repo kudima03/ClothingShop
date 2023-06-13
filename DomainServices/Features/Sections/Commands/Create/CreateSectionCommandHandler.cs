@@ -21,7 +21,10 @@ public class CreateSectionCommandHandler : IRequestHandler<CreateSectionCommand,
     {
         await ValidateSectionNameAsync(request.Name, cancellationToken);
 
-        Section newSection = new() { Name = request.Name };
+        Section newSection = new()
+        {
+            Name = request.Name
+        };
 
         try
         {

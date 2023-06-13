@@ -17,17 +17,17 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Unit>
 
     public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        User? user = await _userRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.User.Id,
+        User? user = await _userRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.Id,
             cancellationToken: cancellationToken);
 
         if (user is null)
         {
-            throw new EntityNotFoundException($"{nameof(User)} with id:{request.User.Id} doesn't exist.");
+            throw new EntityNotFoundException($"{nameof(User)} with id:{request.Id} doesn't exist.");
         }
 
-        user.Email = request.User.Email;
-        user.Password = request.User.Password;
-        user.UserTypeId = request.User.UserTypeId;
+        user.Email = request.Email;
+        user.Password = request.Password;
+        user.UserTypeId = request.UserTypeId;
 
         try
         {

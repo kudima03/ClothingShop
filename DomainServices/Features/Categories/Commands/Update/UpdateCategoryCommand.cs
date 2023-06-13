@@ -6,5 +6,5 @@ public class UpdateCategoryCommand : IRequest<Unit>
 {
     public long Id { get; init; }
     public string Name { get; init; }
-    public long[] SectionsIds { get; init; }
+    public ICollection<long> SectionsIds { get; init; }
 }
