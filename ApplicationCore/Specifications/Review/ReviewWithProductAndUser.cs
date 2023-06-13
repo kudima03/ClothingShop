@@ -8,8 +8,8 @@ public class ReviewWithProductAndUser : Specification<Entities.Review, Entities.
     public ReviewWithProductAndUser(Expression<Func<Entities.Review, bool>>? predicate = null)
         : base(x => x,
             predicate,
-            orderBy: x => x.OrderByDescending(c => c.DateTime),
-            include: reviews => reviews
+            x => x.OrderByDescending(c => c.DateTime),
+            reviews => reviews
                 .Include(review => review.User)
                 .Include(review => review.Product))
     {

@@ -26,36 +26,70 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, Uni
     {
         Order order = await ValidateAndGetOrderToUpdateAsync(request.OrderId, cancellationToken);
 
-        IList<ProductOption> existingProductOptions =
-            await ValidateAndGetProductOptionsAsync(request.ProductOptionsIdsAndQuantity, cancellationToken);
+        UpdateExistingOrderedProductOptions(order, request.ProductOptionsIdsAndQuantity);
 
-        IEnumerable<ProductOption> productOptionsToAdd =
-            existingProductOptions.Except(order.ProductsOptions, new ProductOptionEqualityComparer());
+        List<OrderedProductOption> existingProductOptions =
+            await ValidateAndGetOrderedProductOptionsAsync(request.ProductOptionsIdsAndQuantity, cancellationToken);
 
-        IEnumerable<ProductOption> productOptionsToRemove =
-            order.ProductsOptions.Except(order.ProductsOptions, new ProductOptionEqualityComparer());
+        List<OrderedProductOption> productOptionsToAdd =
+            existingProductOptions.Except(order.OrderedProductsOptionsInfo, new OrderedProductOptionEqualityComparer())
+                .ToList();
 
-        order.ProductsOptions.RemoveAll(productOption => productOptionsToRemove.Contains(productOption));
+        DecrementQuantityInRepository(productOptionsToAdd);
 
-        order.ProductsOptions.AddRange(productOptionsToAdd);
+        List<OrderedProductOption> productOptionsToRemove =
+            order.OrderedProductsOptionsInfo
+                .Except(order.OrderedProductsOptionsInfo, new OrderedProductOptionEqualityComparer()).ToList();
+
+        IncrementQuantityInRepository(productOptionsToRemove);
+
+        order.OrderedProductsOptionsInfo.RemoveAll(productOption => productOptionsToRemove.Contains(productOption));
+
+        order.OrderedProductsOptionsInfo.AddRange(productOptionsToAdd);
 
         try
         {
             await _ordersRepository.SaveChangesAsync(cancellationToken);
+            return Unit.Value;
         }
         catch (DbUpdateException)
         {
             throw new OperationFailureException($"Unable to perform create {nameof(Order)} operation. Check input.");
         }
+    }
 
-        return Unit.Value;
+    private void UpdateExistingOrderedProductOptions(Order order,
+        ProductOptionIdAndQuantity[] productOptionsIdsAndQuantity)
+    {
+        foreach (OrderedProductOption? item in order.OrderedProductsOptionsInfo)
+        {
+            ProductOptionIdAndQuantity updatedValue =
+                productOptionsIdsAndQuantity.Single(x => x.ProductOptionId == item.ProductOptionId);
+            item.Amount = updatedValue.Quantity;
+        }
+    }
+
+    private void DecrementQuantityInRepository(List<OrderedProductOption> orderedProductOptions)
+    {
+        foreach (OrderedProductOption item in orderedProductOptions)
+        {
+            item.ProductOption.Quantity -= item.Amount;
+        }
+    }
+
+    private void IncrementQuantityInRepository(List<OrderedProductOption> abandonedProductOptions)
+    {
+        foreach (OrderedProductOption item in abandonedProductOptions)
+        {
+            item.ProductOption.Quantity += item.Amount;
+        }
     }
 
     private async Task<Order> ValidateAndGetOrderToUpdateAsync(long orderId,
         CancellationToken cancellationToken = default)
     {
         Order? order = await _ordersRepository
-            .ApplySpecification(new OrderWithStatusAndProductOptions(x => x.Id == orderId))
+            .ApplySpecification(new OrderWithStatusAndOrderedProductOptions(x => x.Id == orderId))
             .FirstOrDefaultAsync(cancellationToken);
 
         if (order is null)
@@ -66,7 +100,7 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, Uni
         return order;
     }
 
-    private async Task<IList<ProductOption>> ValidateAndGetProductOptionsAsync(
+    private async Task<List<OrderedProductOption>> ValidateAndGetOrderedProductOptionsAsync(
         ProductOptionIdAndQuantity[] productsOptionsIdAndQuantity, CancellationToken cancellationToken = default)
     {
         IList<ProductOption>? existingProductOptions =
@@ -93,12 +127,17 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, Uni
             }
         }
 
-        return existingProductOptions;
+        return productsOptionsIdAndQuantity.Select(x => new OrderedProductOption
+        {
+            ProductOptionId = x.ProductOptionId,
+            ProductOption = existingProductOptions.Single(c => c.Id == x.ProductOptionId),
+            Amount = x.Quantity
+        }).ToList();
     }
 
-    private class ProductOptionEqualityComparer : IEqualityComparer<ProductOption>
+    private class OrderedProductOptionEqualityComparer : IEqualityComparer<OrderedProductOption>
     {
-        public bool Equals(ProductOption? x, ProductOption? y)
+        public bool Equals(OrderedProductOption? x, OrderedProductOption? y)
         {
             if (ReferenceEquals(x, y))
             {
@@ -120,12 +159,12 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, Uni
                 return false;
             }
 
-            return x.Id == y.Id;
+            return x.ProductOptionId == y.ProductOptionId;
         }
 
-        public int GetHashCode(ProductOption obj)
+        public int GetHashCode(OrderedProductOption obj)
         {
-            return obj.Id.GetHashCode();
+            return obj.ProductOptionId.GetHashCode();
         }
     }
 }

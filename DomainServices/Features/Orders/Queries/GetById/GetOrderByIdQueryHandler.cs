@@ -19,7 +19,7 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
     public async Task<Order> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
     {
         Order? order = await _ordersRepository
-            .ApplySpecification(new OrderWithStatusAndProductOptions(order => order.Id == request.Id))
+            .ApplySpecification(new OrderWithStatusAndOrderedProductOptions(order => order.Id == request.Id))
             .FirstOrDefaultAsync(cancellationToken);
 
         if (order is null)

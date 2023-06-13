@@ -33,11 +33,10 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
     {
         User user = await ValidateAndGetOrderInitiator(request.UserId, cancellationToken);
 
-        IList<ProductOption> productOptions =
-            await ValidateAndGetProductOptions(request.ProductOptionsIdsAndQuantity, cancellationToken);
+        List<OrderedProductOption> productOptionsToOrder =
+            await ValidateAndCreateOrderedProductsOptions(request.ProductOptionsIdsAndQuantity, cancellationToken);
 
-        List<ProductOption> duplicatedProductOptions =
-            DuplicateAccordingToQuantity(productOptions, request.ProductOptionsIdsAndQuantity);
+        DecrementQuantityInRepository(productOptionsToOrder);
 
         OrderStatus orderStatus = (await _orderStatusesRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Name == OrderStatusName.InReview,
@@ -46,7 +45,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         Order newOrder = new()
         {
             User = user,
-            ProductsOptions = duplicatedProductOptions,
+            OrderedProductsOptionsInfo = productOptionsToOrder,
             DateTime = DateTime.UtcNow,
             OrderStatus = orderStatus
         };
@@ -54,7 +53,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         try
         {
             Order? insertedOrder = await _ordersRepository.InsertAsync(newOrder, cancellationToken);
-            DecrementQuantityInRepository(productOptions, request.ProductOptionsIdsAndQuantity);
+            DecrementQuantityInRepository(insertedOrder.OrderedProductsOptionsInfo);
             await _ordersRepository.SaveChangesAsync(cancellationToken);
             return insertedOrder;
         }
@@ -77,7 +76,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         return user;
     }
 
-    private async Task<IList<ProductOption>> ValidateAndGetProductOptions(
+    private async Task<List<OrderedProductOption>> ValidateAndCreateOrderedProductsOptions(
         ProductOptionIdAndQuantity[] productsOptionsIdAndQuantity,
         CancellationToken cancellationToken = default)
     {
@@ -105,33 +104,19 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             }
         }
 
-        return existingProductOptions;
+        return productsOptionsIdAndQuantity.Select(x => new OrderedProductOption
+        {
+            ProductOptionId = x.ProductOptionId,
+            ProductOption = existingProductOptions.Single(c => c.Id == x.ProductOptionId),
+            Amount = x.Quantity
+        }).ToList();
     }
 
-    private List<ProductOption> DuplicateAccordingToQuantity(IEnumerable<ProductOption> productOptions,
-        ProductOptionIdAndQuantity[] productsOptionsIdAndQuantity)
+    private void DecrementQuantityInRepository(List<OrderedProductOption> orderedProductOptions)
     {
-        List<ProductOption> productOptionsDuplicated = new(productOptions.Count());
-        foreach (ProductOption productOption in productOptions)
+        foreach (OrderedProductOption item in orderedProductOptions)
         {
-            for (int i = 0;
-                 i < productsOptionsIdAndQuantity.Single(x => x.ProductOptionId == productOption.Id).Quantity;
-                 i++)
-            {
-                productOptionsDuplicated.Add(productOption);
-            }
-        }
-
-        return productOptionsDuplicated;
-    }
-
-    private void DecrementQuantityInRepository(IList<ProductOption> productOptions,
-        ProductOptionIdAndQuantity[] productsOptionsIdAndQuantity)
-    {
-        foreach (ProductOption productOption in productOptions)
-        {
-            productOption.Quantity -=
-                productsOptionsIdAndQuantity.Single(x => x.ProductOptionId == productOption.Id).Quantity;
+            item.ProductOption.Quantity -= item.Amount;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ApplicationCore.Entities;
+using DomainServices.Features.Orders.Commands.Cancel;
 using DomainServices.Features.Orders.Commands.Create;
 using DomainServices.Features.Orders.Commands.Update;
 using DomainServices.Features.Orders.Queries.GetAll;
@@ -60,6 +61,16 @@ public class OrdersController : ControllerBase
     public async Task<ActionResult> Update([FromBody] UpdateOrderCommand updateCommand)
     {
         await _mediator.Send(updateCommand);
+        return Ok();
+    }
+
+    [HttpDelete("{id:long}")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult> Delete([FromRoute] long id)
+    {
+        await _mediator.Send(new CancelOrderCommand(id));
         return Ok();
     }
 }

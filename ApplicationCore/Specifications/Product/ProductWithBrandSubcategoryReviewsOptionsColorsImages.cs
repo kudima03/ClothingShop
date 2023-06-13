@@ -9,8 +9,8 @@ public class ProductWithBrandSubcategoryReviewsOptionsColorsImages : Specificati
         Expression<Func<Entities.Product, bool>>? predicate = null)
         : base(x => x,
             predicate,
-            orderBy: x => x.OrderBy(c => c.Name),
-            include: x =>
+            x => x.OrderBy(c => c.Name),
+            x =>
                 x.Include(z => z.Brand)
                     .Include(z => z.ProductOptions)
                     .ThenInclude(z => z.ProductColor)
