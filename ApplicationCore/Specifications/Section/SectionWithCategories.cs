@@ -8,7 +8,7 @@ public sealed class SectionWithCategories : Specification<Entities.Section, Enti
     public SectionWithCategories(Expression<Func<Entities.Section, bool>>? predicate = null)
         : base(section => section,
             predicate,
-            sections => sections.OrderBy(section => section.Id),
+            sections => sections.OrderBy(section => section.Name),
             sections => sections.Include(section => section.Categories))
     {
     }
