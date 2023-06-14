@@ -2,7 +2,7 @@
 
 namespace ApplicationCore.Entities;
 
-public class OrderedProductOption : StorableEntity
+public class OrderItem : StorableEntity
 {
     public long OrderId { get; set; }
     public Order Order { get; set; }

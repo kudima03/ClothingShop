@@ -92,7 +92,9 @@ public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryComman
             .GetAllAsync(predicate: x => sectionsIds.Contains(x.Id), cancellationToken: cancellationToken);
         if (existingSections.Count != sectionsIds.Count)
         {
-            throw new EntityNotFoundException("One of sections doesn't exist");
+            IEnumerable<long> missingSectionsIds = sectionsIds.Except(existingSections.Select(x => x.Id));
+            string missingSectionsMessage = string.Join(',', missingSectionsIds);
+            throw new EntityNotFoundException($"Sections with ids:{missingSectionsMessage} doesn't exist.");
         }
 
         return existingSections;

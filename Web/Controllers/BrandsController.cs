@@ -26,7 +26,7 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Brand>>> GetAll()
     {
-        GetAllBrandsQuery? query = new GetAllBrandsQuery();
+        GetAllBrandsQuery query = new GetAllBrandsQuery();
         IEnumerable<Brand> brands = await _mediator.Send(query);
         return Ok(brands);
     }
@@ -38,7 +38,7 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Brand>> GetById([FromRoute] long id)
     {
-        GetBrandByIdQuery? query = new GetBrandByIdQuery(id);
+        GetBrandByIdQuery query = new GetBrandByIdQuery(id);
         Brand brand = await _mediator.Send(query);
         return Ok(brand);
     }
@@ -72,7 +72,7 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        DeleteBrandCommand? command = new DeleteBrandCommand(id);
+        DeleteBrandCommand command = new DeleteBrandCommand(id);
         await _mediator.Send(command);
         return Ok();
     }

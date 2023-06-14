@@ -1,8 +1,8 @@
 ﻿namespace Web.DTOs;
 
-public class ProductColorDTO
+public class ProductColorDto
 {
     public long Id { get; set; }
     public string ColorHex { get; set; }
-    public ICollection<ImageInfoDTO> ImagesInfos { get; init; } = new List<ImageInfoDTO>();
+    public ICollection<ImageInfoDto> ImagesInfos { get; init; } = new List<ImageInfoDto>();
 }

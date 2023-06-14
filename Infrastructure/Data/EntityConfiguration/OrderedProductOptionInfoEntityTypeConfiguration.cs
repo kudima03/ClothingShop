@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Data.EntityConfiguration;
 
-public class OrderedProductOptionInfoEntityTypeConfiguration : IEntityTypeConfiguration<OrderedProductOption>
+public class OrderedProductOptionInfoEntityTypeConfiguration : IEntityTypeConfiguration<OrderItem>
 {
-    public void Configure(EntityTypeBuilder<OrderedProductOption> builder)
+    public void Configure(EntityTypeBuilder<OrderItem> builder)
     {
         builder.ToTable("order_product_options");
 

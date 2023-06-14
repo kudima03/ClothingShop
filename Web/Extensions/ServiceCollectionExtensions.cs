@@ -2,6 +2,7 @@
 using ApplicationCore.Interfaces;
 using AutoMapper;
 using DomainServices.Behaviors;
+using DomainServices.Services;
 using FluentValidation;
 using Infrastructure.Data;
 using Infrastructure.EntityRepository;
@@ -96,5 +97,10 @@ public static class ServiceCollectionExtensions
                 new ProductDTOMapperConfiguration(), new ProductOptionDTOMapperConfiguration()
             });
         });
+    }
+
+    public static void AddCustomServices(this IServiceCollection services)
+    {
+        services.AddScoped<IOrdersService, OrdersService>();
     }
 }

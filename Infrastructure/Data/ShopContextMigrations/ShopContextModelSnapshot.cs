@@ -180,7 +180,7 @@ namespace Infrastructure.Data.ShopContextMigrations
                     b.ToTable("order_statuses", (string)null);
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.OrderedProductOption", b =>
+            modelBuilder.Entity("ApplicationCore.Entities.OrderItem", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -510,7 +510,7 @@ namespace Infrastructure.Data.ShopContextMigrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.OrderedProductOption", b =>
+            modelBuilder.Entity("ApplicationCore.Entities.OrderItem", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.Order", "Order")
                         .WithMany("OrderedProductsOptionsInfo")

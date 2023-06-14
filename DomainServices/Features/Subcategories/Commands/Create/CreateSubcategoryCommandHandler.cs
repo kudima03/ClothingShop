@@ -60,13 +60,15 @@ public class CreateSubcategoryCommandHandler : IRequestHandler<CreateSubcategory
     private async Task<List<Category>> ValidateAndGetCategoriesAsync(ICollection<long> categoriesIds,
         CancellationToken cancellationToken = default)
     {
-        IList<Category>? existingSections = await _categoriesRepository
+        IList<Category>? existingCategories = await _categoriesRepository
             .GetAllAsync(predicate: x => categoriesIds.Contains(x.Id), cancellationToken: cancellationToken);
-        if (existingSections.Count != categoriesIds.Count)
+        if (existingCategories.Count != categoriesIds.Count)
         {
-            throw new EntityNotFoundException("One of categories doesn't exist");
+            IEnumerable<long> missingCategoriesIds = categoriesIds.Except(existingCategories.Select(x => x.Id));
+            string missingCategoriesMessage = string.Join(',', missingCategoriesIds);
+            throw new EntityNotFoundException($"Categories with ids:{missingCategoriesMessage} doesn't exist.");
         }
 
-        return existingSections.ToList();
+        return existingCategories.ToList();
     }
 }

@@ -28,16 +28,16 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
     {
         await ValidateProductNameAsync(request.Name, cancellationToken);
 
-        Brand brand = await ValidateAndGetBrandAsync(request.BrandId, cancellationToken);
+        await ValidateBrandAsync(request.BrandId, cancellationToken);
 
-        Subcategory subcategory = await ValidateAndGetSubcategoryAsync(request.SubcategoryId, cancellationToken);
+        await ValidateSubcategoryAsync(request.SubcategoryId, cancellationToken);
 
         Product newProduct = new()
         {
-            Brand = brand,
+            BrandId = request.BrandId,
             Name = request.Name,
-            ProductOptions = request.ProductOptions,
-            Subcategory = subcategory
+            ProductOptions = request.ProductOptions.ToList(),
+            SubcategoryId = request.SubcategoryId
         };
 
         IEnumerable<ProductColor> distinctProductColors =
@@ -45,8 +45,10 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
 
         await _productColorsRepository.InsertAsync(distinctProductColors, cancellationToken);
 
-        request.ProductOptions.ForEach(x =>
-            x.ProductColor = distinctProductColors.Single(c => c.ColorHex == x.ProductColor.ColorHex));
+        foreach (ProductOption item in request.ProductOptions)
+        {
+            item.ProductColor = distinctProductColors.Single(c => c.ColorHex == item.ProductColor.ColorHex);
+        }
 
         try
         {
@@ -72,31 +74,23 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
         }
     }
 
-    private async Task<Brand> ValidateAndGetBrandAsync(long brandId, CancellationToken cancellationToken = default)
+    private async Task ValidateBrandAsync(long brandId, CancellationToken cancellationToken = default)
     {
-        Brand? brand = await _brandsRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == brandId,
-            cancellationToken: cancellationToken);
-
-        if (brand is null)
+        bool brandExists = await _brandsRepository.ExistsAsync(x => x.Id == brandId, cancellationToken);
+        if (!brandExists)
         {
             throw new EntityNotFoundException($"{nameof(Brand)} with id:{brandId} doesn't exist.");
         }
-
-        return brand;
     }
 
-    private async Task<Subcategory> ValidateAndGetSubcategoryAsync(long subcategoryId,
+    private async Task ValidateSubcategoryAsync(long subcategoryId,
         CancellationToken cancellationToken = default)
     {
-        Subcategory? subcategory = await _subcategoriesRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Id == subcategoryId,
-            cancellationToken: cancellationToken);
+        bool subcategoryExists = await _subcategoriesRepository.ExistsAsync(x => x.Id == subcategoryId, cancellationToken);
 
-        if (subcategory is null)
+        if (!subcategoryExists)
         {
             throw new EntityNotFoundException($"{nameof(Subcategory)} with id:{subcategoryId} doesn't exist.");
         }
-
-        return subcategory;
     }
 }

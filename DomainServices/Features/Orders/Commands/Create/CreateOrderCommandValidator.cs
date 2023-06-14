@@ -10,7 +10,7 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
             .InclusiveBetween(1, long.MaxValue)
             .WithMessage(x => $"{nameof(x.UserId)} out of possible range.");
 
-        RuleForEach(x => x.ProductOptionsIdsAndQuantity)
+        RuleForEach(x => x.OrderItemsDtos)
             .ChildRules(x =>
             {
                 x.RuleFor(c => c.ProductOptionId)

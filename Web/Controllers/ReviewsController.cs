@@ -48,7 +48,7 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        DeleteReviewCommand? command = new DeleteReviewCommand(id);
+        DeleteReviewCommand command = new DeleteReviewCommand(id);
         await _mediator.Send(command);
         return Ok();
     }

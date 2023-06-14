@@ -8,6 +8,6 @@ public class ProductColorDTOMapperConfiguration : Profile
 {
     public ProductColorDTOMapperConfiguration()
     {
-        CreateMap<ProductColorDTO, ProductColor>();
+        CreateMap<ProductColorDto, ProductColor>();
     }
 }

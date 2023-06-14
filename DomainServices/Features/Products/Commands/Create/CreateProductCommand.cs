@@ -8,5 +8,5 @@ public class CreateProductCommand : IRequest<Product>
     public long BrandId { get; init; }
     public long SubcategoryId { get; init; }
     public string Name { get; init; }
-    public List<ProductOption> ProductOptions { get; init; } = new();
+    public ICollection<ProductOption> ProductOptions { get; init; } = new List<ProductOption>();
 }

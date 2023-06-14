@@ -24,22 +24,20 @@ public class OrdersService : IOrdersService
         _ordersRepository = ordersRepository;
     }
 
-    public async Task<Order> CreateOrder(long userId, ICollection<ProductOptionIdAndQuantity> productOptionsIdsAndQuantity, CancellationToken cancellationToken = default)
+    public async Task<Order> CreateOrder(long userId, ICollection<OrderItemDto> productOptionsIdsAndQuantity, CancellationToken cancellationToken = default)
     {
-        User user = await ValidateAndGetOrderInitiator(userId, cancellationToken);
+        await ValidateOrderInitiator(userId, cancellationToken);
 
-        List<OrderedProductOption> productOptionsToOrder =
-        await ValidateAndCreateOrderedProductsOptions(productOptionsIdsAndQuantity, cancellationToken);
-        DecrementQuantityInRepository(productOptionsToOrder);
+        List<OrderItem> orderItems = await ValidateAndCreateOrderedProductsOptions(productOptionsIdsAndQuantity, cancellationToken);
 
         OrderStatus orderStatus = (await _orderStatusesRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Name == OrderStatusName.InReview,
-            cancellationToken: cancellationToken))!;
+                                    predicate: x => x.Name == OrderStatusName.InReview,
+                                    cancellationToken: cancellationToken))!;
 
         Order newOrder = new()
         {
-            User = user,
-            OrderedProductsOptionsInfo = productOptionsToOrder,
+            UserId = userId,
+            OrderedProductsOptionsInfo = orderItems,
             DateTime = DateTime.UtcNow,
             OrderStatus = orderStatus
         };
@@ -58,25 +56,21 @@ public class OrdersService : IOrdersService
         }
     }
 
-    public async Task UpdateOrder(long orderId, ICollection<ProductOptionIdAndQuantity> productOptionsIdsAndQuantity, CancellationToken cancellationToken = default)
+    public async Task UpdateOrder(long orderId, ICollection<OrderItemDto> orderItemsDtos, CancellationToken cancellationToken = default)
     {
         Order order = await ValidateAndGetOrderToUpdateAsync(orderId, cancellationToken);
 
-        UpdateExistingOrderedProductOptions(order, productOptionsIdsAndQuantity);
+        UpdateExistingOrderedProductOptions(order, orderItemsDtos);
 
-        List<OrderedProductOption> existingProductOptions =
-            await ValidateAndGetOrderedProductOptionsAsync(productOptionsIdsAndQuantity, cancellationToken);
+        List<OrderItem> existingProductOptions =
+            await ValidateAndGetOrderedProductOptionsAsync(orderItemsDtos, cancellationToken);
 
-        IEnumerable<OrderedProductOption> productOptionsToAdd =
+        IEnumerable<OrderItem> productOptionsToAdd =
             existingProductOptions.Except(order.OrderedProductsOptionsInfo, new OrderedProductOptionEqualityComparerByProductOptionId());
 
-        DecrementQuantityInRepository(productOptionsToAdd);
-
-        IEnumerable<OrderedProductOption> productOptionsToRemove =
+        IEnumerable<OrderItem> productOptionsToRemove =
             order.OrderedProductsOptionsInfo
                 .Except(order.OrderedProductsOptionsInfo, new OrderedProductOptionEqualityComparerByProductOptionId());
-
-        IncrementQuantityInRepository(productOptionsToRemove);
 
         order.OrderedProductsOptionsInfo.RemoveAll(productOption => productOptionsToRemove.Contains(productOption));
 
@@ -85,6 +79,9 @@ public class OrdersService : IOrdersService
         try
         {
             await _ordersRepository.SaveChangesAsync(cancellationToken);
+            DecrementQuantityInRepository(productOptionsToAdd);
+            IncrementQuantityInRepository(productOptionsToRemove);
+            await _productOptionsRepository.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateException)
         {
@@ -96,7 +93,7 @@ public class OrdersService : IOrdersService
     {
         Order order = await ValidateAndGetOrder(orderId, cancellationToken);
 
-        foreach (OrderedProductOption? item in order.OrderedProductsOptionsInfo)
+        foreach (OrderItem? item in order.OrderedProductsOptionsInfo)
         {
             item.ProductOption.Quantity += item.Amount;
         }
@@ -105,51 +102,49 @@ public class OrdersService : IOrdersService
             predicate: x => x.Name == OrderStatusName.Cancelled, cancellationToken: cancellationToken);
 
         await _ordersRepository.SaveChangesAsync(cancellationToken);
-
     }
 
-    private async Task<User> ValidateAndGetOrderInitiator(long userId, CancellationToken cancellationToken = default)
+    private async Task ValidateOrderInitiator(long userId, CancellationToken cancellationToken = default)
     {
-        User? user = await _usersRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == userId,
-            cancellationToken: cancellationToken);
+        bool userExists = await _usersRepository.ExistsAsync(x => x.Id == userId, cancellationToken);
 
-        if (user is null)
+        if (userExists)
         {
             throw new EntityNotFoundException($"{nameof(User)} with id:{userId} doesn't exist.");
         }
-
-        return user;
     }
 
-    private async Task<List<OrderedProductOption>> ValidateAndCreateOrderedProductsOptions(
-        ICollection<ProductOptionIdAndQuantity> productsOptionsIdAndQuantity,
+    private async Task<List<OrderItem>> ValidateAndCreateOrderedProductsOptions(
+        ICollection<OrderItemDto> orderItemsDtos,
         CancellationToken cancellationToken = default)
     {
         IList<ProductOption>? existingProductOptions =
             await _productOptionsRepository.GetAllAsync(predicate: productOption =>
-                    productsOptionsIdAndQuantity.Select(x => x.ProductOptionId).Contains(productOption.Id),
+                    orderItemsDtos.Select(x => x.ProductOptionId).Contains(productOption.Id),
                 cancellationToken: cancellationToken);
 
-        if (existingProductOptions.Count != productsOptionsIdAndQuantity.Count)
+        if (existingProductOptions.Count != orderItemsDtos.Count)
         {
-            throw new EntityNotFoundException("One of ProductOptionsIdsAndQuantity doesn't exist.");
+            IEnumerable<long> missingProductOptions = orderItemsDtos.Select(x=>x.ProductOptionId).Except(existingProductOptions.Select(x => x.Id));
+            string missingProductOptionsMessage = string.Join(',', missingProductOptions);
+            throw new EntityNotFoundException($"ProductOptions with ids:{missingProductOptionsMessage} doesn't exist.");
         }
 
         foreach (ProductOption? item in existingProductOptions)
         {
-            ProductOptionIdAndQuantity productOptionIdAndQuantity =
-                productsOptionsIdAndQuantity.Single(x => x.ProductOptionId == item.Id);
-            if (item.Quantity < productOptionIdAndQuantity.Quantity)
+            OrderItemDto orderItemDto =
+                orderItemsDtos.Single(x => x.ProductOptionId == item.Id);
+            if (item.Quantity < orderItemDto.Quantity)
             {
                 throw new ValidationException(new[]
                 {
-                    new ValidationFailure("Order.ProductOptionsIdsAndQuantity.Quantity",
-                        $"Requested quantity({productOptionIdAndQuantity.Quantity}) for ProductOption with id:{productOptionIdAndQuantity.ProductOptionId} is not available.")
+                    new ValidationFailure("Order.OrderItemsDtos.Quantity",
+                        $"Requested quantity({orderItemDto.Quantity}) for ProductOption with id:{orderItemDto.ProductOptionId} is not available.")
                 });
             }
         }
 
-        return productsOptionsIdAndQuantity.Select(x => new OrderedProductOption
+        return orderItemsDtos.Select(x => new OrderItem
         {
             ProductOptionId = x.ProductOptionId,
             ProductOption = existingProductOptions.Single(c => c.Id == x.ProductOptionId),
@@ -157,28 +152,28 @@ public class OrdersService : IOrdersService
         }).ToList();
     }
 
-    private void DecrementQuantityInRepository(IEnumerable<OrderedProductOption> orderedProductOptions)
+    private void DecrementQuantityInRepository(IEnumerable<OrderItem> orderedProductOptions)
     {
-        foreach (OrderedProductOption item in orderedProductOptions)
+        foreach (OrderItem item in orderedProductOptions)
         {
             item.ProductOption.Quantity -= item.Amount;
         }
     }
 
     private void UpdateExistingOrderedProductOptions(Order order,
-        IEnumerable<ProductOptionIdAndQuantity> productOptionsIdsAndQuantity)
+        IEnumerable<OrderItemDto> productOptionsIdsAndQuantity)
     {
-        foreach (OrderedProductOption? item in order.OrderedProductsOptionsInfo)
+        foreach (OrderItem? item in order.OrderedProductsOptionsInfo)
         {
-            ProductOptionIdAndQuantity updatedValue =
+            OrderItemDto updatedValue =
                 productOptionsIdsAndQuantity.Single(x => x.ProductOptionId == item.ProductOptionId);
             item.Amount = updatedValue.Quantity;
         }
     }
 
-    private void IncrementQuantityInRepository(IEnumerable<OrderedProductOption> abandonedProductOptions)
+    private void IncrementQuantityInRepository(IEnumerable<OrderItem> abandonedProductOptions)
     {
-        foreach (OrderedProductOption item in abandonedProductOptions)
+        foreach (OrderItem item in abandonedProductOptions)
         {
             item.ProductOption.Quantity += item.Amount;
         }
@@ -214,34 +209,37 @@ public class OrdersService : IOrdersService
         return order;
     }
 
-    private async Task<List<OrderedProductOption>> ValidateAndGetOrderedProductOptionsAsync(
-        IEnumerable<ProductOptionIdAndQuantity> productsOptionsIdAndQuantity, CancellationToken cancellationToken = default)
+    private async Task<List<OrderItem>> ValidateAndGetOrderedProductOptionsAsync(
+        IEnumerable<OrderItemDto> orderItemsDtos, CancellationToken cancellationToken = default)
     {
         IList<ProductOption>? existingProductOptions =
             await _productOptionsRepository.GetAllAsync(predicate: productOption =>
-                    productsOptionsIdAndQuantity.Select(x => x.ProductOptionId).Contains(productOption.Id),
+                    orderItemsDtos.Select(x => x.ProductOptionId).Contains(productOption.Id),
                 cancellationToken: cancellationToken);
 
-        if (existingProductOptions.Count != productsOptionsIdAndQuantity.Count())
+        if (existingProductOptions.Count != orderItemsDtos.Count())
         {
-            throw new EntityNotFoundException("One of ProductOptionsIdsAndQuantity doesn't exist.");
+            IEnumerable<long> missingProductOptions = orderItemsDtos.Select(x => x.ProductOptionId).Except(existingProductOptions.Select(x => x.Id));
+            string missingProductOptionsMessage = string.Join(',', missingProductOptions);
+            throw new EntityNotFoundException($"ProductOptions with ids:{missingProductOptionsMessage} doesn't exist.");
         }
 
         foreach (ProductOption? item in existingProductOptions)
         {
-            ProductOptionIdAndQuantity productOptionIdAndQuantity =
-                productsOptionsIdAndQuantity.Single(x => x.ProductOptionId == item.Id);
+            OrderItemDto productOptionIdAndQuantity =
+                orderItemsDtos.Single(x => x.ProductOptionId == item.Id);
             if (item.Quantity < productOptionIdAndQuantity.Quantity)
             {
                 throw new ValidationException(new[]
                 {
-                    new ValidationFailure("Order.ProductOptionsIdsAndQuantity.Quantity",
-                        $"Requested quantity({productOptionIdAndQuantity.Quantity}) for ProductOption with id:{productOptionIdAndQuantity.ProductOptionId} is not available.")
+                    new ValidationFailure("Order.OrderItemsDtos.Quantity",
+                        $"Requested quantity({productOptionIdAndQuantity.Quantity}) for ProductOption " +
+                        $"with id:{productOptionIdAndQuantity.ProductOptionId} is not available.")
                 });
             }
         }
 
-        return productsOptionsIdAndQuantity.Select(x => new OrderedProductOption
+        return orderItemsDtos.Select(x => new OrderItem
         {
             ProductOptionId = x.ProductOptionId,
             ProductOption = existingProductOptions.Single(c => c.Id == x.ProductOptionId),

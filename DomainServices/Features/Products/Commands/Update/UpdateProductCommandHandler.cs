@@ -17,8 +17,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
     private readonly IRepository<Subcategory> _subcategoriesRepository;
 
     public UpdateProductCommandHandler(IRepository<Product> productRepository, IRepository<Brand> brandsRepository,
-        IRepository<Subcategory> subcategoriesRepository, IRepository<ProductColor> productColorsRepository,
-        IRepository<ImageInfo> imageInfosRepository, IRepository<ProductOption> productOptionsRepository)
+        IRepository<Subcategory> subcategoriesRepository, IRepository<ProductColor> productColorsRepository)
     {
         _productRepository = productRepository;
         _brandsRepository = brandsRepository;
@@ -35,13 +34,13 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             await ValidateProductNameAsync(request.Name, cancellationToken);
         }
 
-        Brand brand = await ValidateAndGetBrandAsync(request.BrandId, cancellationToken);
-
-        Subcategory subcategory = await ValidateAndGetSubcategoryAsync(request.SubcategoryId, cancellationToken);
+        await ValidateBrandAsync(request.BrandId, cancellationToken);
+        
+        await ValidateSubcategoryAsync(request.SubcategoryId, cancellationToken);
 
         product.Name = request.Name;
-        product.Brand = brand;
-        product.Subcategory = subcategory;
+        product.BrandId = request.BrandId;
+        product.SubcategoryId = request.SubcategoryId;
 
         await ApplyProductOptionsAsync(product, request.ProductOptions, cancellationToken);
 
@@ -87,33 +86,25 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             });
         }
     }
-
-    private async Task<Brand> ValidateAndGetBrandAsync(long brandId, CancellationToken cancellationToken = default)
+    
+    private async Task ValidateBrandAsync(long brandId, CancellationToken cancellationToken = default)
     {
-        Brand? brand = await _brandsRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == brandId,
-            cancellationToken: cancellationToken);
-
-        if (brand is null)
+        bool brandExists = await _brandsRepository.ExistsAsync(x => x.Id == brandId, cancellationToken);
+        if (!brandExists)
         {
             throw new EntityNotFoundException($"{nameof(Brand)} with id:{brandId} doesn't exist.");
         }
-
-        return brand;
     }
 
-    private async Task<Subcategory> ValidateAndGetSubcategoryAsync(long subcategoryId,
-        CancellationToken cancellationToken = default)
+    private async Task ValidateSubcategoryAsync(long subcategoryId,
+                                                CancellationToken cancellationToken = default)
     {
-        Subcategory? subcategory = await _subcategoriesRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Id == subcategoryId,
-            cancellationToken: cancellationToken);
+        bool subcategoryExists = await _subcategoriesRepository.ExistsAsync(x => x.Id == subcategoryId, cancellationToken);
 
-        if (subcategory is null)
+        if (!subcategoryExists)
         {
             throw new EntityNotFoundException($"{nameof(Subcategory)} with id:{subcategoryId} doesn't exist.");
         }
-
-        return subcategory;
     }
 
     private async Task DeleteUnusedProductColors(CancellationToken cancellationToken = default)
@@ -188,7 +179,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         }
     }
 
-    private async Task ApplyProductOptionsAsync(Product product, List<ProductOption> modifiedProductOptions,
+    private async Task ApplyProductOptionsAsync(Product product, ICollection<ProductOption> modifiedProductOptions,
         CancellationToken cancellationToken = default)
     {
         ModifyExistingProductOptions(product.ProductOptions, modifiedProductOptions);

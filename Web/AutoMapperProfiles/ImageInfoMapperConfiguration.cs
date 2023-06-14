@@ -8,6 +8,6 @@ public class ImageInfoMapperConfiguration : Profile
 {
     public ImageInfoMapperConfiguration()
     {
-        CreateMap<ImageInfoDTO, ImageInfo>();
+        CreateMap<ImageInfoDto, ImageInfo>();
     }
 }

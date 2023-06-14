@@ -23,6 +23,7 @@ public class Startup
         services.AddMediatRServices();
         services.AddCustomRepositories();
         services.AddAutoMapper();
+        services.AddCustomServices();
         services.AddScoped<GlobalExceptionHandlingMiddleware>();
     }
 

@@ -1,9 +1,9 @@
 ﻿using ApplicationCore.Entities;
 
 namespace ApplicationCore.EqualityComparers;
-public class OrderedProductOptionEqualityComparerByProductOptionId : IEqualityComparer<OrderedProductOption>
+public class OrderedProductOptionEqualityComparerByProductOptionId : IEqualityComparer<OrderItem>
 {
-    public bool Equals(OrderedProductOption? x, OrderedProductOption? y)
+    public bool Equals(OrderItem? x, OrderItem? y)
     {
         if (ReferenceEquals(x, y))
         {
@@ -28,7 +28,7 @@ public class OrderedProductOptionEqualityComparerByProductOptionId : IEqualityCo
         return x.ProductOptionId == y.ProductOptionId;
     }
 
-    public int GetHashCode(OrderedProductOption obj)
+    public int GetHashCode(OrderItem obj)
     {
         return obj.ProductOptionId.GetHashCode();
     }

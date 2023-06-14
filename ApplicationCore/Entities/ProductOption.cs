@@ -11,5 +11,5 @@ public class ProductOption : StorableEntity
     public string Size { get; set; }
     public int Quantity { get; set; }
     public decimal Price { get; set; }
-    public virtual List<OrderedProductOption> OrderedProductOptions { get; init; } = new();
+    public virtual List<OrderItem> OrderedProductOptions { get; init; } = new();
 }

@@ -8,6 +8,6 @@ public class ProductOptionDTOMapperConfiguration : Profile
 {
     public ProductOptionDTOMapperConfiguration()
     {
-        CreateMap<ProductOptionDTO, ProductOption>();
+        CreateMap<ProductOptionDto, ProductOption>();
     }
 }

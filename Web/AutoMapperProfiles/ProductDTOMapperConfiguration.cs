@@ -9,7 +9,7 @@ public class ProductDTOMapperConfiguration : Profile
 {
     public ProductDTOMapperConfiguration()
     {
-        CreateMap<ProductDTO, CreateProductCommand>();
-        CreateMap<ProductDTO, UpdateProductCommand>();
+        CreateMap<ProductDto, CreateProductCommand>();
+        CreateMap<ProductDto, UpdateProductCommand>();
     }
 }

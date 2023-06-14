@@ -9,5 +9,5 @@ public class UpdateProductCommand : IRequest<Unit>
     public long BrandId { get; init; }
     public long SubcategoryId { get; init; }
     public string Name { get; init; }
-    public virtual List<ProductOption> ProductOptions { get; init; } = new();
+    public virtual ICollection<ProductOption> ProductOptions { get; init; } = new List<ProductOption>();
 }

@@ -26,7 +26,7 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Order>>> GetAll()
     {
-        GetAllOrdersQuery? query = new GetAllOrdersQuery();
+        GetAllOrdersQuery query = new GetAllOrdersQuery();
         IEnumerable<Order> orders = await _mediator.Send(query);
         return Ok(orders);
     }
@@ -38,7 +38,7 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Order>> GetById([FromRoute] long id)
     {
-        GetOrderByIdQuery? query = new GetOrderByIdQuery(id);
+        GetOrderByIdQuery query = new GetOrderByIdQuery(id);
         Order order = await _mediator.Send(query);
         return Ok(order);
     }
@@ -72,7 +72,7 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        CancelOrderCommand? command = new CancelOrderCommand(id);
+        CancelOrderCommand command = new CancelOrderCommand(id);
         await _mediator.Send(command);
         return Ok();
     }
