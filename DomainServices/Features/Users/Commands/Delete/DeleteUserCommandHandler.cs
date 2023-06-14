@@ -28,7 +28,7 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Unit>
     private async Task<User> ValidateAndGetUser(long userId, CancellationToken cancellationToken = default)
     {
         User? user = await _usersRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == userId,
-                                                                   cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken);
 
         if (user is null)
         {

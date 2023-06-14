@@ -12,24 +12,20 @@ internal class BrandEntityTypeConfiguration
     {
         builder.ToTable("brands");
         builder.HasKey(x => x.Id);
-
         builder.Property(x => x.Id)
-               .HasColumnName("id")
-               .IsRequired()
-               .ValueGeneratedOnAdd()
-               .Metadata
-               .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
-
+            .HasColumnName("id")
+            .IsRequired()
+            .ValueGeneratedOnAdd()
+            .Metadata
+            .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
         builder.HasIndex(x => x.Name)
-               .IsUnique();
-
+            .IsUnique();
         builder.Property(x => x.Name)
-               .HasColumnName("name")
-               .IsRequired();
-
+            .HasColumnName("name")
+            .IsRequired();
         builder.HasMany(x => x.Products)
-               .WithOne(x => x.Brand)
-               .HasForeignKey(x => x.BrandId)
-               .IsRequired();
+            .WithOne(x => x.Brand)
+            .HasForeignKey(x => x.BrandId)
+            .IsRequired();
     }
 }

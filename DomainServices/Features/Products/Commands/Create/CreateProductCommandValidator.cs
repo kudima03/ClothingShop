@@ -16,32 +16,29 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProductComm
             .ChildRules(x =>
             {
                 x.RuleFor(c => c.Quantity)
-                 .InclusiveBetween(1, int.MaxValue);
-
+                    .InclusiveBetween(1, int.MaxValue);
                 x.RuleFor(c => c.Price)
-                 .InclusiveBetween(1, decimal.MaxValue);
-
+                    .InclusiveBetween(1, decimal.MaxValue);
                 x.RuleFor(c => c.Size)
-                 .NotNull()
-                 .NotEmpty();
-
+                    .NotNull()
+                    .NotEmpty();
                 x.RuleFor(c => c.ProductColor)
-                 .NotNull()
-                 .ChildRules(v =>
-                 {
-                     v.RuleFor(b => b.ColorHex)
-                      .NotNull()
-                      .NotEmpty();
+                    .NotNull()
+                    .ChildRules(v =>
+                    {
+                        v.RuleFor(b => b.ColorHex)
+                            .NotNull()
+                            .NotEmpty();
 
-                     v.RuleForEach(n => n.ImagesInfos)
-                      .NotNull()
-                      .ChildRules(a =>
-                      {
-                          a.RuleFor(s => s.Url)
-                           .NotNull()
-                           .NotEmpty();
-                      });
-                 });
+                        v.RuleForEach(n => n.ImagesInfos)
+                            .NotNull()
+                            .ChildRules(a =>
+                            {
+                                a.RuleFor(s => s.Url)
+                                    .NotNull()
+                                    .NotEmpty();
+                            });
+                    });
             });
     }
 }

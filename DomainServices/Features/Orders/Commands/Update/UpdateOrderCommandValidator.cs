@@ -18,12 +18,12 @@ public class UpdateOrderCommandValidator : AbstractValidator<UpdateOrderCommand>
             .ChildRules(c =>
             {
                 c.RuleFor(v => v.ProductOptionId)
-                 .InclusiveBetween(1, long.MaxValue)
-                 .WithMessage("ProductOptionId id out of possible range.");
+                    .InclusiveBetween(1, long.MaxValue)
+                    .WithMessage("ProductOptionId id out of possible range.");
 
                 c.RuleFor(v => v.Quantity)
-                 .InclusiveBetween(1, int.MaxValue)
-                 .WithMessage("Quantity out of possible range.");
+                    .InclusiveBetween(1, int.MaxValue)
+                    .WithMessage("Quantity out of possible range.");
             });
     }
 }

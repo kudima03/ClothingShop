@@ -3,4 +3,6 @@ using MediatR;
 
 namespace DomainServices.Features.Users.Queries.GetAll;
 
-public class GetAllUsersQuery : IRequest<IEnumerable<User>> { }
+public class GetAllUsersQuery : IRequest<IEnumerable<User>>
+{
+}

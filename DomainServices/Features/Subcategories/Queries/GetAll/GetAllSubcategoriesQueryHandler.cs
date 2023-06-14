@@ -14,7 +14,7 @@ internal class GetAllSubcategoriesQueryHandler : IRequestHandler<GetAllSubcatego
     }
 
     public async Task<IEnumerable<Subcategory>> Handle(GetAllSubcategoriesQuery request,
-                                                       CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
         return await _subcategoriesRepository.GetAllAsync(cancellationToken);
     }

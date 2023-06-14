@@ -19,11 +19,12 @@ public class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerComman
     {
         CustomerInfo? customerInfo =
             await _customersInfoRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.Id,
-                                                                  cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken);
 
         if (customerInfo is null)
         {
-            throw new EntityNotFoundException($"{nameof(CustomerInfo)} with id:{request.Id} doesn't exist.");
+            throw new EntityNotFoundException(
+                $"{nameof(CustomerInfo)} with id:{request.Id} doesn't exist.");
         }
 
         customerInfo.Name = request.Name;
@@ -38,8 +39,8 @@ public class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerComman
         }
         catch (DbUpdateException)
         {
-            throw new
-                OperationFailureException($"Unable to perform create {nameof(CustomerInfo)} operation. Check input.");
+            throw new OperationFailureException(
+                $"Unable to perform create {nameof(CustomerInfo)} operation. Check input.");
         }
 
         return Unit.Value;

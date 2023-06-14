@@ -26,9 +26,8 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Section>>> GetAll()
     {
-        GetAllSectionsQuery query = new();
+        GetAllSectionsQuery query = new GetAllSectionsQuery();
         IEnumerable<Section> sections = await _mediator.Send(query);
-
         return Ok(sections);
     }
 
@@ -39,9 +38,8 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Section>> GetById([FromRoute] long id)
     {
-        GetSectionByIdQuery query = new(id);
+        GetSectionByIdQuery query = new GetSectionByIdQuery(id);
         Section section = await _mediator.Send(query);
-
         return Ok(section);
     }
 
@@ -53,7 +51,6 @@ public class SectionsController : ControllerBase
     public async Task<ActionResult> Create([FromBody] CreateSectionCommand createCommand)
     {
         Section createdSection = await _mediator.Send(createCommand);
-
         return Ok(createdSection.Id);
     }
 
@@ -66,7 +63,6 @@ public class SectionsController : ControllerBase
     public async Task<ActionResult> Update([FromBody] UpdateSectionCommand updateCommand)
     {
         await _mediator.Send(updateCommand);
-
         return Ok();
     }
 
@@ -76,9 +72,8 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        DeleteSectionCommand command = new(id);
+        DeleteSectionCommand command = new DeleteSectionCommand(id);
         await _mediator.Send(command);
-
         return Ok();
     }
 }

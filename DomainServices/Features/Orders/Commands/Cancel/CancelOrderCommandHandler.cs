@@ -12,10 +12,10 @@ public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, Uni
         _ordersService = ordersService;
     }
 
+
     public async Task<Unit> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
     {
         await _ordersService.CancelOrder(request.Id, cancellationToken);
-
         return Unit.Value;
     }
 }

@@ -15,8 +15,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
 
     public async Task<Order> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        return await _ordersService.CreateOrder(request.UserId,
-                                                request.OrderItemsDtos,
-                                                cancellationToken);
+        return await _ordersService.CreateOrder(request.UserId, request.OrderItemsDtos,
+            cancellationToken);
     }
 }

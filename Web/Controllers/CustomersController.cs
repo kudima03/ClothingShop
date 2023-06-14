@@ -25,7 +25,6 @@ public class CustomersController : ControllerBase
     public async Task<ActionResult> Update([FromBody] UpdateCustomerCommand updateCommand)
     {
         await _mediator.Send(updateCommand);
-
         return Ok();
     }
 }

@@ -1,7 +1,6 @@
 ﻿using ApplicationCore.Entities;
 
 namespace ApplicationCore.EqualityComparers;
-
 public class ImageInfoEqualityComparerById : IEqualityComparer<ImageInfo>
 {
     public bool Equals(ImageInfo? x, ImageInfo? y)

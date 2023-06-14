@@ -41,10 +41,10 @@ public class UpdateSectionCommandHandler : IRequestHandler<UpdateSectionCommand,
     }
 
     private async Task<Section> ValidateAndGetSectionAsync(long sectionId,
-                                                           CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default)
     {
         Section? section = await _sectionRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == sectionId,
-                                                                           cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken);
 
         if (section is null)
         {
@@ -57,13 +57,9 @@ public class UpdateSectionCommandHandler : IRequestHandler<UpdateSectionCommand,
     private async Task ValidateSectionNameAsync(string name, CancellationToken cancellationToken = default)
     {
         bool nameExists = await _sectionRepository.ExistsAsync(x => x.Name == name, cancellationToken);
-
         if (nameExists)
         {
-            throw new ValidationException(new[]
-            {
-                new ValidationFailure("Brand.Name", "Such brand already exists!")
-            });
+            throw new ValidationException(new[] { new ValidationFailure("Brand.Name", "Such brand already exists!") });
         }
     }
 }

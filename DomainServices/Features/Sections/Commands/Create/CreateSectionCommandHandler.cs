@@ -30,7 +30,6 @@ public class CreateSectionCommandHandler : IRequestHandler<CreateSectionCommand,
         {
             Section? section = await _sectionsRepository.InsertAsync(newSection, cancellationToken);
             await _sectionsRepository.SaveChangesAsync(cancellationToken);
-
             return section;
         }
         catch (DbUpdateException)

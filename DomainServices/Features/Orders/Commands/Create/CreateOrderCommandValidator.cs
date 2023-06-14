@@ -14,12 +14,12 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
             .ChildRules(x =>
             {
                 x.RuleFor(c => c.ProductOptionId)
-                 .InclusiveBetween(1, long.MaxValue)
-                 .WithMessage(x => $"{nameof(x.ProductOptionId)} out of possible range.");
+                    .InclusiveBetween(1, long.MaxValue)
+                    .WithMessage(x => $"{nameof(x.ProductOptionId)} out of possible range.");
 
                 x.RuleFor(c => c.Quantity)
-                 .InclusiveBetween(1, int.MaxValue)
-                 .WithMessage(x => $"{nameof(x.Quantity)} out of possible range.");
+                    .InclusiveBetween(1, int.MaxValue)
+                    .WithMessage(x => $"{nameof(x.Quantity)} out of possible range.");
             });
     }
 }

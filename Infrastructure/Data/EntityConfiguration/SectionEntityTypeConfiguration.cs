@@ -12,25 +12,21 @@ internal class SectionEntityTypeConfiguration
     {
         builder.ToTable("sections");
         builder.HasKey(x => x.Id);
-
         builder.Property(x => x.Id)
-               .HasColumnName("id")
-               .IsRequired()
-               .ValueGeneratedOnAdd()
-               .Metadata
-               .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
-
+            .HasColumnName("id")
+            .IsRequired()
+            .ValueGeneratedOnAdd()
+            .Metadata
+            .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
         builder.HasIndex(x => x.Name)
-               .IsUnique();
-
+            .IsUnique();
         builder.Property(x => x.Name)
-               .HasColumnName("name")
-               .IsRequired();
-
+            .HasColumnName("name")
+            .IsRequired();
         builder.HasMany(x => x.Categories)
-               .WithMany(x => x.Sections)
-               .UsingEntity("sections_categories",
-                            l => l.HasOne(typeof(Section)).WithMany().HasForeignKey("section_id"),
-                            r => r.HasOne(typeof(Category)).WithMany().HasForeignKey("category_id"));
+            .WithMany(x => x.Sections)
+            .UsingEntity("sections_categories",
+                l => l.HasOne(typeof(Section)).WithMany().HasForeignKey("section_id"),
+                r => r.HasOne(typeof(Category)).WithMany().HasForeignKey("category_id"));
     }
 }

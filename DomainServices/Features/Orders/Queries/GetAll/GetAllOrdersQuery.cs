@@ -3,4 +3,6 @@ using MediatR;
 
 namespace DomainServices.Features.Orders.Queries.GetAll;
 
-public class GetAllOrdersQuery : IRequest<IEnumerable<Order>> { }
+public class GetAllOrdersQuery : IRequest<IEnumerable<Order>>
+{
+}

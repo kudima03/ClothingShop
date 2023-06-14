@@ -17,11 +17,8 @@ public class Startup
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-
-        services.AddControllers()
-                .AddJsonOptions(options =>
-                                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-
+        services.AddControllers().AddJsonOptions(options =>
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
         services.AddCustomDbContext(Configuration);
         services.AddMediatRServices();
         services.AddCustomRepositories();

@@ -19,8 +19,8 @@ public class GetSectionByIdQueryHandler : IRequestHandler<GetSectionByIdQuery, S
     public async Task<Section> Handle(GetSectionByIdQuery request, CancellationToken cancellationToken)
     {
         Section? section = await _sectionsRepository
-                                 .ApplySpecification(new SectionWithCategories(x => x.Id == request.Id))
-                                 .FirstOrDefaultAsync(cancellationToken);
+            .ApplySpecification(new SectionWithCategories(x => x.Id == request.Id))
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (section is null)
         {

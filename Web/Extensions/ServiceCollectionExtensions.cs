@@ -64,32 +64,27 @@ public static class ServiceCollectionExtensions
     public static void AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddEntityFrameworkNpgsql()
-                .AddDbContext<DbContext, ShopContext>(options =>
-                {
-                    options.UseNpgsql(configuration["ConnectionStrings:ShopConnection"],
-                                      sqlOptions =>
-                                      {
-                                          sqlOptions.MigrationsAssembly(typeof(ShopContext).GetTypeInfo()
-                                                                            .Assembly.GetName()
-                                                                            .Name);
-
-                                          sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
-                                      });
-                });
+            .AddDbContext<DbContext, ShopContext>(options =>
+            {
+                options.UseNpgsql(configuration["ConnectionStrings:ShopConnection"],
+                    sqlOptions =>
+                    {
+                        sqlOptions.MigrationsAssembly(typeof(ShopContext).GetTypeInfo().Assembly.GetName().Name);
+                        sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
+                    });
+            });
     }
 
     public static void AddMediatRServices(this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
-
         services.AddMediatR(options =>
         {
             options.RegisterServicesFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
         });
-
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
     }
-
+    
     public static void AddCustomServices(this IServiceCollection services)
     {
         services.AddScoped<IOrdersService, OrdersService>();

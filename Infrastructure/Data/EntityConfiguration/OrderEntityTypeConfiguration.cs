@@ -11,34 +11,28 @@ internal class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
     {
         builder.ToTable("order");
         builder.HasKey(x => x.Id);
-
         builder.Property(x => x.Id)
-               .HasColumnName("id")
-               .IsRequired()
-               .ValueGeneratedOnAdd()
-               .Metadata
-               .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
-
+            .HasColumnName("id")
+            .IsRequired()
+            .ValueGeneratedOnAdd()
+            .Metadata
+            .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
         builder.Property(x => x.UserId)
-               .HasColumnName("user_id")
-               .IsRequired();
-
+            .HasColumnName("user_id")
+            .IsRequired();
         builder.Property(x => x.OrderStatusId)
-               .HasColumnName("order_status_id")
-               .IsRequired();
-
+            .HasColumnName("order_status_id")
+            .IsRequired();
         builder.Property(x => x.DateTime)
-               .HasColumnName("date_time")
-               .IsRequired();
-
+            .HasColumnName("date_time")
+            .IsRequired();
         builder.HasOne(x => x.User)
-               .WithMany(x => x.Orders)
-               .HasForeignKey(x => x.UserId)
-               .IsRequired();
-
+            .WithMany(x => x.Orders)
+            .HasForeignKey(x => x.UserId)
+            .IsRequired();
         builder.HasMany(x => x.OrderedProductsOptionsInfo)
-               .WithOne(x => x.Order)
-               .HasForeignKey(x => x.OrderId)
-               .IsRequired();
+            .WithOne(x => x.Order)
+            .HasForeignKey(x => x.OrderId)
+            .IsRequired();
     }
 }

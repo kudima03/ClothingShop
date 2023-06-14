@@ -19,9 +19,8 @@ public class GetCustomerByIdQueryHandler : IRequestHandler<GetCustomerByIdQuery,
     public async Task<CustomerInfo> Handle(GetCustomerByIdQuery request, CancellationToken cancellationToken)
     {
         CustomerInfo? customer = await _customersInfoRepository
-                                       .ApplySpecification(new CustomerInfoWithUser(customerInfo =>
-                                                               customerInfo.Id == request.Id))
-                                       .FirstOrDefaultAsync(cancellationToken);
+            .ApplySpecification(new CustomerInfoWithUser(customerInfo => customerInfo.Id == request.Id))
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (customer is null)
         {

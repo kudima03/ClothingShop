@@ -14,9 +14,9 @@ public class GetProductsByBrandIdQueryHandler : IRequestHandler<GetProductsByBra
     }
 
     public async Task<IEnumerable<Product>> Handle(GetProductsByBrandIdQuery request,
-                                                   CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
         return await _repository.GetAllAsync(predicate: x => x.BrandId == request.BrandId,
-                                             cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken);
     }
 }

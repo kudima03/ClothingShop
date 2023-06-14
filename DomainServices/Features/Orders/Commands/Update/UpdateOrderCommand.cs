@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Interfaces;
+﻿using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
 using MediatR;
 
 namespace DomainServices.Features.Orders.Commands.Update;

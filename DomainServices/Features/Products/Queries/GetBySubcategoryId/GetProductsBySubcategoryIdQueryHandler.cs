@@ -15,9 +15,9 @@ public class
     }
 
     public async Task<IEnumerable<Product>> Handle(GetProductsBySubcategoryIdQuery request,
-                                                   CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
         return await _productsRepository.GetAllAsync(predicate: x => x.SubcategoryId == request.SubcategoryId,
-                                                     cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken);
     }
 }

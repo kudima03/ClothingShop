@@ -2,5 +2,7 @@
 
 public class OperationFailureException : Exception
 {
-    public OperationFailureException(string message) : base(message) { }
+    public OperationFailureException(string message) : base(message)
+    {
+    }
 }
