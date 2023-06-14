@@ -19,6 +19,6 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
         RuleFor(x => x.UserTypeId)
             .InclusiveBetween(1, long.MaxValue)
             .WithMessage(x =>
-                $"{nameof(x.UserTypeId)} must be greater than 0.");
+                             $"{nameof(x.UserTypeId)} must be greater than 0.");
     }
 }

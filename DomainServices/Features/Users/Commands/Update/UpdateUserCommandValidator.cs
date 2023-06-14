@@ -19,6 +19,6 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
         RuleFor(x => x.UserTypeId)
             .GreaterThan(0)
             .WithMessage(x =>
-                $"{nameof(x.UserTypeId)} must be greater than 0.");
+                             $"{nameof(x.UserTypeId)} must be greater than 0.");
     }
 }

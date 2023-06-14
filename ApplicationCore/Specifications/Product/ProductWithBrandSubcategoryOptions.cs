@@ -7,12 +7,10 @@ public class ProductWithBrandSubcategoryOptions : Specification<Entities.Product
 {
     public ProductWithBrandSubcategoryOptions(Expression<Func<Entities.Product, bool>>? predicate = null)
         : base(x => x,
-            predicate,
-            x => x.OrderBy(c => c.Name),
-            x =>
-                x.Include(z => z.Brand)
+               predicate,
+               x => x.OrderBy(c => c.Name),
+               x =>
+                   x.Include(z => z.Brand)
                     .Include(z => z.ProductOptions)
-                    .Include(z => z.Subcategory))
-    {
-    }
+                    .Include(z => z.Subcategory)) { }
 }

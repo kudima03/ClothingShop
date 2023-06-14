@@ -18,10 +18,12 @@ public class OrderedProductOptionInfoEntityTypeConfiguration : IEntityTypeConfig
 
         builder.Property(x => x.Amount).HasColumnName("amount").IsRequired();
 
-        builder.HasOne(x => x.ProductOption).WithMany(x => x.OrderedProductOptions)
-            .HasForeignKey(x => x.ProductOptionId);
+        builder.HasOne(x => x.ProductOption)
+               .WithMany(x => x.OrderedProductOptions)
+               .HasForeignKey(x => x.ProductOptionId);
 
-        builder.HasOne(x => x.Order).WithMany(x => x.OrderedProductsOptionsInfo)
-            .HasForeignKey(x => x.OrderId);
+        builder.HasOne(x => x.Order)
+               .WithMany(x => x.OrderedProductsOptionsInfo)
+               .HasForeignKey(x => x.OrderId);
     }
 }

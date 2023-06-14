@@ -14,7 +14,7 @@ public class GetAllCustomersQueryHandler : IRequestHandler<GetAllCustomersQuery,
     }
 
     public async Task<IEnumerable<CustomerInfo>> Handle(GetAllCustomersQuery request,
-        CancellationToken cancellationToken)
+                                                        CancellationToken cancellationToken)
     {
         return await _customersRepository.GetAllAsync(cancellationToken);
     }

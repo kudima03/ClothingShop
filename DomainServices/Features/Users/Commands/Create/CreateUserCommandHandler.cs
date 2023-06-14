@@ -44,6 +44,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, User>
         {
             CustomerInfo? customerInfo = await _customersRepository.InsertAsync(newCustomerInfo, cancellationToken);
             await _customersRepository.SaveChangesAsync(cancellationToken);
+
             return customerInfo.User;
         }
         catch (DbUpdateException)
@@ -55,9 +56,13 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, User>
     private async Task ValidateEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         bool emailExists = await _userRepository.ExistsAsync(x => x.Email == email, cancellationToken);
+
         if (emailExists)
         {
-            throw new ValidationException(new[] { new ValidationFailure("Brand.Name", "Such brand already exists!") });
+            throw new ValidationException(new[]
+            {
+                new ValidationFailure("Brand.Name", "Such brand already exists!")
+            });
         }
     }
 }

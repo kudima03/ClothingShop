@@ -9,27 +9,35 @@ internal class CustomerInfoEntityTypeConfiguration : IEntityTypeConfiguration<Cu
     public void Configure(EntityTypeBuilder<CustomerInfo> builder)
     {
         builder.ToTable("customers_info");
+
         builder.HasOne(x => x.User)
-            .WithOne()
-            .IsRequired();
+               .WithOne()
+               .IsRequired();
+
         builder.HasKey(x => x.Id);
+
         builder.Property(x => x.UserId)
-            .HasColumnName("user_id")
-            .IsRequired();
+               .HasColumnName("user_id")
+               .IsRequired();
+
         builder.Property(x => x.Name)
-            .HasColumnName("name")
-            .IsRequired(false);
+               .HasColumnName("name")
+               .IsRequired(false);
+
         builder.Property(x => x.Surname)
-            .HasColumnName("surname")
-            .IsRequired(false);
+               .HasColumnName("surname")
+               .IsRequired(false);
+
         builder.Property(x => x.Patronymic)
-            .HasColumnName("patronymic")
-            .IsRequired(false);
+               .HasColumnName("patronymic")
+               .IsRequired(false);
+
         builder.Property(x => x.Address)
-            .HasColumnName("address")
-            .IsRequired(false);
+               .HasColumnName("address")
+               .IsRequired(false);
+
         builder.Property(x => x.Phone)
-            .HasColumnName("phone")
-            .IsRequired(false);
+               .HasColumnName("phone")
+               .IsRequired(false);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ApplicationCore.Entities;
 
 namespace ApplicationCore.EqualityComparers;
+
 public class ProductOptionEqualityComparerById : IEqualityComparer<ProductOption>
 {
     public bool Equals(ProductOption? x, ProductOption? y)

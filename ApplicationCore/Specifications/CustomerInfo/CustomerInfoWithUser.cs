@@ -7,8 +7,6 @@ public class CustomerInfoWithUser : Specification<Entities.CustomerInfo, Entitie
 {
     public CustomerInfoWithUser(Expression<Func<Entities.CustomerInfo, bool>>? predicate = null)
         : base(x => x,
-            predicate,
-            include: x => x.Include(c => c.User))
-    {
-    }
+               predicate,
+               include: x => x.Include(c => c.User)) { }
 }

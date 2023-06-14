@@ -30,6 +30,7 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, R
         {
             Review? review = await _repository.InsertAsync(newReview, cancellationToken);
             await _repository.SaveChangesAsync(cancellationToken);
+
             return review;
         }
         catch (DbUpdateException)

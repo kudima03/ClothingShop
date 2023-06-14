@@ -37,7 +37,7 @@ public class UpdateReviewCommandHandler : IRequestHandler<UpdateReviewCommand, U
     private async Task<Review> ValidateAndGetReviewAsync(long reviewId, CancellationToken cancellationToken = default)
     {
         Review? review = await _repository.GetFirstOrDefaultAsync(predicate: x => x.Id == reviewId,
-            cancellationToken: cancellationToken);
+                                                                  cancellationToken: cancellationToken);
 
         if (review is null)
         {

@@ -7,10 +7,7 @@ public class ProductColorWithImagesInfos : Specification<Entities.ProductColor, 
 {
     public ProductColorWithImagesInfos(Expression<Func<Entities.ProductColor, bool>>? predicate = null)
         : base(x => x,
-            predicate,
-            include: colors => colors
-                .Include(productColor => productColor.ImagesInfos)
-        )
-    {
-    }
+               predicate,
+               include: colors => colors
+                   .Include(productColor => productColor.ImagesInfos)) { }
 }

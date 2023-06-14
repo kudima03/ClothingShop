@@ -26,8 +26,9 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Subcategory>>> GetAll()
     {
-        GetAllSubcategoriesQuery query = new GetAllSubcategoriesQuery();
+        GetAllSubcategoriesQuery query = new();
         IEnumerable<Subcategory> subcategories = await _mediator.Send(query);
+
         return Ok(subcategories);
     }
 
@@ -38,8 +39,9 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<Subcategory>> GetById([FromRoute] long id)
     {
-        GetSubcategoryByIdQuery query = new GetSubcategoryByIdQuery(id);
+        GetSubcategoryByIdQuery query = new(id);
         Subcategory subcategory = await _mediator.Send(query);
+
         return Ok(subcategory);
     }
 
@@ -51,6 +53,7 @@ public class SubcategoriesController : ControllerBase
     public async Task<ActionResult> Create([FromBody] CreateSubcategoryCommand createCommand)
     {
         Subcategory createdCategory = await _mediator.Send(createCommand);
+
         return Ok(createdCategory.Id);
     }
 
@@ -63,6 +66,7 @@ public class SubcategoriesController : ControllerBase
     public async Task<ActionResult> Update([FromBody] UpdateSubcategoryCommand updateCommand)
     {
         await _mediator.Send(updateCommand);
+
         return Ok();
     }
 
@@ -72,8 +76,9 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        DeleteSubcategoryCommand command = new DeleteSubcategoryCommand(id);
+        DeleteSubcategoryCommand command = new(id);
         await _mediator.Send(command);
+
         return Ok();
     }
 }

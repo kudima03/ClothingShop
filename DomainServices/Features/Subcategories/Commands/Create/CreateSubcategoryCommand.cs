@@ -6,5 +6,6 @@ namespace DomainServices.Features.Subcategories.Commands.Create;
 public class CreateSubcategoryCommand : IRequest<Subcategory>
 {
     public string Name { get; init; }
+
     public ICollection<long> CategoriesIds { get; init; }
 }

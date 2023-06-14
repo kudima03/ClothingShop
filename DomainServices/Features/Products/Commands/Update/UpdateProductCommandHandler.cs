@@ -16,8 +16,10 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
     private readonly IRepository<Product> _productRepository;
     private readonly IRepository<Subcategory> _subcategoriesRepository;
 
-    public UpdateProductCommandHandler(IRepository<Product> productRepository, IRepository<Brand> brandsRepository,
-        IRepository<Subcategory> subcategoriesRepository, IRepository<ProductColor> productColorsRepository)
+    public UpdateProductCommandHandler(IRepository<Product> productRepository,
+                                       IRepository<Brand> brandsRepository,
+                                       IRepository<Subcategory> subcategoriesRepository,
+                                       IRepository<ProductColor> productColorsRepository)
     {
         _productRepository = productRepository;
         _brandsRepository = brandsRepository;
@@ -35,7 +37,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         }
 
         await ValidateBrandAsync(request.BrandId, cancellationToken);
-        
+
         await ValidateSubcategoryAsync(request.SubcategoryId, cancellationToken);
 
         product.Name = request.Name;
@@ -61,11 +63,11 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
     private async Task<Product> ValidateAndGetProduct(long productId, CancellationToken cancellationToken = default)
     {
         Product? product = await
-            _productRepository.GetFirstOrDefaultAsync(x => x.Id == productId,
-                x => x.Include(c => c.ProductOptions)
-                    .ThenInclude(c => c.ProductColor)
-                    .ThenInclude(c => c.ImagesInfos),
-                cancellationToken);
+                               _productRepository.GetFirstOrDefaultAsync(x => x.Id == productId,
+                                                                         x => x.Include(c => c.ProductOptions)
+                                                                               .ThenInclude(c => c.ProductColor)
+                                                                               .ThenInclude(c => c.ImagesInfos),
+                                                                         cancellationToken);
 
         if (product is null)
         {
@@ -78,6 +80,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
     private async Task ValidateProductNameAsync(string name, CancellationToken cancellationToken = default)
     {
         bool nameExists = await _productRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+
         if (nameExists)
         {
             throw new ValidationException(new[]
@@ -86,10 +89,11 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             });
         }
     }
-    
+
     private async Task ValidateBrandAsync(long brandId, CancellationToken cancellationToken = default)
     {
         bool brandExists = await _brandsRepository.ExistsAsync(x => x.Id == brandId, cancellationToken);
+
         if (!brandExists)
         {
             throw new EntityNotFoundException($"{nameof(Brand)} with id:{brandId} doesn't exist.");
@@ -99,7 +103,8 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
     private async Task ValidateSubcategoryAsync(long subcategoryId,
                                                 CancellationToken cancellationToken = default)
     {
-        bool subcategoryExists = await _subcategoriesRepository.ExistsAsync(x => x.Id == subcategoryId, cancellationToken);
+        bool subcategoryExists =
+            await _subcategoriesRepository.ExistsAsync(x => x.Id == subcategoryId, cancellationToken);
 
         if (!subcategoryExists)
         {
@@ -109,18 +114,20 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
 
     private async Task DeleteUnusedProductColors(CancellationToken cancellationToken = default)
     {
-        IList<ProductColor>? productColorsToRemove = await _productColorsRepository.GetAllAsync(
-            predicate: x => x.ProductOptions.Count == 0,
-            cancellationToken: cancellationToken);
+        IList<ProductColor>? productColorsToRemove =
+            await _productColorsRepository.GetAllAsync(predicate: x => x.ProductOptions.Count == 0,
+                                                       cancellationToken: cancellationToken);
+
         _productColorsRepository.Delete(productColorsToRemove);
     }
 
     private void CreateOrUpdateRelatedImages(ProductColor productColor,
-        IEnumerable<ImageInfo> modifiedImagesInfos)
+                                             IEnumerable<ImageInfo> modifiedImagesInfos)
     {
         foreach (ImageInfo? item in productColor.ImagesInfos)
         {
             ImageInfo? modifiedImageInfo = modifiedImagesInfos.FirstOrDefault(x => x.Id == item.Id && x.Id != 0);
+
             if (modifiedImageInfo is not null)
             {
                 item.Url = modifiedImageInfo.Url;
@@ -138,8 +145,9 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         productColor.ImagesInfos.AddRange(imagesToAdd);
     }
 
-    private async Task CreateOrUpdateRelatedProductColors(Product product, IEnumerable<ProductOption> productOptions,
-        CancellationToken cancellationToken)
+    private async Task CreateOrUpdateRelatedProductColors(Product product,
+                                                          IEnumerable<ProductOption> productOptions,
+                                                          CancellationToken cancellationToken)
     {
         List<ProductColor> existingProductColors =
             product.ProductOptions.Select(x => x.ProductColor).DistinctBy(x => x.Id).ToList();
@@ -153,6 +161,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             {
                 ProductColor? newProductColor =
                     await _productColorsRepository.InsertAsync(item.ProductColor, cancellationToken);
+
                 existingProductColors.Add(newProductColor);
                 item.ProductColor = newProductColor;
             }
@@ -165,11 +174,12 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
     }
 
     private void ModifyExistingProductOptions(IEnumerable<ProductOption> existingProductOptions,
-        IEnumerable<ProductOption> modifiedProductOptions)
+                                              IEnumerable<ProductOption> modifiedProductOptions)
     {
         foreach (ProductOption item in existingProductOptions)
         {
             ProductOption? modifiedProductOption = modifiedProductOptions.SingleOrDefault(x => x.Id == item.Id);
+
             if (modifiedProductOption is not null)
             {
                 item.Quantity = modifiedProductOption.Quantity;
@@ -179,15 +189,18 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         }
     }
 
-    private async Task ApplyProductOptionsAsync(Product product, ICollection<ProductOption> modifiedProductOptions,
-        CancellationToken cancellationToken = default)
+    private async Task ApplyProductOptionsAsync(Product product,
+                                                ICollection<ProductOption> modifiedProductOptions,
+                                                CancellationToken cancellationToken = default)
     {
         ModifyExistingProductOptions(product.ProductOptions, modifiedProductOptions);
 
         IEnumerable<ProductOption> optionsToAdd = modifiedProductOptions.Where(x => x.Id == 0).ToList();
 
         IEnumerable<ProductOption> optionsToRemove = product.ProductOptions
-            .Except(modifiedProductOptions, new ProductOptionEqualityComparerById()).ToList();
+                                                            .Except(modifiedProductOptions,
+                                                                    new ProductOptionEqualityComparerById())
+                                                            .ToList();
 
         await CreateOrUpdateRelatedProductColors(product, modifiedProductOptions, cancellationToken);
 
@@ -195,8 +208,4 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
 
         product.ProductOptions.RemoveAll(productOption => optionsToRemove.Contains(productOption));
     }
-
-    
-
-    
 }

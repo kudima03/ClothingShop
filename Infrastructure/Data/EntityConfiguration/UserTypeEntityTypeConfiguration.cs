@@ -11,18 +11,21 @@ internal class UserTypeEntityTypeConfiguration : IEntityTypeConfiguration<UserTy
     {
         builder.ToTable("user_types");
         builder.HasKey(x => x.Id);
+
         builder.Property(x => x.Id)
-            .HasColumnName("id")
-            .IsRequired()
-            .ValueGeneratedOnAdd()
-            .Metadata
-            .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+               .HasColumnName("id")
+               .IsRequired()
+               .ValueGeneratedOnAdd()
+               .Metadata
+               .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
         builder.Property(x => x.Name)
-            .HasColumnName("name")
-            .IsRequired();
+               .HasColumnName("name")
+               .IsRequired();
+
         builder.HasMany(x => x.Users)
-            .WithOne(x => x.UserType)
-            .HasForeignKey(x => x.UserTypeId)
-            .IsRequired();
+               .WithOne(x => x.UserType)
+               .HasForeignKey(x => x.UserTypeId)
+               .IsRequired();
     }
 }

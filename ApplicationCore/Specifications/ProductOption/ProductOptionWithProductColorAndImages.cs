@@ -7,10 +7,8 @@ public class ProductOptionWithProductColorAndImages : Specification<Entities.Pro
 {
     public ProductOptionWithProductColorAndImages(Expression<Func<Entities.ProductOption, bool>>? predicate = null)
         : base(productOption => productOption,
-            predicate,
-            include: productOptions =>
-                productOptions.Include(productOption => productOption.ProductColor)
-                    .Include(productOption => productOption.ProductColor.ImagesInfos))
-    {
-    }
+               predicate,
+               include: productOptions =>
+                   productOptions.Include(productOption => productOption.ProductColor)
+                                 .Include(productOption => productOption.ProductColor.ImagesInfos)) { }
 }

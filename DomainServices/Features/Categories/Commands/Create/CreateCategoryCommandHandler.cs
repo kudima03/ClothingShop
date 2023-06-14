@@ -12,7 +12,8 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
     private readonly IRepository<Category> _categoriesRepository;
     private readonly IRepository<Section> _sectionsRepository;
 
-    public CreateCategoryCommandHandler(IRepository<Category> categoriesRepository, IRepository<Section> sectionsRepository)
+    public CreateCategoryCommandHandler(IRepository<Category> categoriesRepository,
+                                        IRepository<Section> sectionsRepository)
     {
         _categoriesRepository = categoriesRepository;
         _sectionsRepository = sectionsRepository;
@@ -38,14 +39,17 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
     }
 
     private async Task<List<Section>> ValidateAndGetSectionsAsync(ICollection<long> sectionsIds,
-        CancellationToken cancellationToken = default)
+                                                                  CancellationToken cancellationToken = default)
     {
         IList<Section>? existingSections = await _sectionsRepository
-            .GetAllAsync(predicate: x => sectionsIds.Contains(x.Id), cancellationToken: cancellationToken);
+                                               .GetAllAsync(predicate: x => sectionsIds.Contains(x.Id),
+                                                            cancellationToken: cancellationToken);
+
         if (existingSections.Count != sectionsIds.Count)
         {
             IEnumerable<long> missingSectionsIds = sectionsIds.Except(existingSections.Select(x => x.Id));
             string missingSectionsMessage = string.Join(',', missingSectionsIds);
+
             throw new EntityNotFoundException($"Sections with ids:{missingSectionsMessage} doesn't exist.");
         }
 

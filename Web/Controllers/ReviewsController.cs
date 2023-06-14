@@ -27,6 +27,7 @@ public class ReviewsController : ControllerBase
     public async Task<ActionResult> Create([FromBody] CreateReviewCommand createCommand)
     {
         Review createdReview = await _mediator.Send(createCommand);
+
         return Ok(createdReview.Id);
     }
 
@@ -39,6 +40,7 @@ public class ReviewsController : ControllerBase
     public async Task<ActionResult> Update([FromBody] UpdateReviewCommand updateCommand)
     {
         await _mediator.Send(updateCommand);
+
         return Ok();
     }
 
@@ -48,8 +50,9 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        DeleteReviewCommand command = new DeleteReviewCommand(id);
+        DeleteReviewCommand command = new(id);
         await _mediator.Send(command);
+
         return Ok();
     }
 }

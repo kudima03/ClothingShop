@@ -3,6 +3,4 @@ using MediatR;
 
 namespace DomainServices.Features.Categories.Queries.GetAll;
 
-public class GetAllCategoriesQuery : IRequest<IEnumerable<Category>>
-{
-}
+public class GetAllCategoriesQuery : IRequest<IEnumerable<Category>> { }

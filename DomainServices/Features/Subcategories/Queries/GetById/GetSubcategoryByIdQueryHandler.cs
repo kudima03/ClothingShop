@@ -16,9 +16,9 @@ public class GetSubcategoryByIdQueryHandler : IRequestHandler<GetSubcategoryById
 
     public async Task<Subcategory> Handle(GetSubcategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        Subcategory? subcategory = await _subcategoriesRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Id == request.Id,
-            cancellationToken: cancellationToken);
+        Subcategory? subcategory =
+            await _subcategoriesRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.Id,
+                                                                  cancellationToken: cancellationToken);
 
         if (subcategory is null)
         {

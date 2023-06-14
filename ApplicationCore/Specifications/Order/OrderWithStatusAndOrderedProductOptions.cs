@@ -7,10 +7,8 @@ public class OrderWithStatusAndOrderedProductOptions : Specification<Entities.Or
 {
     public OrderWithStatusAndOrderedProductOptions(Expression<Func<Entities.Order, bool>>? predicate = null)
         : base(order => order,
-            predicate,
-            include: orders => orders
-                .Include(order => order.OrderStatus)
-                .Include(order => order.OrderedProductsOptionsInfo))
-    {
-    }
+               predicate,
+               include: orders => orders
+                                  .Include(order => order.OrderStatus)
+                                  .Include(order => order.OrderedProductsOptionsInfo)) { }
 }

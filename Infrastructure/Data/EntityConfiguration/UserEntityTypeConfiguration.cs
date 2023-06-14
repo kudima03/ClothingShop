@@ -11,28 +11,35 @@ internal class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
     {
         builder.ToTable("users");
         builder.HasKey(x => x.Id);
+
         builder.Property(x => x.Id)
-            .HasColumnName("id")
-            .ValueGeneratedOnAdd()
-            .Metadata
-            .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+               .HasColumnName("id")
+               .ValueGeneratedOnAdd()
+               .Metadata
+               .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
         builder.Property(x => x.UserTypeId)
-            .HasColumnName("user_type_id")
-            .IsRequired();
+               .HasColumnName("user_type_id")
+               .IsRequired();
+
         builder.HasIndex(x => x.Email)
-            .IsUnique();
+               .IsUnique();
+
         builder.Property(x => x.Email)
-            .HasColumnName("email")
-            .IsRequired();
+               .HasColumnName("email")
+               .IsRequired();
+
         builder.Property(x => x.Password)
-            .HasColumnName("password")
-            .IsRequired();
+               .HasColumnName("password")
+               .IsRequired();
+
         builder.Property(x => x.DeletionDateTime)
-            .HasColumnName("deletion_date_time")
-            .IsRequired(false);
+               .HasColumnName("deletion_date_time")
+               .IsRequired(false);
+
         builder.HasOne(x => x.UserType)
-            .WithMany(x => x.Users)
-            .HasForeignKey(x => x.UserTypeId)
-            .IsRequired();
+               .WithMany(x => x.Users)
+               .HasForeignKey(x => x.UserTypeId)
+               .IsRequired();
     }
 }
