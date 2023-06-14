@@ -25,7 +25,7 @@ internal class CategoryEntityTypeConfiguration : IEntityTypeConfiguration<Catego
         builder
             .HasMany(x => x.Subcategories)
             .WithMany(x => x.Categories)
-            .UsingEntity("category_subcategories",
+            .UsingEntity("categories_subcategories",
                 l => l.HasOne(typeof(Category)).WithMany().HasForeignKey("category_id"),
                 r => r.HasOne(typeof(Subcategory)).WithMany().HasForeignKey("subcategory_id"));
 

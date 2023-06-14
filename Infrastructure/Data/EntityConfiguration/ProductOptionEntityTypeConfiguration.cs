@@ -9,7 +9,7 @@ internal class ProductOptionEntityTypeConfiguration : IEntityTypeConfiguration<P
 {
     public void Configure(EntityTypeBuilder<ProductOption> builder)
     {
-        builder.ToTable("product_option");
+        builder.ToTable("product_options");
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)
             .HasColumnName("id")
