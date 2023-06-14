@@ -1,6 +1,5 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
-using AutoMapper;
 using DomainServices.Behaviors;
 using DomainServices.Services;
 using FluentValidation;
@@ -9,7 +8,6 @@ using Infrastructure.EntityRepository;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using Web.AutoMapperProfiles;
 
 namespace Web.Extensions;
 
@@ -86,19 +84,7 @@ public static class ServiceCollectionExtensions
         });
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
     }
-
-    public static void AddAutoMapper(this IServiceCollection services)
-    {
-        services.AddAutoMapper(x =>
-        {
-            x.AddProfiles(new Profile[]
-            {
-                new ImageInfoMapperConfiguration(), new ProductColorDTOMapperConfiguration(),
-                new ProductDTOMapperConfiguration(), new ProductOptionDTOMapperConfiguration()
-            });
-        });
-    }
-
+    
     public static void AddCustomServices(this IServiceCollection services)
     {
         services.AddScoped<IOrdersService, OrdersService>();

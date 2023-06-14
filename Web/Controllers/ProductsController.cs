@@ -1,5 +1,4 @@
 ﻿using ApplicationCore.Entities;
-using AutoMapper;
 using DomainServices.Features.Products.Commands.Create;
 using DomainServices.Features.Products.Commands.Delete;
 using DomainServices.Features.Products.Commands.Update;
@@ -10,7 +9,6 @@ using DomainServices.Features.Products.Queries.GetBySubcategoryId;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
-using Web.DTOs;
 
 namespace Web.Controllers;
 
@@ -19,12 +17,10 @@ namespace Web.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly IMapper _mapper;
 
-    public ProductsController(IMediator mediator, IMapper mapper)
+    public ProductsController(IMediator mediator)
     {
         _mediator = mediator;
-        _mapper = mapper;
     }
 
     [HttpGet]
@@ -78,9 +74,8 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> CreateProduct([FromBody] ProductDto product)
+    public async Task<ActionResult> CreateProduct([FromBody] CreateProductCommand createCommand)
     {
-        CreateProductCommand createCommand = _mapper.Map<CreateProductCommand>(product);
         Product createdProduct = await _mediator.Send(createCommand);
         return Ok(createdProduct.Id);
     }
@@ -91,9 +86,8 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> UpdateProduct([FromBody] ProductDto product)
+    public async Task<ActionResult> UpdateProduct([FromBody] UpdateProductCommand updateCommand)
     {
-        UpdateProductCommand updateCommand = _mapper.Map<UpdateProductCommand>(product);
         await _mediator.Send(updateCommand);
         return Ok();
     }

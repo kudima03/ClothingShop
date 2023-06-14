@@ -22,7 +22,6 @@ public class Startup
         services.AddCustomDbContext(Configuration);
         services.AddMediatRServices();
         services.AddCustomRepositories();
-        services.AddAutoMapper();
         services.AddCustomServices();
         services.AddScoped<GlobalExceptionHandlingMiddleware>();
     }

@@ -127,7 +127,7 @@ public class OrdersService : IOrdersService
         {
             IEnumerable<long> missingProductOptions = orderItemsDtos.Select(x=>x.ProductOptionId).Except(existingProductOptions.Select(x => x.Id));
             string missingProductOptionsMessage = string.Join(',', missingProductOptions);
-            throw new EntityNotFoundException($"ProductOptions with ids:{missingProductOptionsMessage} doesn't exist.");
+            throw new EntityNotFoundException($"ProductOptionsDtos with ids:{missingProductOptionsMessage} doesn't exist.");
         }
 
         foreach (ProductOption? item in existingProductOptions)
@@ -221,7 +221,7 @@ public class OrdersService : IOrdersService
         {
             IEnumerable<long> missingProductOptions = orderItemsDtos.Select(x => x.ProductOptionId).Except(existingProductOptions.Select(x => x.Id));
             string missingProductOptionsMessage = string.Join(',', missingProductOptions);
-            throw new EntityNotFoundException($"ProductOptions with ids:{missingProductOptionsMessage} doesn't exist.");
+            throw new EntityNotFoundException($"ProductOptionsDtos with ids:{missingProductOptionsMessage} doesn't exist.");
         }
 
         foreach (ProductOption? item in existingProductOptions)

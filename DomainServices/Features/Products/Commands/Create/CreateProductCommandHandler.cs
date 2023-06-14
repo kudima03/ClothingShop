@@ -16,7 +16,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
     private readonly IRepository<Subcategory> _subcategoriesRepository;
 
     public CreateProductCommandHandler(IRepository<Product> productsRepository, IRepository<Brand> brandsRepository,
-        IRepository<Subcategory> subcategoriesRepository, IRepository<ProductColor> productColorsRepository)
+                                       IRepository<Subcategory> subcategoriesRepository, IRepository<ProductColor> productColorsRepository)
     {
         _productsRepository = productsRepository;
         _brandsRepository = brandsRepository;
@@ -32,20 +32,40 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
 
         await ValidateSubcategoryAsync(request.SubcategoryId, cancellationToken);
 
+        List<ProductOption> productOptions = request.ProductOptionsDtos.Select(x => new ProductOption
+        {
+            Id = x.Id,
+            Price = x.Price,
+            Quantity = x.Quantity,
+            Size = x.Size,
+            ProductColorId = x.ProductColorId,
+            ProductColor = new ProductColor()
+            {
+                Id = x.ProductColorId,
+                ColorHex = x.ProductColor.ColorHex,
+                ImagesInfos = x.ProductColor.ImagesInfos.Select(c => new ImageInfo()
+                {
+                    Id = c.Id,
+                    ProductColorId = x.ProductColorId,
+                    Url = c.Url
+                }).ToList()
+            }
+        }).ToList();
+
         Product newProduct = new()
         {
             BrandId = request.BrandId,
             Name = request.Name,
-            ProductOptions = request.ProductOptions.ToList(),
-            SubcategoryId = request.SubcategoryId
+            SubcategoryId = request.SubcategoryId,
+            ProductOptions = productOptions
         };
 
         IEnumerable<ProductColor> distinctProductColors =
-            request.ProductOptions.Select(x => x.ProductColor).DistinctBy(x => x.ColorHex);
+            newProduct.ProductOptions.Select(x => x.ProductColor).DistinctBy(x => x.ColorHex);
 
         await _productColorsRepository.InsertAsync(distinctProductColors, cancellationToken);
 
-        foreach (ProductOption item in request.ProductOptions)
+        foreach (ProductOption item in newProduct.ProductOptions)
         {
             item.ProductColor = distinctProductColors.Single(c => c.ColorHex == item.ProductColor.ColorHex);
         }
