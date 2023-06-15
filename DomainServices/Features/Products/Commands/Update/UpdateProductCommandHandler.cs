@@ -42,7 +42,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         product.BrandId = request.BrandId;
         product.SubcategoryId = request.SubcategoryId;
 
-        await ApplyProductOptionsAsync(product, request.ProductOptions, cancellationToken);
+        await ApplyProductOptionsAsync(product, request.ProductOptionsDto, cancellationToken);
 
         try
         {

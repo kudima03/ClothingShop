@@ -11,7 +11,7 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProductComm
             .NotEmpty()
             .WithMessage(x => $"{nameof(x.Name)} cannot be null or empty");
 
-        RuleForEach(x => x.ProductOptions)
+        RuleForEach(x => x.ProductOptionsDto)
             .NotNull()
             .ChildRules(x =>
             {

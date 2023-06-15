@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DomainServices.Features.Products.Commands;
+﻿namespace DomainServices.Features.Products.Commands;
 public static class CreateUpdateProductCommandsDtos
 {
     public class ImageInfoDto
