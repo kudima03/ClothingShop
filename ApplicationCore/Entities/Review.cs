@@ -1,9 +1,10 @@
 ﻿#nullable enable
+using ApplicationCore.Entities.BaseEntity;
+
 namespace ApplicationCore.Entities;
 
-public class Review
+public class Review : StorableEntity
 {
-    public long Id { get; set; }
     public int Rate { get; set; }
     public DateTime DateTime { get; set; }
     public string? Comment { get; set; }

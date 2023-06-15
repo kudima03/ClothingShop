@@ -1,5 +1,5 @@
-# Remove the line below if you want to inherit .editorconfig settings from higher directories
 root = true
+# Remove the line below if you want to inherit .editorconfig settings from higher directories
 
 # C# files
 [*.cs]
@@ -20,7 +20,7 @@ insert_final_newline = false
 # Organize usings
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = false
-file_header_template = unset
+file_header_template = 
 
 # this. and Me. preferences
 dotnet_style_qualification_for_event = false
@@ -254,3 +254,81 @@ dotnet_style_require_accessibility_modifiers = for_non_interface_members:silent
 dotnet_style_allow_statement_immediately_after_block_experimental = true:silent
 dotnet_style_allow_multiple_blank_lines_experimental = false:silent
 dotnet_code_quality_unused_parameters = all:suggestion
+
+[*]
+
+# Microsoft .NET properties
+csharp_new_line_before_members_in_object_initializers = true
+
+# ReSharper properties
+resharper_align_first_arg_by_paren = true
+resharper_align_linq_query = true
+resharper_align_multiline_binary_patterns = true
+resharper_align_multiline_calls_chain = true
+resharper_align_multiline_expression = true
+resharper_align_multiline_extends_list = true
+resharper_align_multiline_parameter = true
+resharper_align_multiline_switch_expression = true
+resharper_align_multiple_declaration = true
+resharper_align_multline_type_parameter_constrains = true
+resharper_align_multline_type_parameter_list = true
+resharper_align_tuple_components = true
+resharper_blank_lines_after_multiline_statements = 1
+resharper_blank_lines_after_start_comment = 0
+resharper_blank_lines_around_accessor = 1
+resharper_blank_lines_around_single_line_auto_property = 1
+resharper_blank_lines_around_single_line_local_method = 1
+resharper_blank_lines_around_single_line_property = 1
+resharper_blank_lines_around_single_line_type = 2
+resharper_blank_lines_before_block_statements = 1
+resharper_blank_lines_before_control_transfer_statements = 1
+resharper_blank_lines_before_multiline_statements = 1
+resharper_blank_lines_before_single_line_comment = 1
+resharper_csharp_alignment_tab_fill_style = optimal_fill
+resharper_csharp_blank_lines_around_single_line_invocable = 1
+resharper_csharp_keep_blank_lines_in_code = 1
+resharper_csharp_keep_blank_lines_in_declarations = 1
+resharper_csharp_stick_comment = false
+resharper_csharp_wrap_arguments_style = chop_if_long
+resharper_csharp_wrap_parameters_style = chop_if_long
+resharper_empty_block_style = together_same_line
+resharper_indent_anonymous_method_block = false
+resharper_indent_nested_fixed_stmt = true
+resharper_indent_nested_foreach_stmt = true
+resharper_indent_nested_for_stmt = true
+resharper_indent_nested_lock_stmt = true
+resharper_indent_nested_usings_stmt = true
+resharper_indent_nested_while_stmt = true
+resharper_indent_preprocessor_region = no_indent
+resharper_int_align_comments = true
+resharper_int_align_switch_expressions = true
+resharper_int_align_switch_sections = true
+resharper_keep_existing_declaration_parens_arrangement = false
+resharper_keep_existing_embedded_arrangement = false
+resharper_keep_existing_expr_member_arrangement = false
+resharper_keep_existing_invocation_parens_arrangement = false
+resharper_keep_existing_list_patterns_arrangement = false
+resharper_keep_existing_property_patterns_arrangement = false
+resharper_keep_existing_switch_expression_arrangement = false
+resharper_max_array_initializer_elements_on_line = 1
+resharper_max_enum_members_on_line = 1
+resharper_max_formal_parameters_on_line = 3
+resharper_max_initializer_elements_on_line = 1
+resharper_max_invocation_arguments_on_line = 6
+resharper_place_accessorholder_attribute_on_same_line = false
+resharper_place_accessor_attribute_on_same_line = false
+resharper_place_expr_accessor_on_single_line = true
+resharper_place_expr_method_on_single_line = true
+resharper_place_expr_property_on_single_line = true
+resharper_place_field_attribute_on_same_line = false
+resharper_place_linq_into_on_new_line = false
+resharper_place_simple_enum_on_single_line = true
+resharper_place_simple_initializer_on_single_line = false
+resharper_place_simple_property_pattern_on_single_line = false
+resharper_wrap_array_initializer_style = chop_always
+resharper_wrap_chained_binary_expressions = chop_if_long
+resharper_wrap_chained_binary_patterns = chop_if_long
+resharper_wrap_chained_method_calls = chop_if_long
+resharper_wrap_list_pattern = chop_if_long
+resharper_wrap_object_and_collection_initializer_style = chop_always
+resharper_wrap_property_pattern = chop_always

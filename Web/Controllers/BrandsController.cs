@@ -1,7 +1,10 @@
 ﻿using ApplicationCore.Entities;
-using DomainServices.Services.Interfaces;
-using FluentValidation;
-using FluentValidation.Results;
+using DomainServices.Features.Brands.Commands.Create;
+using DomainServices.Features.Brands.Commands.Delete;
+using DomainServices.Features.Brands.Commands.Update;
+using DomainServices.Features.Brands.Queries.GetAll;
+using DomainServices.Features.Brands.Queries.GetById;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -11,107 +14,66 @@ namespace Web.Controllers;
 [Route("[controller]")]
 public class BrandsController : ControllerBase
 {
-    private readonly IBrandsService _brandsService;
-    private readonly IValidator<Brand> _brandValidator;
+    private readonly IMediator _mediator;
 
-    public BrandsController(IBrandsService brandsService, IValidator<Brand> brandValidator)
+    public BrandsController(IMediator mediator)
     {
-        _brandsService = brandsService;
-        _brandValidator = brandValidator;
+        _mediator = mediator;
     }
 
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Brand>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<Brand>>> GetAllBrands()
+    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult<IEnumerable<Brand>>> GetAll()
     {
-        return Ok(await _brandsService.GetAllBrandsAsync());
+        GetAllBrandsQuery query = new GetAllBrandsQuery();
+        IEnumerable<Brand> brands = await _mediator.Send(query);
+        return Ok(brands);
     }
 
     [HttpGet("{id:long}")]
-    [ProducesResponseType(typeof(IEnumerable<Brand>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Brand), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<Brand>>> GetBrandById([FromRoute] long id)
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult<Brand>> GetById([FromRoute] long id)
     {
-        if (id < 0)
-        {
-            return BadRequest("Id cannot be less than zero.");
-        }
-
-        Brand? brand = await _brandsService.GetBrandByIdAsync(id);
-
-        if (brand is null)
-        {
-            return BadRequest($"Brand with id:{id} doesn't exist.");
-        }
-
+        GetBrandByIdQuery query = new GetBrandByIdQuery(id);
+        Brand brand = await _mediator.Send(query);
         return Ok(brand);
     }
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> CreateBrand([FromBody] Brand brand)
+    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult> Create([FromBody] CreateBrandCommand createCommand)
     {
-        ValidationResult validationResult = await _brandValidator.ValidateAsync(brand);
-
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(validationResult.ToString());
-        }
-
-        brand.Id = 0;
-
-        await _brandsService.CreateBrandAsync(brand);
-
-        return Ok();
+        Brand createdBrand = await _mediator.Send(createCommand);
+        return Ok(createdBrand.Id);
     }
 
     [HttpPut]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> UpdateBrand([FromBody] Brand brand)
+    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult> Update([FromBody] UpdateBrandCommand updateCommand)
     {
-        ValidationResult validationResult = await _brandValidator.ValidateAsync(brand);
-
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(validationResult.ToString());
-        }
-
-        if (await _brandsService.GetBrandByIdAsync(brand.Id) is null)
-        {
-            return BadRequest($"Brand with id:{brand.Id} doesn't exist.");
-        }
-
-        await _brandsService.UpdateBrandAsync(brand);
-
+        await _mediator.Send(updateCommand);
         return Ok();
     }
 
     [HttpDelete("{id:long}")]
-    [ProducesResponseType(typeof(IEnumerable<Brand>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> DeleteBrand([FromRoute] long id)
+    [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult> Delete([FromRoute] long id)
     {
-        if (id < 0)
-        {
-            return BadRequest("Id cannot be less than zero.");
-        }
-
-        Brand? brand = await _brandsService.GetBrandByIdAsync(id);
-
-        if (brand is null)
-        {
-            return BadRequest($"Brand with id:{id} doesn't exist.");
-        }
-
-        await _brandsService.DeleteBrandAsync(brand);
-
+        DeleteBrandCommand command = new DeleteBrandCommand(id);
+        await _mediator.Send(command);
         return Ok();
     }
 }

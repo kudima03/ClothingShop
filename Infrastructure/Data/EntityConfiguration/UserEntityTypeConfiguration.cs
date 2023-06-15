@@ -19,12 +19,17 @@ internal class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.UserTypeId)
             .HasColumnName("user_type_id")
             .IsRequired();
+        builder.HasIndex(x => x.Email)
+            .IsUnique();
         builder.Property(x => x.Email)
             .HasColumnName("email")
             .IsRequired();
         builder.Property(x => x.Password)
             .HasColumnName("password")
             .IsRequired();
+        builder.Property(x => x.DeletionDateTime)
+            .HasColumnName("deletion_date_time")
+            .IsRequired(false);
         builder.HasOne(x => x.UserType)
             .WithMany(x => x.Users)
             .HasForeignKey(x => x.UserTypeId)

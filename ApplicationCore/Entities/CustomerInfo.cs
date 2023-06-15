@@ -1,7 +1,9 @@
 ﻿#nullable enable
+using ApplicationCore.Entities.BaseEntity;
+
 namespace ApplicationCore.Entities;
 
-public class CustomerInfo
+public class CustomerInfo : StorableEntity
 {
     public long UserId { get; set; }
     public virtual User User { get; set; }

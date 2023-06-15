@@ -1,12 +1,13 @@
-﻿using ApplicationCore.Interfaces;
+﻿using ApplicationCore.Entities.BaseEntity;
+using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace Infrastructure.EntityRepository;
 
-public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEntity : class
+public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEntity : StorableEntity
 {
     private readonly DbContext _dbContext;
 
@@ -28,10 +29,30 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
         await _dbContext.DisposeAsync();
     }
 
+    public IQueryable<TResult> ApplySpecification<TResult>(Specification<TEntity, TResult> specification)
+    {
+        IQueryable<TEntity> query = _dbSet;
+
+        if (specification.Include is not null)
+        {
+            query = specification.Include(query);
+        }
+
+        if (specification.Predicate is not null)
+        {
+            query = query.Where(specification.Predicate);
+        }
+
+        return specification.OrderBy is not null
+            ? specification.OrderBy(query).Select(specification.Selector)
+            : query.Select(specification.Selector);
+    }
+
     public async Task<TResult?> GetFirstOrDefaultAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
 
@@ -46,12 +67,13 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
         }
 
         return orderBy is not null
-            ? await orderBy(query).Select(selector).FirstOrDefaultAsync()
-            : await query.Select(selector).FirstOrDefaultAsync();
+            ? await orderBy(query).Select(selector).FirstOrDefaultAsync(cancellationToken)
+            : await query.Select(selector).FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<TEntity?> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>>? predicate = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
 
@@ -65,7 +87,7 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
             query = query.Where(predicate);
         }
 
-        return await query.FirstOrDefaultAsync();
+        return await query.FirstOrDefaultAsync(cancellationToken);
     }
 
     public TResult? GetFirstOrDefault<TResult>(Expression<Func<TEntity, TResult>> selector,
@@ -107,7 +129,8 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
 
     public async Task<TResult?> GetFirstOrDefaultAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
 
@@ -121,7 +144,7 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
             query = query.Where(predicate);
         }
 
-        return await query.Select(selector).FirstOrDefaultAsync();
+        return await query.Select(selector).FirstOrDefaultAsync(cancellationToken);
     }
 
     public TEntity? Find(params object[] keyValues)
@@ -201,19 +224,21 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
             : query.Select(selector);
     }
 
-    public async Task<IList<TEntity>> GetAllAsync()
+    public async Task<IList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbSet.ToListAsync();
+        return await _dbSet.ToListAsync(cancellationToken);
     }
 
-    public async Task<IList<TResult>> GetAllAsync<TResult>(Expression<Func<TEntity, TResult>> selector)
+    public async Task<IList<TResult>> GetAllAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
+        CancellationToken cancellationToken = default)
     {
-        return await _dbSet.Select(selector).ToListAsync();
+        return await _dbSet.Select(selector).ToListAsync(cancellationToken);
     }
 
     public async Task<IList<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
 
@@ -228,14 +253,15 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
         }
 
         return orderBy is not null
-            ? await orderBy(query).ToListAsync()
-            : await query.ToListAsync();
+            ? await orderBy(query).ToListAsync(cancellationToken)
+            : await query.ToListAsync(cancellationToken);
     }
 
     public async Task<IList<TResult>> GetAllAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null)
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
 
@@ -250,8 +276,8 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
         }
 
         return orderBy is not null
-            ? await orderBy(query).Select(selector).ToListAsync()
-            : await query.Select(selector).ToListAsync();
+            ? await orderBy(query).Select(selector).ToListAsync(cancellationToken)
+            : await query.Select(selector).ToListAsync(cancellationToken);
     }
 
     public TEntity Insert(TEntity entity)
@@ -264,10 +290,10 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
         _dbSet.AddRange(entities);
     }
 
-    public async ValueTask<EntityEntry<TEntity>> InsertAsync(TEntity entity,
+    public async ValueTask<TEntity> InsertAsync(TEntity entity,
         CancellationToken cancellationToken = default)
     {
-        return await _dbSet.AddAsync(entity, cancellationToken);
+        return (await _dbSet.AddAsync(entity, cancellationToken)).Entity;
     }
 
     public async Task InsertAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
@@ -300,9 +326,9 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
         _dbContext.SaveChanges();
     }
 
-    public async Task SaveChangesAsync()
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public int Count(Expression<Func<TEntity, bool>>? predicate = null)

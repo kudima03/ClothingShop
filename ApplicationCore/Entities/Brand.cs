@@ -1,8 +1,9 @@
-﻿namespace ApplicationCore.Entities;
+﻿using ApplicationCore.Entities.BaseEntity;
 
-public class Brand
+namespace ApplicationCore.Entities;
+
+public class Brand : StorableEntity
 {
-    public long Id { get; set; }
     public string Name { get; set; }
-    public virtual List<Product> Products { get; } = new();
+    public virtual List<Product> Products { get; init; } = new();
 }

@@ -18,12 +18,14 @@ internal class SubcategoryEntityTypeConfiguration
             .ValueGeneratedOnAdd()
             .Metadata
             .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        builder.HasIndex(x => x.Name)
+            .IsUnique();
         builder.Property(x => x.Name)
             .HasColumnName("name")
             .IsRequired();
-        builder.HasMany(x => x.CategoriesBelongsTo)
+        builder.HasMany(x => x.Categories)
             .WithMany(x => x.Subcategories)
-            .UsingEntity("category_subcategories",
+            .UsingEntity("categories_subcategories",
                 l => l.HasOne(typeof(Category)).WithMany().HasForeignKey("category_id"),
                 r => r.HasOne(typeof(Subcategory)).WithMany().HasForeignKey("subcategory_id"));
         builder.HasMany(x => x.Products)

@@ -1,13 +1,6 @@
-﻿using ApplicationCore.Entities;
-using ApplicationCore.Interfaces;
-using DomainServices.Services.Implementations;
-using DomainServices.Services.Interfaces;
-using FluentValidation;
-using Infrastructure.Data;
-using Infrastructure.EntityRepository;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using Web.ModelValidators;
+﻿using System.Text.Json.Serialization;
+using Web.Extensions;
+using Web.Middlewares;
 
 namespace Web;
 
@@ -24,12 +17,13 @@ public class Startup
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddControllers();
-        services.AddTransient<IValidator<Brand>, BrandValidator>();
-        AddCustomDbContext(Configuration, services);
-        services.AddScoped<IRepository<Brand>, EntityFrameworkRepository<Brand>>();
-        services.AddScoped<IReadOnlyRepository<Brand>, EntityFrameworkReadOnlyRepository<Brand>>();
-        services.AddScoped<IBrandsService, BrandsService>();
+        services.AddControllers().AddJsonOptions(options =>
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+        services.AddCustomDbContext(Configuration);
+        services.AddMediatRServices();
+        services.AddCustomRepositories();
+        services.AddCustomServices();
+        services.AddScoped<GlobalExceptionHandlingMiddleware>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -45,22 +39,10 @@ public class Startup
 
         app.UseRouting();
 
+        app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-    }
-
-    private static void AddCustomDbContext(IConfiguration configuration, IServiceCollection services)
-    {
-        services.AddEntityFrameworkNpgsql()
-            .AddDbContext<DbContext, ShopContext>(options =>
-            {
-                options.UseNpgsql(configuration["ConnectionStrings:ShopConnection"],
-                    sqlOptions =>
-                    {
-                        sqlOptions.MigrationsAssembly(typeof(ShopContext).GetTypeInfo().Assembly.GetName().Name);
-                        sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
-                    });
-            });
     }
 }

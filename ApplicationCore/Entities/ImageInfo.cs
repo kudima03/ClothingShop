@@ -1,8 +1,9 @@
-﻿namespace ApplicationCore.Entities;
+﻿using ApplicationCore.Entities.BaseEntity;
 
-public class ImageInfo
+namespace ApplicationCore.Entities;
+
+public class ImageInfo : StorableEntity
 {
-    public long Id { get; set; }
     public string Url { get; set; }
     public long ProductColorId { get; set; }
     public virtual ProductColor ProductColor { get; set; }

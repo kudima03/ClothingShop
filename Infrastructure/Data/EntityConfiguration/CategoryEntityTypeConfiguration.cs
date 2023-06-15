@@ -17,17 +17,19 @@ internal class CategoryEntityTypeConfiguration : IEntityTypeConfiguration<Catego
             .ValueGeneratedOnAdd()
             .Metadata
             .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        builder.HasIndex(x => x.Name)
+            .IsUnique();
         builder.Property(x => x.Name)
             .HasColumnName("name")
             .IsRequired();
         builder
             .HasMany(x => x.Subcategories)
-            .WithMany(x => x.CategoriesBelongsTo)
-            .UsingEntity("category_subcategories",
+            .WithMany(x => x.Categories)
+            .UsingEntity("categories_subcategories",
                 l => l.HasOne(typeof(Category)).WithMany().HasForeignKey("category_id"),
                 r => r.HasOne(typeof(Subcategory)).WithMany().HasForeignKey("subcategory_id"));
 
-        builder.HasMany(x => x.SectionsBelongsTo)
+        builder.HasMany(x => x.Sections)
             .WithMany(x => x.Categories)
             .UsingEntity("sections_categories",
                 l => l.HasOne(typeof(Section)).WithMany().HasForeignKey("section_id"),

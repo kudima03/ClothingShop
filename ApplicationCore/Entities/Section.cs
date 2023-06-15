@@ -1,8 +1,9 @@
-﻿namespace ApplicationCore.Entities;
+﻿using ApplicationCore.Entities.BaseEntity;
 
-public class Section
+namespace ApplicationCore.Entities;
+
+public class Section : StorableEntity
 {
-    public long Id { get; set; }
     public string Name { get; set; }
-    public virtual List<Category> Categories { get; } = new();
+    public virtual List<Category> Categories { get; init; } = new();
 }

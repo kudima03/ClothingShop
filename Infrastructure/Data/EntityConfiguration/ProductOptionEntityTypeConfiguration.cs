@@ -9,7 +9,7 @@ internal class ProductOptionEntityTypeConfiguration : IEntityTypeConfiguration<P
 {
     public void Configure(EntityTypeBuilder<ProductOption> builder)
     {
-        builder.ToTable("product_option");
+        builder.ToTable("product_options");
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)
             .HasColumnName("id")
@@ -36,11 +36,8 @@ internal class ProductOptionEntityTypeConfiguration : IEntityTypeConfiguration<P
             .WithMany(x => x.ProductOptions)
             .HasForeignKey(x => x.ProductId)
             .IsRequired();
-        builder.HasMany(x => x.Orders)
-            .WithMany(x => x.ProductsOptions)
-            .UsingEntity("orders_product_options",
-                l => l.HasOne(typeof(Order)).WithMany().HasForeignKey("order_id"),
-                r => r.HasOne(typeof(ProductOption)).WithMany().HasForeignKey("product_option_id"),
-                amount => amount.Property(typeof(int), "amount"));
+        builder.HasMany(x => x.OrderedProductOptions).WithOne(x => x.ProductOption)
+            .HasForeignKey(x => x.ProductOptionId)
+            .IsRequired();
     }
 }

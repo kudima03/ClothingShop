@@ -1,8 +1,9 @@
-﻿namespace ApplicationCore.Entities;
+﻿using ApplicationCore.Entities.BaseEntity;
 
-public class UserType
+namespace ApplicationCore.Entities;
+
+public class UserType : StorableEntity
 {
-    public long Id { get; set; }
     public string Name { get; set; }
-    public virtual List<User> Users { get; } = new();
+    public virtual List<User> Users { get; init; } = new();
 }

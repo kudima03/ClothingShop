@@ -1,8 +1,9 @@
-﻿namespace ApplicationCore.Entities;
+﻿using ApplicationCore.Entities.BaseEntity;
 
-public class OrderStatus
+namespace ApplicationCore.Entities;
+
+public class OrderStatus : StorableEntity
 {
-    public long Id { get; set; }
     public string Name { get; set; }
-    public virtual List<Order> Orders { get; } = new();
+    public virtual List<Order> Orders { get; init; } = new();
 }

@@ -1,18 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using ApplicationCore.Entities.BaseEntity;
+using ApplicationCore.Specifications;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace ApplicationCore.Interfaces;
 
-public interface IRepository<TEntity> : IDisposable, IAsyncDisposable where TEntity : class
+public interface IRepository<TEntity> : IDisposable, IAsyncDisposable where TEntity : StorableEntity
 {
+    IQueryable<TResult> ApplySpecification<TResult>(Specification<TEntity, TResult> specification);
+
     Task<TResult?> GetFirstOrDefaultAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default);
 
     Task<TEntity?> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>>? predicate = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default);
 
     TResult? GetFirstOrDefault<TResult>(
         Expression<Func<TEntity, TResult>> selector,
@@ -26,7 +31,8 @@ public interface IRepository<TEntity> : IDisposable, IAsyncDisposable where TEnt
     Task<TResult?> GetFirstOrDefaultAsync<TResult>(
         Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default);
 
     TEntity? Find(params object[] keyValues);
 
@@ -52,27 +58,30 @@ public interface IRepository<TEntity> : IDisposable, IAsyncDisposable where TEnt
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
 
-    Task<IList<TEntity>> GetAllAsync();
+    Task<IList<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
 
     Task<IList<TResult>> GetAllAsync<TResult>(
-        Expression<Func<TEntity, TResult>> selector);
+        Expression<Func<TEntity, TResult>> selector,
+        CancellationToken cancellationToken = default);
 
     Task<IList<TEntity>> GetAllAsync(
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default);
 
     Task<IList<TResult>> GetAllAsync<TResult>(
         Expression<Func<TEntity, TResult>> selector,
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        CancellationToken cancellationToken = default);
 
     TEntity Insert(TEntity entity);
 
     void Insert(IEnumerable<TEntity> entities);
 
-    ValueTask<EntityEntry<TEntity>> InsertAsync(TEntity entity, CancellationToken cancellationToken = default);
+    ValueTask<TEntity> InsertAsync(TEntity entity, CancellationToken cancellationToken = default);
 
     Task InsertAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
 
@@ -85,7 +94,7 @@ public interface IRepository<TEntity> : IDisposable, IAsyncDisposable where TEnt
     void Delete(IEnumerable<TEntity> entities);
 
     void SaveChanges();
-    Task SaveChangesAsync();
+    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 
     int Count(Expression<Func<TEntity, bool>>? predicate = null);
 

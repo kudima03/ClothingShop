@@ -9,7 +9,7 @@ internal class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
 {
     public void Configure(EntityTypeBuilder<Order> builder)
     {
-        builder.ToTable("order");
+        builder.ToTable("orders");
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)
             .HasColumnName("id")
@@ -30,10 +30,9 @@ internal class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
             .WithMany(x => x.Orders)
             .HasForeignKey(x => x.UserId)
             .IsRequired();
-        builder.HasMany(x => x.ProductsOptions).WithMany(x => x.Orders)
-            .UsingEntity("orders_product_options",
-                l => l.HasOne(typeof(Order)).WithMany().HasForeignKey("order_id"),
-                r => r.HasOne(typeof(ProductOption)).WithMany().HasForeignKey("product_option_id"),
-                amount => amount.Property(typeof(int), "amount"));
+        builder.HasMany(x => x.OrderedProductsOptionsInfo)
+            .WithOne(x => x.Order)
+            .HasForeignKey(x => x.OrderId)
+            .IsRequired();
     }
 }

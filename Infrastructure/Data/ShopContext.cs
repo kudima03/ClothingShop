@@ -12,7 +12,6 @@ public class ShopContext : DbContext
 
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Category> Categories { get; set; }
-    public DbSet<Color> Colors { get; set; }
     public DbSet<CustomerInfo> CustomersInfos { get; set; }
     public DbSet<ImageInfo> ImagesInfos { get; set; }
     public DbSet<Order> Orders { get; set; }
@@ -30,5 +29,6 @@ public class ShopContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ShopContext).Assembly);
+        modelBuilder.UseIdentityAlwaysColumns();
     }
 }
