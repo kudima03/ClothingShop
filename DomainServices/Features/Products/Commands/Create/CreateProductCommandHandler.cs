@@ -24,15 +24,10 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
         _productColorsRepository = productColorsRepository;
     }
 
-    public async Task<Product> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+    private List<ProductOption> MapToProductOptions(
+        IEnumerable<CreateUpdateProductCommandsDtos.ProductOptionDto> productOptionDtos)
     {
-        await ValidateProductNameAsync(request.Name, cancellationToken);
-
-        await ValidateBrandAsync(request.BrandId, cancellationToken);
-
-        await ValidateSubcategoryAsync(request.SubcategoryId, cancellationToken);
-
-        List<ProductOption> productOptions = request.ProductOptionsDtos.Select(x => new ProductOption
+        return productOptionDtos.Select(x => new ProductOption
         {
             Id = x.Id,
             Price = x.Price,
@@ -41,7 +36,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
             ProductColorId = x.ProductColorId,
             ProductColor = new ProductColor()
             {
-                Id = x.ProductColorId,
+                Id = x.ProductColor.Id,
                 ColorHex = x.ProductColor.ColorHex,
                 ImagesInfos = x.ProductColor.ImagesInfos.Select(c => new ImageInfo()
                 {
@@ -51,7 +46,18 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
                 }).ToList()
             }
         }).ToList();
+    }
 
+    public async Task<Product> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+    {
+        await ValidateProductNameAsync(request.Name, cancellationToken);
+
+        await ValidateBrandAsync(request.BrandId, cancellationToken);
+
+        await ValidateSubcategoryAsync(request.SubcategoryId, cancellationToken);
+
+        List<ProductOption> productOptions = MapToProductOptions(request.ProductOptionsDtos);
+        
         Product newProduct = new()
         {
             BrandId = request.BrandId,

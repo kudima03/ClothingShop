@@ -25,6 +25,30 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         _productColorsRepository = productColorsRepository;
     }
 
+    private List<ProductOption> MapToProductOptions(
+        IEnumerable<CreateUpdateProductCommandsDtos.ProductOptionDto> productOptionDtos)
+    {
+        return productOptionDtos.Select(x => new ProductOption
+        {
+            Id = x.Id,
+            Price = x.Price,
+            Quantity = x.Quantity,
+            Size = x.Size,
+            ProductColorId = x.ProductColorId,
+            ProductColor = new ProductColor()
+            {
+                Id = x.ProductColor.Id,
+                ColorHex = x.ProductColor.ColorHex,
+                ImagesInfos = x.ProductColor.ImagesInfos.Select(c => new ImageInfo()
+                {
+                    Id = c.Id,
+                    ProductColorId = x.ProductColorId,
+                    Url = c.Url
+                }).ToList()
+            }
+        }).ToList();
+    }
+
     public async Task<Unit> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
         Product product = await ValidateAndGetProduct(request.Id, cancellationToken);
@@ -35,14 +59,16 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         }
 
         await ValidateBrandAsync(request.BrandId, cancellationToken);
-        
+
         await ValidateSubcategoryAsync(request.SubcategoryId, cancellationToken);
 
         product.Name = request.Name;
         product.BrandId = request.BrandId;
         product.SubcategoryId = request.SubcategoryId;
 
-        await ApplyProductOptionsAsync(product, request.ProductOptionsDto, cancellationToken);
+        List<ProductOption> productOptions = MapToProductOptions(request.ProductOptionsDtos);
+
+        await ApplyProductOptionsAsync(product, productOptions, cancellationToken);
 
         try
         {
@@ -86,7 +112,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             });
         }
     }
-    
+
     private async Task ValidateBrandAsync(long brandId, CancellationToken cancellationToken = default)
     {
         bool brandExists = await _brandsRepository.ExistsAsync(x => x.Id == brandId, cancellationToken);
@@ -196,7 +222,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
         product.ProductOptions.RemoveAll(productOption => optionsToRemove.Contains(productOption));
     }
 
-    
 
-    
+
+
 }
