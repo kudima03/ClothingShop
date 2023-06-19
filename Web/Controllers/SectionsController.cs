@@ -4,7 +4,9 @@ using DomainServices.Features.Sections.Commands.Delete;
 using DomainServices.Features.Sections.Commands.Update;
 using DomainServices.Features.Sections.Queries.GetAll;
 using DomainServices.Features.Sections.Queries.GetById;
+using Infrastructure.Identity;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -12,6 +14,7 @@ namespace Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Policy = PolicyName.Customer)]
 public class SectionsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -44,6 +47,7 @@ public class SectionsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = PolicyName.Administrator)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -55,6 +59,7 @@ public class SectionsController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Policy = PolicyName.Administrator)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -67,6 +72,7 @@ public class SectionsController : ControllerBase
     }
 
     [HttpDelete("{id:long}")]
+    [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]

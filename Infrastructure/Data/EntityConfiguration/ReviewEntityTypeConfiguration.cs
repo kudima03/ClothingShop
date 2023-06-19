@@ -32,13 +32,9 @@ internal class ReviewEntityTypeConfiguration : IEntityTypeConfiguration<Review>
         builder.Property(x => x.Rate)
             .HasColumnName("rate")
             .IsRequired();
-        builder.HasOne(x => x.User)
-            .WithMany(x => x.Reviews)
-            .HasForeignKey(x => x.UserId)
-            .IsRequired();
         builder.HasOne(x => x.Product)
-            .WithMany(x => x.Reviews)
-            .HasForeignKey(x => x.ProductId)
-            .IsRequired();
+               .WithMany(x => x.Reviews)
+               .HasForeignKey(x => x.ProductId)
+               .IsRequired();
     }
 }

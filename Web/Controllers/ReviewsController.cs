@@ -2,7 +2,9 @@
 using DomainServices.Features.Reviews.Commands.Create;
 using DomainServices.Features.Reviews.Commands.Delete;
 using DomainServices.Features.Reviews.Commands.Update;
+using Infrastructure.Identity;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -10,6 +12,7 @@ namespace Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Policy = PolicyName.Customer)]
 public class ReviewsController : ControllerBase
 {
     private readonly IMediator _mediator;

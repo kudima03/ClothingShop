@@ -4,7 +4,9 @@ using DomainServices.Features.Orders.Commands.Create;
 using DomainServices.Features.Orders.Commands.Update;
 using DomainServices.Features.Orders.Queries.GetAll;
 using DomainServices.Features.Orders.Queries.GetById;
+using Infrastructure.Identity;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -12,6 +14,7 @@ namespace Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Policy = PolicyName.Customer)]
 public class OrdersController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -22,6 +25,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(IEnumerable<Order>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Order>>> GetAll()
@@ -32,6 +36,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet("{id:long}")]
+    [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
@@ -67,6 +72,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpDelete("{id:long}")]
+    [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]

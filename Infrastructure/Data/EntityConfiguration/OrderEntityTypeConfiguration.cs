@@ -26,13 +26,9 @@ internal class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(x => x.DateTime)
             .HasColumnName("date_time")
             .IsRequired();
-        builder.HasOne(x => x.User)
-            .WithMany(x => x.Orders)
-            .HasForeignKey(x => x.UserId)
-            .IsRequired();
         builder.HasMany(x => x.OrderedProductsOptionsInfo)
-            .WithOne(x => x.Order)
-            .HasForeignKey(x => x.OrderId)
-            .IsRequired();
+               .WithOne(x => x.Order)
+               .HasForeignKey(x => x.OrderId)
+               .IsRequired();
     }
 }
