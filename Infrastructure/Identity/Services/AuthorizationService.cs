@@ -33,16 +33,16 @@ public class AuthorizationService : IAuthorizationService
     {
         User? user = await _userManager.FindByEmailAsync(email);
 
-        if (user is null)
+        if (user is null || user.DeletionDateTime is not null)
         {
-            throw new AuthorizationException("User with such email doesn't exist.");
+            throw new AuthorizationException("Invalid login or password.");
         }
 
         bool passwordCorrect = await _userManager.CheckPasswordAsync(user, password);
 
         if (!passwordCorrect)
         {
-            throw new AuthorizationException("Invalid password.");
+            throw new AuthorizationException("Invalid login or password.");
         }
 
         string token = await _tokenClaimsService.GetTokenAsync(user.Email);
@@ -55,18 +55,14 @@ public class AuthorizationService : IAuthorizationService
 
     public async Task RegisterAsync(User user)
     {
-        string notHashedPassword = user.PasswordHash!;
-
         IdentityResult result = await _userManager.CreateAsync(user, user.PasswordHash);
 
         if (!result.Succeeded)
         {
-            throw new AuthorizationException($"Unable to register such user. Reasons: {string.Join(',', result.Errors.Select(x=>x.Description))}");
+            throw new AuthorizationException($"Unable to register such user. Reasons: {string.Join(',', result.Errors.Select(x => x.Description))}");
         }
 
         await _userManager.AddToRoleAsync(user, RoleName.Customer);
-
-        await SignInAsync(user.Email, notHashedPassword);
     }
 
     public Task SingOutAsync()

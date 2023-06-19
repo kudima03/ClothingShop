@@ -63,7 +63,9 @@ public class DeleteAccountCommandHandler : IRequestHandler<DeleteAccountCommand,
 
         await _ordersRepository.SaveChangesAsync(cancellationToken);
 
-        await _userManager.DeleteAsync(user);
+        user.DeletionDateTime = DateTime.UtcNow;
+
+        await _userManager.UpdateAsync(user);
 
         _contextAccessor.HttpContext?.Response.Cookies.Delete(JwtConstants.TokenType);
 

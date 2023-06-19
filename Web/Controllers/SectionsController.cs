@@ -6,7 +6,6 @@ using DomainServices.Features.Sections.Queries.GetAll;
 using DomainServices.Features.Sections.Queries.GetById;
 using Infrastructure.Identity;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -15,6 +14,7 @@ namespace Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Policy = PolicyName.Customer)]
 public class SectionsController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -25,7 +25,6 @@ public class SectionsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Policy = PolicyName.Customer, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ProducesResponseType(typeof(IEnumerable<Section>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Section>>> GetAll()
@@ -36,7 +35,6 @@ public class SectionsController : ControllerBase
     }
 
     [HttpGet("{id:long}")]
-    [Authorize(Policy = PolicyName.Customer, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ProducesResponseType(typeof(Section), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
@@ -49,7 +47,7 @@ public class SectionsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Policy = PolicyName.Administrator, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Policy = PolicyName.Administrator)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -61,7 +59,7 @@ public class SectionsController : ControllerBase
     }
 
     [HttpPut]
-    [Authorize(Policy = PolicyName.Administrator, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Policy = PolicyName.Administrator)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -74,7 +72,7 @@ public class SectionsController : ControllerBase
     }
 
     [HttpDelete("{id:long}")]
-    [Authorize(Policy = PolicyName.Administrator, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]

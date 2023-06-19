@@ -101,20 +101,22 @@ public static class ServiceCollectionExtensions
             options.AddPolicy(PolicyName.Administrator, builder =>
             {
                 builder.RequireClaim(ClaimTypes.Role, RoleName.Administrator);
+                builder.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
             });
 
             options.AddPolicy(PolicyName.Customer, builder =>
             {
                 builder.RequireAssertion(x => x.User.HasClaim(ClaimTypes.Role, RoleName.Customer) ||
                                               x.User.HasClaim(ClaimTypes.Role, RoleName.Administrator));
+                builder.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
             });
         });
     }
 
     public static void AddAndConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+        services.AddAuthentication()
+                .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new()
                     {
@@ -149,7 +151,7 @@ public static class ServiceCollectionExtensions
                 .AddDefaultTokenProviders();
 
         services.AddScoped<IAuthorizationService, AuthorizationService>();
-        
+
         services.AddScoped<ITokenClaimsService, IdentityTokenClaimsService>();
     }
 }
