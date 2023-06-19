@@ -63,7 +63,7 @@ public class DeleteAccountCommandHandler : IRequestHandler<DeleteAccountCommand,
 
         await _ordersRepository.SaveChangesAsync(cancellationToken);
 
-        user.DeletionDateTime = DateTime.UtcNow;
+        user.Delete();
 
         await _userManager.UpdateAsync(user);
 
