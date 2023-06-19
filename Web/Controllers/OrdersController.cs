@@ -4,7 +4,10 @@ using DomainServices.Features.Orders.Commands.Create;
 using DomainServices.Features.Orders.Commands.Update;
 using DomainServices.Features.Orders.Queries.GetAll;
 using DomainServices.Features.Orders.Queries.GetById;
+using Infrastructure.Identity;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -22,6 +25,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = PolicyName.Administrator, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ProducesResponseType(typeof(IEnumerable<Order>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Order>>> GetAll()
@@ -32,6 +36,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet("{id:long}")]
+    [Authorize(Policy = PolicyName.Administrator, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
@@ -44,6 +49,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = PolicyName.Customer, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -55,6 +61,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Policy = PolicyName.Customer, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -67,6 +74,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpDelete("{id:long}")]
+    [Authorize(Policy = PolicyName.Administrator, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]

@@ -12,7 +12,6 @@ public class ShopContext : DbContext
 
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Category> Categories { get; set; }
-    public DbSet<CustomerInfo> CustomersInfos { get; set; }
     public DbSet<ImageInfo> ImagesInfos { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderStatus> OrderStatuses { get; set; }
@@ -22,9 +21,6 @@ public class ShopContext : DbContext
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Section> Sections { get; set; }
     public DbSet<Subcategory> Subcategories { get; set; }
-    public DbSet<User> Users { get; set; }
-    public DbSet<UserType> UserTypes { get; set; }
-
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

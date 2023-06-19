@@ -33,6 +33,11 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             await context.Response.WriteAsJsonAsync(e.Errors);
         }
+        catch (AuthorizationException e)
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsJsonAsync(e.Message);
+        }
         catch (Exception e)
         {
             _logger.LogError(e, e.Message);

@@ -2,7 +2,10 @@
 using DomainServices.Features.Reviews.Commands.Create;
 using DomainServices.Features.Reviews.Commands.Delete;
 using DomainServices.Features.Reviews.Commands.Update;
+using Infrastructure.Identity;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -20,6 +23,7 @@ public class ReviewsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = PolicyName.Customer, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -31,6 +35,7 @@ public class ReviewsController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Policy = PolicyName.Customer, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -43,6 +48,7 @@ public class ReviewsController : ControllerBase
     }
 
     [HttpDelete("{id:long}")]
+    [Authorize(Policy = PolicyName.Customer, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]

@@ -4,7 +4,10 @@ using DomainServices.Features.Categories.Commands.Delete;
 using DomainServices.Features.Categories.Commands.Update;
 using DomainServices.Features.Categories.Queries.GetAll;
 using DomainServices.Features.Categories.Queries.GetById;
+using Infrastructure.Identity;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -22,6 +25,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = PolicyName.Customer, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ProducesResponseType(typeof(IEnumerable<Category>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Category>>> GetAll()
@@ -30,8 +34,9 @@ public class CategoriesController : ControllerBase
         IEnumerable<Category> categories = await _mediator.Send(query);
         return Ok(categories);
     }
-
+    
     [HttpGet("{id:long}")]
+    [Authorize(Policy = PolicyName.Customer, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
@@ -44,6 +49,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = PolicyName.Administrator, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -55,6 +61,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Policy = PolicyName.Administrator, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -67,6 +74,7 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpDelete("{id:long}")]
+    [Authorize(Policy = PolicyName.Administrator, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]

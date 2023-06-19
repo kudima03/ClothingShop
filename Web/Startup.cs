@@ -17,8 +17,11 @@ public class Startup
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddControllers().AddJsonOptions(options =>
+        services.AddControllersWithViews().AddJsonOptions(options =>
             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+        services.AddHttpContextAccessor();
+        services.AddAndConfigureAuthentication(Configuration);
+        services.AddAndConfigureAuthorization();
         services.AddCustomDbContext(Configuration);
         services.AddMediatRServices();
         services.AddCustomRepositories();
@@ -39,9 +42,11 @@ public class Startup
 
         app.UseRouting();
 
-        app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+        app.UseAuthentication();
 
         app.UseAuthorization();
+
+        app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
