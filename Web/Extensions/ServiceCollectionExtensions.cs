@@ -124,26 +124,17 @@ public static class ServiceCollectionExtensions
                         ValidIssuer = JwtSettings.Issuer,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey)),
                     };
-
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            context.Token = context.Request.Cookies[JwtConstants.TokenType];
-                            return Task.CompletedTask;
-                        }
-                    };
                 });
 
         services.AddEntityFrameworkNpgsql()
                 .AddDbContext<IdentityContext>(options =>
                 {
                     options.UseNpgsql(configuration["ConnectionStrings:IdentityConnection"],
-                                      sqlOptions =>
-                                      {
-                                          sqlOptions.MigrationsAssembly(typeof(IdentityContext).GetTypeInfo().Assembly.GetName().Name);
-                                          sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
-                                      });
+                        sqlOptions =>
+                        {
+                            sqlOptions.MigrationsAssembly(typeof(IdentityContext).GetTypeInfo().Assembly.GetName().Name);
+                            sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
+                        });
                 });
 
         services.AddIdentity<User, IdentityRole<long>>()

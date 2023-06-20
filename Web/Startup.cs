@@ -27,6 +27,7 @@ public class Startup
         services.AddCustomRepositories();
         services.AddCustomServices();
         services.AddScoped<GlobalExceptionHandlingMiddleware>();
+        services.AddScoped<JwtSubstitutionMiddleware>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -42,12 +43,14 @@ public class Startup
 
         app.UseRouting();
 
+        app.UseMiddleware<JwtSubstitutionMiddleware>();
+
         app.UseAuthentication();
 
         app.UseAuthorization();
 
         app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
-
+        
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }
