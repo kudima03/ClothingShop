@@ -4,7 +4,7 @@ using DomainServices.Features.Brands.Commands.Delete;
 using DomainServices.Features.Brands.Commands.Update;
 using DomainServices.Features.Brands.Queries.GetAll;
 using DomainServices.Features.Brands.Queries.GetById;
-using Infrastructure.Identity;
+using Infrastructure.Identity.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

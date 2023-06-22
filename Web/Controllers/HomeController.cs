@@ -1,4 +1,4 @@
-﻿using Infrastructure.Identity;
+﻿using Infrastructure.Identity.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

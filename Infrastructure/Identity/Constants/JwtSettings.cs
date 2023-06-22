@@ -1,4 +1,5 @@
-﻿namespace Infrastructure.Identity;
+﻿namespace Infrastructure.Identity.Constants;
+
 public static class JwtSettings
 {
     public const string Issuer = "LocalIdentity";

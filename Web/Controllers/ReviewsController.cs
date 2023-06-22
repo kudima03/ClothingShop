@@ -2,7 +2,7 @@
 using DomainServices.Features.Reviews.Commands.Create;
 using DomainServices.Features.Reviews.Commands.Delete;
 using DomainServices.Features.Reviews.Commands.Update;
-using Infrastructure.Identity;
+using Infrastructure.Identity.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

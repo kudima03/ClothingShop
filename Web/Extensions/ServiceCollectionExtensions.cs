@@ -5,7 +5,7 @@ using DomainServices.Services.OrdersService;
 using FluentValidation;
 using Infrastructure.Data;
 using Infrastructure.EntityRepository;
-using Infrastructure.Identity;
+using Infrastructure.Identity.Constants;
 using Infrastructure.Identity.Entity;
 using Infrastructure.Identity.IdentityContext;
 using Infrastructure.Identity.Interfaces;

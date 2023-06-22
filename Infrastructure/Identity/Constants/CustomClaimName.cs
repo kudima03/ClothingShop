@@ -1,4 +1,4 @@
-﻿namespace Infrastructure;
+﻿namespace Infrastructure.Identity.Constants;
 
 public static class CustomClaimName
 {

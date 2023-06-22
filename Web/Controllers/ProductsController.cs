@@ -6,7 +6,7 @@ using DomainServices.Features.Products.Queries.GetAll;
 using DomainServices.Features.Products.Queries.GetByBrandId;
 using DomainServices.Features.Products.Queries.GetById;
 using DomainServices.Features.Products.Queries.GetBySubcategoryId;
-using Infrastructure.Identity;
+using Infrastructure.Identity.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
