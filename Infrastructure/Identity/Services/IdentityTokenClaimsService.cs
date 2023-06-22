@@ -28,7 +28,7 @@ public class IdentityTokenClaimsService : ITokenClaimsService
 
         List<Claim> claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Email, userEmail)
+            new Claim(CustomClaimName.Id, user.Id.ToString())
         };
 
         foreach (string role in roles)
