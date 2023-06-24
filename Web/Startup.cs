@@ -1,6 +1,10 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.AspNetCore.SignalR;
+using System.Text.Json.Serialization;
 using Web.Extensions;
+using Web.Hubs;
 using Web.Middlewares;
+using Web.Services;
+using Web.SignalR;
 
 namespace Web;
 
@@ -24,6 +28,7 @@ public class Startup
         services.AddAndConfigureAuthorization();
         services.AddCustomDbContext(Configuration);
         services.AddMediatRServices();
+        services.AddSignalRWithRelatedServices();
         services.AddCustomRepositories();
         services.AddCustomServices();
         services.AddScoped<GlobalExceptionHandlingMiddleware>();
@@ -37,8 +42,10 @@ public class Startup
             app.UseSwaggerUI();
             app.UseDeveloperExceptionPage();
         }
-
+        
         app.UseHttpsRedirection();
+
+        app.UseStaticFiles();
 
         app.UseRouting();
 
@@ -48,6 +55,10 @@ public class Startup
 
         app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
-        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapHub<OnlineProductViewsHub>(SignalRConstants.OnlineProductViewsHubRoute);
+        });
     }
 }

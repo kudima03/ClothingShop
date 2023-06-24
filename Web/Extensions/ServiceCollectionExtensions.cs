@@ -13,12 +13,16 @@ using Infrastructure.Identity.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using Web.Services.Implementations;
+using Web.Services.Interfaces;
+using Web.SignalR;
 
 namespace Web.Extensions;
 
@@ -153,5 +157,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthorizationService, AuthorizationService>();
 
         services.AddScoped<ITokenClaimsService, IdentityTokenClaimsService>();
+    }
+
+    public static void AddSignalRWithRelatedServices(this IServiceCollection services)
+    {
+        services.AddSignalR();
+        services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
+        services.AddSingleton<IConnectionsToProductsManager, ConnectionsToProductsManager>();
     }
 }

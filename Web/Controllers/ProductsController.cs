@@ -17,7 +17,7 @@ namespace Web.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize(Policy = PolicyName.Customer)]
-public class ProductsController : ControllerBase
+public class ProductsController : Controller
 {
     private readonly IMediator _mediator;
 
@@ -45,7 +45,7 @@ public class ProductsController : ControllerBase
     {
         GetProductByIdQuery query = new GetProductByIdQuery(id);
         Product product = await _mediator.Send(query);
-        return Ok(product);
+        return View("Product", product);
     }
 
     [HttpGet("bySubcategory")]
