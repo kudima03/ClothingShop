@@ -1,0 +1,27 @@
+﻿@using Web.SignalR
+@model ApplicationCore.Entities.Product
+
+<h1 hidden="">Name: @Model.Name</h1>
+<h1>BrandId: @Model.BrandId</h1>
+<h1>SubcategoryId: @Model.SubcategoryId</h1>
+<h1>Users on current product: </h1>
+<h2 id="usersOnPage">0</h2>
+
+<script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+<script>
+    "use strict";
+
+    var connection = new signalR
+        .HubConnectionBuilder()
+        .withUrl("@SignalRConstants.OnlineProductViewsHubRoute").build();
+
+    connection.on("@SignalRConstants.ProductWatchersCountChanged", function (newAmount) {
+        document.getElementById("usersOnPage").innerHTML = newAmount;
+    });
+    
+    connection.start().then(function () {
+        connection.invoke("@SignalRConstants.GetProductWatchersCount", @Model.Id);
+    }).catch (function (err) {
+        return console.error(err.toString());
+    });
+</script>
