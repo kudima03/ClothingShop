@@ -7,6 +7,6 @@ public class SignalRUserIdProvider : IUserIdProvider
 {
     public string GetUserId(HubConnectionContext connection)
     {
-        return connection.User.Claims.Single(x => x.Type == CustomClaimName.Id).Value;
+        return connection.User.Claims.Single(claim => claim.Type == CustomClaimName.Id).Value;
     }
 }

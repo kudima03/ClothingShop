@@ -13,23 +13,26 @@ public class ConnectionsToProductsManager : IConnectionsToProductsManager
 
     public void RemoveConnection(string connectionId)
     {
-        ConnectionInfo connectionToRemove = _usersConnections.Single(x => x.ConnectionId == connectionId);
+        ConnectionInfo connectionToRemove =
+            _usersConnections.Single(connectionInfo => connectionInfo.ConnectionId == connectionId);
         _usersConnections.Remove(connectionToRemove);
     }
 
     public IEnumerable<string> ConnectionsAssociatedWithProduct(long productId)
     {
-        return _usersConnections.Where(x => x.ProductId == productId).Select(x => x.ConnectionId);
+        return _usersConnections.Where(connectionInfo => connectionInfo.ProductId == productId)
+            .Select(connectionInfo => connectionInfo.ConnectionId);
     }
 
     public int WatchingProductUsersCount(long productId)
     {
-        return _usersConnections.Where(x => x.ProductId == productId).DistinctBy(x => x.UserId).Count();
+        return _usersConnections.Where(connectionInfo => connectionInfo.ProductId == productId)
+            .DistinctBy(connectionInfo => connectionInfo.UserId).Count();
     }
 
     public long ProductAssociatedWithConnection(string connectionId)
     {
-        return _usersConnections.Single(x => x.ConnectionId == connectionId).ProductId;
+        return _usersConnections.Single(connectionInfo => connectionInfo.ConnectionId == connectionId).ProductId;
     }
 }
 

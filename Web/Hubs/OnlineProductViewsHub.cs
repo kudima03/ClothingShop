@@ -19,13 +19,9 @@ public class OnlineProductViewsHub : Hub
     public async Task GetProductWatchersCount(long productId)
     {
         int watchersBeforeNewConnection = _connectionsManager.WatchingProductUsersCount(productId);
-
         long userId = long.Parse(Context.UserIdentifier!);
-
         _connectionsManager.AddConnection(userId, productId, Context.ConnectionId);
-
         int watchersAfterNewConnection = _connectionsManager.WatchingProductUsersCount(productId);
-
         bool productWatchersAmountChanged = watchersAfterNewConnection != watchersBeforeNewConnection;
         
         if (productWatchersAmountChanged)
@@ -42,13 +38,9 @@ public class OnlineProductViewsHub : Hub
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         long productWithIdViewed = _connectionsManager.ProductAssociatedWithConnection(Context.ConnectionId);
-
         int watchersBeforeDisconnect = _connectionsManager.WatchingProductUsersCount(productWithIdViewed);
-
-         _connectionsManager.RemoveConnection(Context.ConnectionId);
-
+        _connectionsManager.RemoveConnection(Context.ConnectionId);
         int watchersAfterDisconnect = _connectionsManager.WatchingProductUsersCount(productWithIdViewed);
-
         bool watchersAmountChanged = watchersAfterDisconnect != watchersBeforeDisconnect;
 
         if (watchersAmountChanged)
