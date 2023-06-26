@@ -4,6 +4,7 @@ using DomainServices.Behaviors;
 using DomainServices.Services.OrdersService;
 using FluentValidation;
 using Infrastructure.Data;
+using Infrastructure.Data.Triggers;
 using Infrastructure.EntityRepository;
 using Infrastructure.Identity.Constants;
 using Infrastructure.Identity.Entity;
@@ -78,6 +79,11 @@ public static class ServiceCollectionExtensions
                         sqlOptions.MigrationsAssembly(typeof(ShopContext).GetTypeInfo().Assembly.GetName().Name);
                         sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
                     });
+
+                options.UseTriggers(triggerOptions =>
+                {
+                    triggerOptions.AddTrigger<AfterProductOptionSavedTrigger>();
+                });
             });
     }
 
@@ -89,6 +95,7 @@ public static class ServiceCollectionExtensions
         {
             options.RegisterServicesFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
             options.RegisterServicesFromAssembly(typeof(IdentityContext).Assembly);
+            options.RegisterServicesFromAssembly(typeof(Program).Assembly);
         });
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
     }
@@ -163,6 +170,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddSignalR();
         services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
-        services.AddSingleton<IConnectionsToProductsManager, ConnectionsToProductsManager>();
+        services.AddSingleton<ISubscribesToProductsManager, SubscribesToProductsManager>();
     }
 }
