@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Data.EntityConfiguration;
 
-public class OrderedProductOptionInfoEntityTypeConfiguration : IEntityTypeConfiguration<OrderItem>
+public class OrderItemEntityTypeConfiguration : IEntityTypeConfiguration<OrderItem>
 {
     public void Configure(EntityTypeBuilder<OrderItem> builder)
     {

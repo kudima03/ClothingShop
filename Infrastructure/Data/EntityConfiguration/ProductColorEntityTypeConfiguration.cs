@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Data.EntityConfiguration;
 
-internal class ProductColorEntityConfiguration : IEntityTypeConfiguration<ProductColor>
+internal class ProductColorEntityTypeConfiguration : IEntityTypeConfiguration<ProductColor>
 {
     public void Configure(EntityTypeBuilder<ProductColor> builder)
     {
