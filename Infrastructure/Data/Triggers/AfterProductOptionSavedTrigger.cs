@@ -4,11 +4,11 @@ using EntityFrameworkCore.Triggered;
 using MediatR;
 
 namespace Infrastructure.Data.Triggers;
-public class ProductOptionAfterUpdateTrigger : IAfterSaveTrigger<ProductOption>
+public class AfterProductOptionSavedTrigger : IAfterSaveTrigger<ProductOption>
 {
     private readonly IMediator _mediator;
 
-    public ProductOptionAfterUpdateTrigger(IMediator mediator)
+    public AfterProductOptionSavedTrigger(IMediator mediator)
     {
         _mediator = mediator;
     }

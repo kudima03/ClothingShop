@@ -82,7 +82,7 @@ public static class ServiceCollectionExtensions
 
                 options.UseTriggers(triggerOptions =>
                 {
-                    triggerOptions.AddTrigger<ProductOptionAfterUpdateTrigger>();
+                    triggerOptions.AddTrigger<AfterProductOptionSavedTrigger>();
                 });
             });
     }
