@@ -29,6 +29,7 @@ public class Startup
         services.AddSignalRWithRelatedServices();
         services.AddCustomRepositories();
         services.AddCustomServices();
+        services.AddAndConfigureQuartzNet(Configuration);
         services.AddScoped<GlobalExceptionHandlingMiddleware>();
     }
 

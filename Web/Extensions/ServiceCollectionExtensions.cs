@@ -4,6 +4,7 @@ using DomainServices.Behaviors;
 using DomainServices.Services.OrdersService;
 using FluentValidation;
 using Infrastructure.Data;
+using Infrastructure.Data.Autoremove;
 using Infrastructure.Data.Triggers;
 using Infrastructure.EntityRepository;
 using Infrastructure.Identity.Constants;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
@@ -64,6 +66,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRepository<Section>, EntityFrameworkRepository<Section>>();
         services.AddScoped<IReadOnlyRepository<Section>, EntityFrameworkReadOnlyRepository<Section>>();
 
+        services.AddScoped<IRepository<ShoppingCart>, EntityFrameworkRepository<ShoppingCart>>();
+        services.AddScoped<IReadOnlyRepository<ShoppingCart>, EntityFrameworkReadOnlyRepository<ShoppingCart>>();
+
+        services.AddScoped<IRepository<ShoppingCartItem>, EntityFrameworkRepository<ShoppingCartItem>>();
+        services.AddScoped<IReadOnlyRepository<ShoppingCartItem>, EntityFrameworkReadOnlyRepository<ShoppingCartItem>>();
+
         services.AddScoped<IRepository<Subcategory>, EntityFrameworkRepository<Subcategory>>();
         services.AddScoped<IReadOnlyRepository<Subcategory>, EntityFrameworkReadOnlyRepository<Subcategory>>();
     }
@@ -83,6 +91,7 @@ public static class ServiceCollectionExtensions
                 options.UseTriggers(triggerOptions =>
                 {
                     triggerOptions.AddTrigger<AfterProductOptionSavedTrigger>();
+                    triggerOptions.AddTrigger<AfterShoppingCartItemSavedTrigger>();
                 });
             });
     }
@@ -103,6 +112,15 @@ public static class ServiceCollectionExtensions
     public static void AddCustomServices(this IServiceCollection services)
     {
         services.AddScoped<IOrdersService, OrdersService>();
+        services.AddTransient<ShoppingCartItemsAutoremoveScheduler>();
+    }
+
+    public static void AddAndConfigureQuartzNet(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddQuartz(options =>
+        {
+            options.UseMicrosoftDependencyInjectionJobFactory();
+        });
     }
 
     public static void AddAndConfigureAuthorization(this IServiceCollection services)

@@ -12,4 +12,5 @@ public class ProductOption : StorableEntity
     public int Quantity { get; set; }
     public decimal Price { get; set; }
     public virtual List<OrderItem> OrderedProductOptions { get; init; } = new();
+    public virtual List<ShoppingCartItem> ReservedProductOptions { get; init; } = new();
 }

@@ -1,100 +1,20 @@
 ﻿@model Infrastructure.Identity.Features.SignIn.SignInCommand
 
-<div class="brand-header-block">
-    <ul class="container">
-        <li><a asp-area="" asp-controller="Account" asp-action="Register">REGISTER</a></li>
-        <li class="active" style="margin-right: 65px;">LOGIN</li>
-    </ul>
-</div>
-<div class="container account-login-container">
-    <div class="row">
-        <div class="col-md-12">
-            <section>
-                <form asp-controller="Account" asp-action="Login" method="post" class="form-horizontal">
-                    <div class="form-group">
-                        <label asp-for="Email" class="control-label form-label"></label>
-                        <input asp-for="Email" class="form-control form-input form-input-center" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Password" class="control-label form-label"></label>
-                        <input asp-for="Password" class="form-control form-input form-input-center" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-default btn-brand btn-brand-big">&nbsp;LOG IN&nbsp;</button>
-                    </div>
-                    Demo credentials:
-                    <p>
-                        User: user@gmail.com
-                    </p>
-                    <h3>
-                        Password: P@ssword1
-                    </h3>
-                </form>
-            </section>
+<head>
+    <link rel="stylesheet" href="~/css/signInStyles.css">
+</head>
+
+<body>
+    <form class="form" asp-ation="Login" method="post">
+        <p class="form-title">Sign in to your account</p>
+        <div class="input-container">
+            <input asp-for="Email" type="email" placeholder="Enter email" required="true">
+            <span></span>
         </div>
-    </div>
-</div>
-
-<style>
-    * {
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-
-    ul { list-style-type: none; }
-
-    .account-login-container { width: 100%; }
-
-    .row {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        margin-bottom: 20px;
-        text-align: center;
-        text-transform: uppercase;
-    }
-
-    h4 { font-size: 25px; }
-
-    .form-group { margin: 15px 0; }
-
-    .form-group label {
-        display: block;
-        font-size: 13px;
-        margin-bottom: 10px;
-        margin-right: 10px;
-        min-width: 150px;
-    }
-
-    input {
-        border: 1px solid #000;
-        outline: none;
-        padding: 10px 20px;
-    }
-
-    button {
-        background-color: #fff;
-        border-radius: 5px;
-        color: #000;
-        cursor: pointer;
-        font-size: 15px;
-        padding: 10px 15px;
-        transition: .2s all ease-in-out;
-    }
-
-    button:hover {
-        background-color: #000;
-        color: #fff;
-    }
-
-    .buttons {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-    }
-</style>
+        <div class="input-container">
+            <input asp-for="Password" type="password" placeholder="Enter password" required="true">
+        </div>
+        <button type="submit" class="submit">Sign in</button>
+        <p class="signup-link">No account?<a asp-action="Register">Sign up</a></p>
+    </form>
+</body>

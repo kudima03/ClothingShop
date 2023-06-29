@@ -54,7 +54,7 @@ public class AuthorizationService : IAuthorizationService
         });
     }
 
-    public async Task RegisterAsync(User user)
+    public async Task<long> RegisterAsync(User user)
     {
         IdentityResult result = await _userManager.CreateAsync(user, user.PasswordHash);
 
@@ -64,6 +64,8 @@ public class AuthorizationService : IAuthorizationService
         }
 
         await _userManager.AddToRoleAsync(user, RoleName.Customer);
+
+        return user.Id;
     }
 
     public Task SingOutAsync()

@@ -33,7 +33,7 @@ public class ProductsController : Controller
     {
         GetAllProductsQuery query = new GetAllProductsQuery();
         IEnumerable<Product> products = await _mediator.Send(query);
-        return Ok(products);
+        return View("Products" ,products);
     }
 
     [HttpGet("{id:long}")]

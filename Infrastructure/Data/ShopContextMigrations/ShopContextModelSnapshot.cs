@@ -17,7 +17,7 @@ namespace Infrastructure.Data.ShopContextMigrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "7.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityAlwaysColumns(modelBuilder);
@@ -64,47 +64,6 @@ namespace Infrastructure.Data.ShopContextMigrations
                         .IsUnique();
 
                     b.ToTable("categories", (string)null);
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.CustomerInfo", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Address")
-                        .HasColumnType("text")
-                        .HasColumnName("address");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<string>("Patronymic")
-                        .HasColumnType("text")
-                        .HasColumnName("patronymic");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("text")
-                        .HasColumnName("phone");
-
-                    b.Property<string>("Surname")
-                        .HasColumnType("text")
-                        .HasColumnName("surname");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("customers_info", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.ImageInfo", b =>
@@ -156,8 +115,6 @@ namespace Infrastructure.Data.ShopContextMigrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrderStatusId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("orders", (string)null);
                 });
@@ -336,8 +293,6 @@ namespace Infrastructure.Data.ShopContextMigrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("reviews", (string)null);
                 });
 
@@ -363,6 +318,57 @@ namespace Infrastructure.Data.ShopContextMigrations
                     b.ToTable("sections", (string)null);
                 });
 
+            modelBuilder.Entity("ApplicationCore.Entities.ShoppingCart", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("shopping_carts", (string)null);
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ShoppingCartItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer")
+                        .HasColumnName("amount");
+
+                    b.Property<DateTime>("CreationDateTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("creation_date_time");
+
+                    b.Property<long>("ProductOptionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ShoppingCartId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("product_option_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductOptionId");
+
+                    b.HasIndex("ShoppingCartId");
+
+                    b.ToTable("shopping_carts_product_options", (string)null);
+                });
+
             modelBuilder.Entity("ApplicationCore.Entities.Subcategory", b =>
                 {
                     b.Property<long>("Id")
@@ -383,62 +389,6 @@ namespace Infrastructure.Data.ShopContextMigrations
                         .IsUnique();
 
                     b.ToTable("subcategories", (string)null);
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.User", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime?>("DeletionDateTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deletion_date_time");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("email");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("password");
-
-                    b.Property<long>("UserTypeId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("user_type_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("UserTypeId");
-
-                    b.ToTable("users", (string)null);
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.UserType", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("user_types", (string)null);
                 });
 
             modelBuilder.Entity("categories_subcategories", b =>
@@ -471,17 +421,6 @@ namespace Infrastructure.Data.ShopContextMigrations
                     b.ToTable("sections_categories");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.CustomerInfo", b =>
-                {
-                    b.HasOne("ApplicationCore.Entities.User", "User")
-                        .WithOne()
-                        .HasForeignKey("ApplicationCore.Entities.CustomerInfo", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ApplicationCore.Entities.ImageInfo", b =>
                 {
                     b.HasOne("ApplicationCore.Entities.ProductColor", "ProductColor")
@@ -501,15 +440,7 @@ namespace Infrastructure.Data.ShopContextMigrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ApplicationCore.Entities.User", "User")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("OrderStatus");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.OrderItem", b =>
@@ -577,26 +508,26 @@ namespace Infrastructure.Data.ShopContextMigrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ApplicationCore.Entities.User", "User")
-                        .WithMany("Reviews")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Product");
-
-                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ApplicationCore.Entities.User", b =>
+            modelBuilder.Entity("ApplicationCore.Entities.ShoppingCartItem", b =>
                 {
-                    b.HasOne("ApplicationCore.Entities.UserType", "UserType")
-                        .WithMany("Users")
-                        .HasForeignKey("UserTypeId")
+                    b.HasOne("ApplicationCore.Entities.ProductOption", "ProductOption")
+                        .WithMany("ReservedProductOptions")
+                        .HasForeignKey("ProductOptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("UserType");
+                    b.HasOne("ApplicationCore.Entities.ShoppingCart", "ShoppingCart")
+                        .WithMany("Items")
+                        .HasForeignKey("ShoppingCartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductOption");
+
+                    b.Navigation("ShoppingCart");
                 });
 
             modelBuilder.Entity("categories_subcategories", b =>
@@ -661,23 +592,18 @@ namespace Infrastructure.Data.ShopContextMigrations
             modelBuilder.Entity("ApplicationCore.Entities.ProductOption", b =>
                 {
                     b.Navigation("OrderedProductOptions");
+
+                    b.Navigation("ReservedProductOptions");
+                });
+
+            modelBuilder.Entity("ApplicationCore.Entities.ShoppingCart", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("ApplicationCore.Entities.Subcategory", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.User", b =>
-                {
-                    b.Navigation("Orders");
-
-                    b.Navigation("Reviews");
-                });
-
-            modelBuilder.Entity("ApplicationCore.Entities.UserType", b =>
-                {
-                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

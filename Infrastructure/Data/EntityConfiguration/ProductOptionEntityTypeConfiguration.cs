@@ -36,7 +36,12 @@ internal class ProductOptionEntityTypeConfiguration : IEntityTypeConfiguration<P
             .WithMany(x => x.ProductOptions)
             .HasForeignKey(x => x.ProductId)
             .IsRequired();
-        builder.HasMany(x => x.OrderedProductOptions).WithOne(x => x.ProductOption)
+        builder.HasMany(x => x.OrderedProductOptions)
+            .WithOne(x => x.ProductOption)
+            .HasForeignKey(x => x.ProductOptionId)
+            .IsRequired();
+        builder.HasMany(x => x.ReservedProductOptions)
+            .WithOne(x => x.ProductOption)
             .HasForeignKey(x => x.ProductOptionId)
             .IsRequired();
     }

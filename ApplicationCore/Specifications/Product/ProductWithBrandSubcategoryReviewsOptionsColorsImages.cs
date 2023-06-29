@@ -16,7 +16,9 @@ public class ProductWithBrandSubcategoryReviewsOptionsColorsImages : Specificati
                     .ThenInclude(z => z.ProductColor)
                     .ThenInclude(z => z.ImagesInfos)
                     .Include(z => z.Subcategory)
-                    .Include(z => z.Reviews))
+                    .Include(z => z.Reviews)
+                    .Include(z => z.ProductOptions)
+                    .ThenInclude(c => c.ReservedProductOptions))
     {
     }
 }

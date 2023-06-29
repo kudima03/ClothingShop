@@ -1,19 +1,18 @@
 ﻿using FluentValidation;
 
-namespace DomainServices.Features.Orders.Commands.Update;
-
-public class UpdateOrderCommandValidator : AbstractValidator<UpdateOrderCommand>
+namespace DomainServices.Features.ShoppingCarts.Commands.Update;
+public class UpdateShoppingCartCommandValidator : AbstractValidator<UpdateShoppingCartCommand>
 {
-    public UpdateOrderCommandValidator()
+    public UpdateShoppingCartCommandValidator()
     {
-        RuleFor(x => x.OrderId)
+        RuleFor(x => x.UserId)
             .InclusiveBetween(1, long.MaxValue)
-            .WithMessage(x => $"{nameof(x.OrderId)} out of possible range.");
+            .WithMessage(x => $"{nameof(x.UserId)} out of possible range.");
 
-        RuleFor(x => x.ProductOptionsIdsAndQuantity)
+        RuleFor(x => x.ItemsDtos)
             .NotNull();
 
-        RuleForEach(x => x.ProductOptionsIdsAndQuantity)
+        RuleForEach(x => x.ItemsDtos)
             .NotNull()
             .ChildRules(c =>
             {

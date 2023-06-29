@@ -1,127 +1,58 @@
 ﻿@model Infrastructure.Identity.Features.Register.RegisterCommand
 
-<div class="brand-header-block">
-    <ul class="container">
-        <li class="active">REGISTER</li>
-        <li style="margin-right: 65px;"><a asp-area="" asp-controller="Account" asp-action="Login">LOGIN</a></li>
-    </ul>
-</div>
-<div class="container register-container">
-    <form asp-controller="Account" asp-action="Register" method="post" class="form-horizontal">
-        <div asp-validation-summary="All" class="text-danger"></div>
-        <div class="row">
-            <div class="form-group col-sm-6">
-                <label asp-for="Name" class="control-label form-label">Name</label>
-                <input asp-for="Name" class="form-control form-input" />
-                <span asp-validation-for="Name" class="text-danger" />
+<head>
+    <link rel="stylesheet" href="~/css/signInStyles.css">
+</head>
+
+<body>
+
+        <form class="form" asp-action="Register" method="post">
+            <p class="form-title">Register new account</p>
+            <div class="input-container">
+                <input asp-for="Email" type="email" placeholder="Enter email" required="true">
+                <span>
+                </span>
             </div>
-            <div class="form-group col-sm-6">
-                <label asp-for="Surname" class="control-label form-label">Surname</label>
-                <input asp-for="Surname" class="form-control form-input" />
-                <span asp-validation-for="Surname" class="text-danger" />
+            <div class="input-container">
+                <input asp-for="Password" type="password" placeholder="Enter password" required="true">
+                <span>
+                </span>
             </div>
-            <div class="form-group col-sm-6">
-                <label asp-for="Patronymic" class="control-label form-label">Patronymic</label>
-                <input asp-for="Patronymic" class="form-control form-input" />
-                <span asp-validation-for="Patronymic" class="text-danger" />
+            <div class="input-container">
+                <input asp-for="ConfirmPassword" type="password" placeholder="Confirm password" required="true">
+                <span>
+                </span>
             </div>
-            <div class="form-group col-sm-6">
-                <label asp-for="PhoneNumber" class="control-label form-label">Phone number</label>
-                <input asp-for="PhoneNumber" class="form-control form-input" />
-                <span asp-validation-for="PhoneNumber" class="text-danger" />
+            <div class="input-container">
+                <input asp-for="Name" type="text" placeholder="Name">
+                <span>
+                </span>
             </div>
-        </div>
-        <br /><br />
-        <div class="row">
-            <div class="form-group col-sm-6">
-                <label asp-for="Email" class="control-label form-label"></label>
-                <input asp-for="Email" class="form-control form-input" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+            <div class="input-container">
+                <input asp-for="Surname" type="text" placeholder="Surname">
+                <span>
+                </span>
             </div>
-            <div class="form-group col-sm-offset-6"></div>
-            <div class="form-group col-sm-6">
-                <label asp-for="Password" class="control-label form-label"></label>
-                <input asp-for="Password" class="form-control form-input" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+            <div class="input-container">
+                <input asp-for="Patronymic" type="text" placeholder="Patronymic">
+                <span>
+                </span>
             </div>
-            <div class="form-group col-sm-6">
-                <label asp-for="ConfirmPassword" class="control-label form-label"></label>
-                <input asp-for="ConfirmPassword" class="form-control form-input" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            <div class="input-container">
+                <input asp-for="PhoneNumber" type="tel" placeholder="Phone number">
+                <span>
+                </span>
             </div>
-        </div>
-        <br /><br />
-        <div class="form-group">
-            <button type="submit" class="btn btn-default btn-brand">&nbsp;Register&nbsp;</button>
-        </div>
-        <br /><br />
-    </form>
-</div>
+            <div class="input-container">
+                <input asp-for="Address" type="text" placeholder="Address">
+            </div>
+            <button type="submit" class="submit">
+                Sign up
+            </button>
 
-<style>
-    * {
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-
-    ul { list-style-type: none; }
-
-    ster-container { width: 100%; }
-
-    .row {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        margin-bottom: 20px;
-        text-align: center;
-        text-transform: uppercase;
-    }
-
-    h4 { 
-        font-size: 25px;
-        display: flex;
-    }
-
-    .form-group { margin: 15px 0; }
-
-    .form-group label {
-        display: block;
-        font-size: 13px;
-        margin-bottom: 10px;
-        margin-right: 10px;
-        min-width: 150px;
-    }
-
-    input {
-        border: 1px solid #000;
-        outline: none;
-        padding: 10px 20px;
-    }
-
-    button {
-        background-color: #fff;
-        border-radius: 5px;
-        color: #000;
-        cursor: pointer;
-        font-size: 15px;
-        padding: 10px 15px;
-        transition: .2s all ease-in-out;
-        margin: 0 auto;
-        display: block;
-    }
-
-    button:hover {
-        background-color: #000;
-        color: #fff;
-    }
-
-    .buttons {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-        width: 100%;
-    }
-</style>
+            <p class="signup-link">
+                Already have an account?
+                <a asp-action="Login">Sign in</a>
+            </p>
+        </form>
+</body>

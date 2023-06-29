@@ -1,6 +1,8 @@
 ﻿using ApplicationCore.Entities;
 using ApplicationCore.Interfaces;
+using ApplicationCore.Specifications.Product;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Products.Queries.GetAll;
 
@@ -15,6 +17,7 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, I
 
     public async Task<IEnumerable<Product>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
     {
-        return await _productsRepository.GetAllAsync(cancellationToken);
+        return await _productsRepository.ApplySpecification(new ProductWithBrandSubcategoryReviewsOptionsColorsImages())
+            .ToListAsync(cancellationToken);
     }
 }

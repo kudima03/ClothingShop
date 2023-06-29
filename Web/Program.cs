@@ -1,3 +1,7 @@
+using ApplicationCore.Entities;
+using ApplicationCore.Interfaces;
+using Infrastructure.Data;
+using Infrastructure.Data.Autoremove;
 using Infrastructure.Identity.Entity;
 using Infrastructure.Identity.IdentityContext;
 using Microsoft.AspNetCore;
@@ -15,11 +19,30 @@ internal class Program
         {
             IServiceProvider scopedProvider = scope.ServiceProvider;
 
+            ShopContext shopContext = scopedProvider.GetRequiredService<ShopContext>();
+            await ShopContextSeed.SeedAsync(shopContext);
+        }
+
+        using (IServiceScope scope = webHost.Services.CreateScope())
+        {
+            IServiceProvider scopedProvider = scope.ServiceProvider;
+
             UserManager<User> userManager = scopedProvider.GetRequiredService<UserManager<User>>();
             RoleManager<IdentityRole<long>>? roleManager = scopedProvider.GetRequiredService(typeof(RoleManager<IdentityRole<long>>))
                 as RoleManager<IdentityRole<long>>;
             IdentityContext identityContext = scopedProvider.GetRequiredService<IdentityContext>();
-            await IdentityContextSeed.SeedAsync(identityContext, userManager, roleManager);
+            ShopContext shopContext = scopedProvider.GetRequiredService<ShopContext>();
+            await IdentityContextSeed.SeedAsync(identityContext, shopContext, userManager, roleManager);
+        }
+
+        using (IServiceScope scope = webHost.Services.CreateScope())
+        {
+            IServiceProvider scopedProvider = scope.ServiceProvider;
+
+            IReadOnlyRepository<ShoppingCartItem> repository = scopedProvider.GetRequiredService<IReadOnlyRepository<ShoppingCartItem>>();
+            ShoppingCartItemsAutoremoveScheduler service = scopedProvider.GetRequiredService<ShoppingCartItemsAutoremoveScheduler>();
+            List<ShoppingCartItem> items = repository.GetAll().ToList();
+            items.ForEach(x => service.AddToSchedule(x).Wait());
         }
 
         await webHost.RunAsync();

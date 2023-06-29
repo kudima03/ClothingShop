@@ -1,0 +1,159 @@
+﻿@model ApplicationCore.Entities.ShoppingCart
+
+<head>
+    <title>Shopping cart</title>
+    
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/shoppingCartStyles.css">
+    <link rel="stylesheet" href="~/css/fontawesome.css">
+    <link rel="stylesheet" href="~/css/mainStyles.css">
+    <link rel="stylesheet" href="~/css/owl.css">
+
+    <script src="~/js/shoppingCart.js"></script>
+
+</head>
+
+<body>
+
+    <header class="">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <h2>Clothing</h2>
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Products" asp-action="GetAllProducts">Our Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="AboutUs">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="ContactUs">Contact Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="ShoppingCarts" asp-action="GetUserShoppingCartView">Shopping cart</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Orders" asp-action="GetUserOrders">My orders</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="h-100 h-custom" style="background-color: #eee;">
+        <div class="container h-100 py-5">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col">
+                    <div class="card shopping-cart" style="border-radius: 15px;">
+                        <div class="card-body text-black">
+
+                            <div class="row">
+                                <div class="col-lg-6 px-5 py-4">
+
+                                    <h3 class="mb-5 pt-2 text-center fw-bold text-uppercase">Your products</h3>
+
+                                    @foreach (var item in Model.Items)
+                                    {
+                                        <div class="d-flex align-items-center mb-5">
+                                            <div class="flex-shrink-0">
+                                                <img src="@item.ProductOption.ProductColor.ImagesInfos.FirstOrDefault()?.Url"
+                                                     class="img-fluid" style="width: 150px;" alt="Generic placeholder image">
+                                            </div>
+                                            <div class="flex-grow-1 ms-3">
+                                                <a onclick="removeProductOptionFromCart(@item.ProductOptionId)" class="float-end text-black"><img width="15" height="15" src="images/close.png" class="fas fa-times"></img></a>
+                                                <a asp-controller="Products" asp-action="GetProductById" asp-route-id="@item.ProductOption.ProductId">
+                                                    <h5 class="text-primary">@item.ProductOption.Product.Name (@item.ProductOption.Size)</h5>
+                                                </a>
+                                                <h6 style="color: #9e9e9e;">Color: @item.ProductOption.ProductColor.ColorHex</h6>
+                                                <div class="d-flex align-items-center">
+                                                    <p class="fw-bold mb-0 me-5 pe-3">@item.ProductOption.Price$</p>
+                                                    <div class="def-number-input number-input safari_only">
+                                                        <button onclick="this.parentNode.querySelector('input[type=number]').stepDown();changeProductOptionQuantity(@item.ProductOptionId, false);"
+                                                                class="minus"></button>
+                                                        <input id="quantityOf @item.ProductOptionId" class="quantity fw-bold text-black" min="1" max="9" name="quantity" value="@item.Amount"
+                                                               type="number">
+                                                        <button onclick="this.parentNode.querySelector('input[type=number]').stepUp();changeProductOptionQuantity(@item.ProductOptionId, true);"
+                                                                class="plus"></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    <hr class="mb-4" style="height: 2px; background-color: #1266f1; opacity: 1;">
+
+                                    <div class="d-flex justify-content-between p-2 mb-2" style="background-color: #e1f5fe;">
+                                        <h5 class="fw-bold mb-0">Total:</h5>
+                                        <h5 id="totalPrice" class="fw-bold mb-0">@Model.Items.Sum(x => x.ProductOption.Price * x.Amount)$</h5>
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-6 px-5 py-4">
+
+                                    <h3 class="mb-5 pt-2 text-center fw-bold text-uppercase">Payment</h3>
+
+                                    <form class="mb-5">
+
+                                        <div class="form-outline mb-5">
+                                            <input type="text" id="typeText" class="form-control form-control-lg" siez="17"
+                                                   value="1111 1111 1111 1111" minlength="19" maxlength="19" />
+                                            <label class="form-label" for="typeText">Card number</label>
+                                        </div>
+
+                                        <div class="form-outline mb-5">
+                                            <input type="text" id="typeName" class="form-control form-control-lg" siez="17"
+                                                   value="Name Surname" />
+                                            <label class="form-label" for="typeName">Holder name</label>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-5">
+                                                <div class="form-outline">
+                                                    <input type="text" id="typeExp" class="form-control form-control-lg" value="01/23"
+                                                           size="7" id="exp" minlength="7" maxlength="7" />
+                                                    <label class="form-label" for="typeExp">Expiration</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-5">
+                                                <div class="form-outline">
+                                                    <input type="password" id="typeText" class="form-control form-control-lg"
+                                                           value="&#9679;&#9679;&#9679;" size="1" minlength="3" maxlength="3" />
+                                                    <label class="form-label" for="typeText">CVV</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-outline mb-5">
+                                                <input type="text" id="typeText" class="form-control form-control-lg" siez="17"
+                                                       value="st. Kosmonavtov 50-11, Minsk, Belarus" />
+                                                <label class="form-label" for="typeText">Postal address</label>
+                                            </div>
+                                        </div>
+
+                                        <p class="mb-5">
+                                            By submitting, you accept <a href="#">policy</a>.
+                                        </p>
+
+                                        <a onclick="createOrderFromCartItems()" asp-controller="Orders" asp-action="GetUserOrders" type="button" class="btn btn-primary btn-block btn-lg">Buy now</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>

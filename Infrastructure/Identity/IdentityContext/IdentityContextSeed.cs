@@ -1,11 +1,13 @@
-﻿using Infrastructure.Identity.Constants;
+﻿using ApplicationCore.Entities;
+using Infrastructure.Data;
+using Infrastructure.Identity.Constants;
 using Infrastructure.Identity.Entity;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Identity.IdentityContext;
 public class IdentityContextSeed
 {
-    public static async Task SeedAsync(IdentityContext identityDbContext, UserManager<User> userManager, RoleManager<IdentityRole<long>> roleManager)
+    public static async Task SeedAsync(IdentityContext identityDbContext, ShopContext shopContext, UserManager<User> userManager, RoleManager<IdentityRole<long>> roleManager)
     {
         await roleManager.CreateAsync(new IdentityRole<long>(RoleName.Customer));
         await roleManager.CreateAsync(new IdentityRole<long>(RoleName.Administrator));
@@ -21,8 +23,9 @@ public class IdentityContextSeed
         if (createdUser != null)
         {
             await userManager.AddToRoleAsync(defaultUser, RoleName.Customer);
+            await shopContext.ShoppingCarts.AddAsync(new ShoppingCart() { UserId = createdUser.Id });
+            await shopContext.SaveChangesAsync();
         }
-
 
         User admin = new User
         {
