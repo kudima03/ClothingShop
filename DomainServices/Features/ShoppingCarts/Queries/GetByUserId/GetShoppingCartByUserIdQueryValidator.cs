@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 
 namespace DomainServices.Features.ShoppingCarts.Queries.GetByUserId;
+
 public class GetShoppingCartByUserIdQueryValidator : AbstractValidator<GetShoppingCartByUserIdQuery>
 {
     public GetShoppingCartByUserIdQueryValidator()

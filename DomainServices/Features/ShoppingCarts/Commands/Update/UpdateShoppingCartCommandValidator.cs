@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 
 namespace DomainServices.Features.ShoppingCarts.Commands.Update;
+
 public class UpdateShoppingCartCommandValidator : AbstractValidator<UpdateShoppingCartCommand>
 {
     public UpdateShoppingCartCommandValidator()
@@ -14,15 +15,16 @@ public class UpdateShoppingCartCommandValidator : AbstractValidator<UpdateShoppi
 
         RuleForEach(x => x.ItemsDtos)
             .NotNull()
-            .ChildRules(c =>
-            {
-                c.RuleFor(v => v.ProductOptionId)
-                    .InclusiveBetween(1, long.MaxValue)
-                    .WithMessage("ProductOptionId id out of possible range.");
+            .ChildRules
+                (c =>
+                {
+                    c.RuleFor(v => v.ProductOptionId)
+                     .InclusiveBetween(1, long.MaxValue)
+                     .WithMessage("ProductOptionId id out of possible range.");
 
-                c.RuleFor(v => v.Quantity)
-                    .InclusiveBetween(1, int.MaxValue)
-                    .WithMessage("Quantity out of possible range.");
-            });
+                    c.RuleFor(v => v.Quantity)
+                     .InclusiveBetween(1, int.MaxValue)
+                     .WithMessage("Quantity out of possible range.");
+                });
     }
 }

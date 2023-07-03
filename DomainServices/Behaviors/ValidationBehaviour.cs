@@ -11,14 +11,15 @@ public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReque
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
     public ValidationBehaviour(IEnumerable<IValidator<TRequest>> validators,
-        ILogger<ValidationBehaviour<TRequest, TResponse>> logger)
+                               ILogger<ValidationBehaviour<TRequest, TResponse>> logger)
     {
         _validators = validators;
         _logger = logger;
     }
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request,
+                                        RequestHandlerDelegate<TResponse> next,
+                                        CancellationToken cancellationToken)
     {
         if (_validators.Any())
         {
@@ -26,13 +27,14 @@ public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReque
 
             _logger.LogInformation($"Validating command {typeName}");
 
-            ValidationContext<TRequest> context = new(request);
+            ValidationContext<TRequest> context = new ValidationContext<TRequest>(request);
 
             ValidationResult[] validationResults =
                 await Task.WhenAll(_validators.Select(v => v.ValidateAsync(context, cancellationToken)));
 
             IEnumerable<ValidationFailure> failures = validationResults.SelectMany(result => result.Errors)
-                .Where(error => error != null).ToList();
+                                                                       .Where(error => error != null)
+                                                                       .ToList();
 
             if (failures.Any())
             {

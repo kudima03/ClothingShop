@@ -15,9 +15,9 @@ public class DeleteSubcategoryCommandHandler : IRequestHandler<DeleteSubcategory
 
     public async Task<Unit> Handle(DeleteSubcategoryCommand request, CancellationToken cancellationToken)
     {
-        Subcategory? subcategory = await _subcategoriesRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Id == request.Id,
-            cancellationToken: cancellationToken);
+        Subcategory? subcategory = await _subcategoriesRepository.GetFirstOrDefaultAsync
+                                       (predicate: x => x.Id == request.Id,
+                                        cancellationToken: cancellationToken);
 
         if (subcategory is not null)
         {

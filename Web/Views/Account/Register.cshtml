@@ -6,53 +6,53 @@
 
 <body>
 
-        <form class="form" asp-action="Register" method="post">
-            <p class="form-title">Register new account</p>
-            <div class="input-container">
-                <input asp-for="Email" type="email" placeholder="Enter email" required="true">
-                <span>
-                </span>
-            </div>
-            <div class="input-container">
-                <input asp-for="Password" type="password" placeholder="Enter password" required="true">
-                <span>
-                </span>
-            </div>
-            <div class="input-container">
-                <input asp-for="ConfirmPassword" type="password" placeholder="Confirm password" required="true">
-                <span>
-                </span>
-            </div>
-            <div class="input-container">
-                <input asp-for="Name" type="text" placeholder="Name">
-                <span>
-                </span>
-            </div>
-            <div class="input-container">
-                <input asp-for="Surname" type="text" placeholder="Surname">
-                <span>
-                </span>
-            </div>
-            <div class="input-container">
-                <input asp-for="Patronymic" type="text" placeholder="Patronymic">
-                <span>
-                </span>
-            </div>
-            <div class="input-container">
-                <input asp-for="PhoneNumber" type="tel" placeholder="Phone number">
-                <span>
-                </span>
-            </div>
-            <div class="input-container">
-                <input asp-for="Address" type="text" placeholder="Address">
-            </div>
-            <button type="submit" class="submit">
-                Sign up
-            </button>
+<form class="form" asp-action="Register" method="post">
+    <p class="form-title">Register new account</p>
+    <div class="input-container">
+        <input asp-for="Email" type="email" placeholder="Enter email" required="true">
+        <span>
+        </span>
+    </div>
+    <div class="input-container">
+        <input asp-for="Password" type="password" placeholder="Enter password" required="true">
+        <span>
+        </span>
+    </div>
+    <div class="input-container">
+        <input asp-for="ConfirmPassword" type="password" placeholder="Confirm password" required="true">
+        <span>
+        </span>
+    </div>
+    <div class="input-container">
+        <input asp-for="Name" type="text" placeholder="Name">
+        <span>
+        </span>
+    </div>
+    <div class="input-container">
+        <input asp-for="Surname" type="text" placeholder="Surname">
+        <span>
+        </span>
+    </div>
+    <div class="input-container">
+        <input asp-for="Patronymic" type="text" placeholder="Patronymic">
+        <span>
+        </span>
+    </div>
+    <div class="input-container">
+        <input asp-for="PhoneNumber" type="tel" placeholder="Phone number">
+        <span>
+        </span>
+    </div>
+    <div class="input-container">
+        <input asp-for="Address" type="text" placeholder="Address">
+    </div>
+    <button type="submit" class="submit">
+        Sign up
+    </button>
 
-            <p class="signup-link">
-                Already have an account?
-                <a asp-action="Login">Sign in</a>
-            </p>
-        </form>
+    <p class="signup-link">
+        Already have an account?
+        <a asp-action="Login">Sign in</a>
+    </p>
+</form>
 </body>

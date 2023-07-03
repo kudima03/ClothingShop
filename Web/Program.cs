@@ -28,8 +28,11 @@ internal class Program
             IServiceProvider scopedProvider = scope.ServiceProvider;
 
             UserManager<User> userManager = scopedProvider.GetRequiredService<UserManager<User>>();
-            RoleManager<IdentityRole<long>>? roleManager = scopedProvider.GetRequiredService(typeof(RoleManager<IdentityRole<long>>))
-                as RoleManager<IdentityRole<long>>;
+
+            RoleManager<IdentityRole<long>>? roleManager = scopedProvider.GetRequiredService
+                                                                   (typeof(RoleManager<IdentityRole<long>>))
+                                                               as RoleManager<IdentityRole<long>>;
+
             IdentityContext identityContext = scopedProvider.GetRequiredService<IdentityContext>();
             ShopContext shopContext = scopedProvider.GetRequiredService<ShopContext>();
             await IdentityContextSeed.SeedAsync(identityContext, shopContext, userManager, roleManager);
@@ -39,8 +42,12 @@ internal class Program
         {
             IServiceProvider scopedProvider = scope.ServiceProvider;
 
-            IReadOnlyRepository<ShoppingCartItem> repository = scopedProvider.GetRequiredService<IReadOnlyRepository<ShoppingCartItem>>();
-            ShoppingCartItemsAutoremoveScheduler service = scopedProvider.GetRequiredService<ShoppingCartItemsAutoremoveScheduler>();
+            IReadOnlyRepository<ShoppingCartItem> repository =
+                scopedProvider.GetRequiredService<IReadOnlyRepository<ShoppingCartItem>>();
+
+            ShoppingCartItemsAutoremoveScheduler service =
+                scopedProvider.GetRequiredService<ShoppingCartItemsAutoremoveScheduler>();
+
             List<ShoppingCartItem> items = repository.GetAll().ToList();
             items.ForEach(x => service.AddToSchedule(x).Wait());
         }
@@ -51,6 +58,6 @@ internal class Program
     public static IWebHostBuilder CreateHostBuilder(string[] args)
     {
         return WebHost.CreateDefaultBuilder(args)
-            .UseStartup<Startup>();
+                      .UseStartup<Startup>();
     }
 }

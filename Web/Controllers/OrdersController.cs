@@ -32,6 +32,7 @@ public class OrdersController : Controller
     {
         GetAllOrdersQuery query = new GetAllOrdersQuery();
         IEnumerable<Order> orders = await _mediator.Send(query);
+
         return Ok(orders);
     }
 
@@ -45,6 +46,7 @@ public class OrdersController : Controller
     {
         GetOrderByIdQuery query = new GetOrderByIdQuery(id);
         Order order = await _mediator.Send(query);
+
         return Ok(order);
     }
 
@@ -58,6 +60,7 @@ public class OrdersController : Controller
         long userId = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         GetOrdersByUserIdQuery query = new GetOrdersByUserIdQuery(userId);
         IEnumerable<Order> orders = await _mediator.Send(query);
+
         return View("Orders", orders);
     }
 
@@ -71,6 +74,7 @@ public class OrdersController : Controller
         long userId = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         createCommand.UserId = userId;
         Order createdOrder = await _mediator.Send(createCommand);
+
         return Ok(createdOrder.Id);
     }
 
@@ -83,6 +87,7 @@ public class OrdersController : Controller
     {
         CancelOrderCommand command = new CancelOrderCommand(id);
         await _mediator.Send(command);
+
         return Ok();
     }
 }

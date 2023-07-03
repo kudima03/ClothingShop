@@ -31,6 +31,7 @@ public class SubcategoriesController : ControllerBase
     {
         GetAllSubcategoriesQuery query = new GetAllSubcategoriesQuery();
         IEnumerable<Subcategory> subcategories = await _mediator.Send(query);
+
         return Ok(subcategories);
     }
 
@@ -43,6 +44,7 @@ public class SubcategoriesController : ControllerBase
     {
         GetSubcategoryByIdQuery query = new GetSubcategoryByIdQuery(id);
         Subcategory subcategory = await _mediator.Send(query);
+
         return Ok(subcategory);
     }
 
@@ -55,6 +57,7 @@ public class SubcategoriesController : ControllerBase
     public async Task<ActionResult> Create([FromBody] CreateSubcategoryCommand createCommand)
     {
         Subcategory createdCategory = await _mediator.Send(createCommand);
+
         return Ok(createdCategory.Id);
     }
 
@@ -68,6 +71,7 @@ public class SubcategoriesController : ControllerBase
     public async Task<ActionResult> Update([FromBody] UpdateSubcategoryCommand updateCommand)
     {
         await _mediator.Send(updateCommand);
+
         return Ok();
     }
 
@@ -80,6 +84,7 @@ public class SubcategoriesController : ControllerBase
     {
         DeleteSubcategoryCommand command = new DeleteSubcategoryCommand(id);
         await _mediator.Send(command);
+
         return Ok();
     }
 }

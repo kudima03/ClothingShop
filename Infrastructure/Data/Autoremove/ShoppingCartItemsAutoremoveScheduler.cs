@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Quartz;
 
 namespace Infrastructure.Data.Autoremove;
+
 public class ShoppingCartItemsAutoremoveScheduler
 {
     private readonly IScheduler _scheduler;
@@ -21,22 +22,22 @@ public class ShoppingCartItemsAutoremoveScheduler
 
     private (IJobDetail job, ITrigger trigger) CreateJobForItem(ShoppingCartItem item)
     {
-        JobDataMap jobData = new JobDataMap()
+        JobDataMap jobData = new JobDataMap
         {
-            new (JobIdentityName.Id, item.Id)
+            new KeyValuePair<string, object>(JobIdentityName.Id, item.Id)
         };
 
         IJobDetail job = JobBuilder
-            .Create<RemoveTimedOutShoppingCartItemsJob>()
-            .DisallowConcurrentExecution()
-            .SetJobData(jobData)
-            .WithIdentity(new JobKey(item.Id.ToString()))
-            .Build();
+                         .Create<RemoveTimedOutShoppingCartItemsJob>()
+                         .DisallowConcurrentExecution()
+                         .SetJobData(jobData)
+                         .WithIdentity(new JobKey(item.Id.ToString()))
+                         .Build();
 
         ITrigger trigger = TriggerBuilder.Create()
-            .WithIdentity(new TriggerKey(item.Id.ToString()))
-            .StartAt(item.CreationDateTime.Add(_shoppingCartItemLifetime))
-            .Build();
+                                         .WithIdentity(new TriggerKey(item.Id.ToString()))
+                                         .StartAt(item.CreationDateTime.Add(_shoppingCartItemLifetime))
+                                         .Build();
 
         return (job, trigger);
     }

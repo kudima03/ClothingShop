@@ -19,8 +19,8 @@ public class GetBrandByIdQueryHandler : IRequestHandler<GetBrandByIdQuery, Brand
     public async Task<Brand> Handle(GetBrandByIdQuery request, CancellationToken cancellationToken)
     {
         Brand? brand = await _brandsRepository
-            .ApplySpecification(new GetBrandWithProducts(brand => brand.Id == request.Id))
-            .FirstOrDefaultAsync(cancellationToken);
+                             .ApplySpecification(new GetBrandWithProducts(brand => brand.Id == request.Id))
+                             .FirstOrDefaultAsync(cancellationToken);
 
         if (brand is null)
         {

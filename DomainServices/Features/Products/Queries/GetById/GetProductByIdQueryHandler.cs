@@ -19,8 +19,9 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, P
     public async Task<Product> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
         Product? product = await _repository
-            .ApplySpecification(new ProductWithBrandSubcategoryReviewsOptionsColorsImages(x => x.Id == request.Id))
-            .SingleOrDefaultAsync(cancellationToken);
+                                 .ApplySpecification
+                                     (new ProductWithBrandSubcategoryReviewsOptionsColorsImages(x => x.Id == request.Id))
+                                 .SingleOrDefaultAsync(cancellationToken);
 
         if (product is null)
         {

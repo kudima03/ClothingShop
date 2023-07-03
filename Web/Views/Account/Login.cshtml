@@ -5,16 +5,16 @@
 </head>
 
 <body>
-    <form class="form" asp-ation="Login" method="post">
-        <p class="form-title">Sign in to your account</p>
-        <div class="input-container">
-            <input asp-for="Email" type="email" placeholder="Enter email" required="true">
-            <span></span>
-        </div>
-        <div class="input-container">
-            <input asp-for="Password" type="password" placeholder="Enter password" required="true">
-        </div>
-        <button type="submit" class="submit">Sign in</button>
-        <p class="signup-link">No account?<a asp-action="Register">Sign up</a></p>
-    </form>
+<form class="form" asp-ation="Login" method="post">
+    <p class="form-title">Sign in to your account</p>
+    <div class="input-container">
+        <input asp-for="Email" type="email" placeholder="Enter email" required="true">
+        <span></span>
+    </div>
+    <div class="input-container">
+        <input asp-for="Password" type="password" placeholder="Enter password" required="true">
+    </div>
+    <button type="submit" class="submit">Sign in</button>
+    <p class="signup-link">No account?<a asp-action="Register">Sign up</a></p>
+</form>
 </body>

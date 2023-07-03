@@ -79,33 +79,39 @@ public static class ServiceCollectionExtensions
     public static void AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddEntityFrameworkNpgsql()
-            .AddDbContext<DbContext, ShopContext>(options =>
-            {
-                options.UseNpgsql(configuration["ConnectionStrings:ShopConnection"],
-                    sqlOptions =>
+                .AddDbContext<DbContext, ShopContext>
+                    (options =>
                     {
-                        sqlOptions.MigrationsAssembly(typeof(ShopContext).GetTypeInfo().Assembly.GetName().Name);
-                        sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
-                    });
+                        options.UseNpgsql
+                            (configuration["ConnectionStrings:ShopConnection"],
+                             sqlOptions =>
+                             {
+                                 sqlOptions.MigrationsAssembly(typeof(ShopContext).GetTypeInfo().Assembly.GetName().Name);
+                                 sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
+                             });
 
-                options.UseTriggers(triggerOptions =>
-                {
-                    triggerOptions.AddTrigger<AfterProductOptionSavedTrigger>();
-                    triggerOptions.AddTrigger<AfterShoppingCartItemSavedTrigger>();
-                });
-            });
+                        options.UseTriggers
+                            (triggerOptions =>
+                            {
+                                triggerOptions.AddTrigger<AfterProductOptionSavedTrigger>();
+                                triggerOptions.AddTrigger<AfterShoppingCartItemSavedTrigger>();
+                            });
+                    });
     }
 
     public static void AddMediatRServices(this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
         services.AddValidatorsFromAssembly(typeof(IdentityContext).Assembly);
-        services.AddMediatR(options =>
-        {
-            options.RegisterServicesFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
-            options.RegisterServicesFromAssembly(typeof(IdentityContext).Assembly);
-            options.RegisterServicesFromAssembly(typeof(Program).Assembly);
-        });
+
+        services.AddMediatR
+            (options =>
+            {
+                options.RegisterServicesFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
+                options.RegisterServicesFromAssembly(typeof(IdentityContext).Assembly);
+                options.RegisterServicesFromAssembly(typeof(Program).Assembly);
+            });
+
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
     }
 
@@ -117,63 +123,75 @@ public static class ServiceCollectionExtensions
 
     public static void AddAndConfigureQuartzNet(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddQuartz(options =>
-        {
-            options.UseMicrosoftDependencyInjectionJobFactory();
-        });
+        services.AddQuartz
+            (options =>
+            {
+                options.UseMicrosoftDependencyInjectionJobFactory();
+            });
     }
 
     public static void AddAndConfigureAuthorization(this IServiceCollection services)
     {
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy(PolicyName.Administrator, builder =>
+        services.AddAuthorization
+            (options =>
             {
-                builder.RequireClaim(ClaimTypes.Role, RoleName.Administrator);
-                builder.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
-            });
+                options.AddPolicy
+                    (PolicyName.Administrator,
+                     builder =>
+                     {
+                         builder.RequireClaim(ClaimTypes.Role, RoleName.Administrator);
+                         builder.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                     });
 
-            options.AddPolicy(PolicyName.Customer, builder =>
-            {
-                builder.RequireAssertion(x => x.User.HasClaim(ClaimTypes.Role, RoleName.Customer) ||
-                                              x.User.HasClaim(ClaimTypes.Role, RoleName.Administrator));
-                builder.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                options.AddPolicy
+                    (PolicyName.Customer,
+                     builder =>
+                     {
+                         builder.RequireAssertion
+                             (x => x.User.HasClaim(ClaimTypes.Role, RoleName.Customer) ||
+                                   x.User.HasClaim(ClaimTypes.Role, RoleName.Administrator));
+
+                         builder.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                     });
             });
-        });
     }
 
     public static void AddAndConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication()
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new()
+                .AddJwtBearer
+                    (options =>
                     {
-                        ValidAudience = JwtSettings.Audience,
-                        ValidIssuer = JwtSettings.Issuer,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey)),
-                    };
-
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
+                        options.TokenValidationParameters = new TokenValidationParameters
                         {
-                            context.Token = context.Request.Cookies[JwtConstants.TokenType];
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
+                            ValidAudience = JwtSettings.Audience,
+                            ValidIssuer = JwtSettings.Issuer,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey))
+                        };
+
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnMessageReceived = context =>
+                            {
+                                context.Token = context.Request.Cookies[JwtConstants.TokenType];
+
+                                return Task.CompletedTask;
+                            }
+                        };
+                    });
 
         services.AddEntityFrameworkNpgsql()
-                .AddDbContext<IdentityContext>(options =>
-                {
-                    options.UseNpgsql(configuration["ConnectionStrings:IdentityConnection"],
-                                      sqlOptions =>
-                                      {
-                                          sqlOptions.MigrationsAssembly(typeof(IdentityContext).GetTypeInfo().Assembly.GetName().Name);
-                                          sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
-                                      });
-                });
+                .AddDbContext<IdentityContext>
+                    (options =>
+                    {
+                        options.UseNpgsql
+                            (configuration["ConnectionStrings:IdentityConnection"],
+                             sqlOptions =>
+                             {
+                                 sqlOptions.MigrationsAssembly(typeof(IdentityContext).GetTypeInfo().Assembly.GetName().Name);
+                                 sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
+                             });
+                    });
 
         services.AddIdentity<User, IdentityRole<long>>()
                 .AddEntityFrameworkStores<IdentityContext>()

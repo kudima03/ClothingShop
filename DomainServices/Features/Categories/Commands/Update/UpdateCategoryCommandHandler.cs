@@ -16,7 +16,7 @@ public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryComman
     private readonly IRepository<Section> _sectionsRepository;
 
     public UpdateCategoryCommandHandler(IRepository<Category> categoriesRepository,
-        IRepository<Section> sectionsRepository)
+                                        IRepository<Section> sectionsRepository)
     {
         _categoriesRepository = categoriesRepository;
         _sectionsRepository = sectionsRepository;
@@ -58,12 +58,12 @@ public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryComman
     }
 
     private async Task<Category> ValidateAndGetCategoryToUpdateAsync(long id,
-        CancellationToken cancellationToken = default)
+                                                                     CancellationToken cancellationToken = default)
     {
-        Category? category = await _categoriesRepository.GetFirstOrDefaultAsync(
-            x => x.Id == id,
-            categories => categories.Include(cat => cat.Sections),
-            cancellationToken);
+        Category? category = await _categoriesRepository.GetFirstOrDefaultAsync
+                                 (x => x.Id == id,
+                                  categories => categories.Include(cat => cat.Sections),
+                                  cancellationToken);
 
         if (category is null)
         {
@@ -76,24 +76,30 @@ public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryComman
     private async Task ValidateCategoryNameAsync(string name, CancellationToken cancellationToken = default)
     {
         bool nameExists = await _categoriesRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+
         if (nameExists)
         {
-            throw new ValidationException(new[]
-            {
-                new ValidationFailure("Category.Name", "Such category name already exists!")
-            });
+            throw new ValidationException
+                (new[]
+                {
+                    new ValidationFailure("Category.Name", "Such category name already exists!")
+                });
         }
     }
 
     private async Task<IList<Section>> ValidateAndGetSectionsAsync(ICollection<long> sectionsIds,
-        CancellationToken cancellationToken = default)
+                                                                   CancellationToken cancellationToken = default)
     {
         IList<Section>? existingSections = await _sectionsRepository
-            .GetAllAsync(predicate: x => sectionsIds.Contains(x.Id), cancellationToken: cancellationToken);
+                                               .GetAllAsync
+                                                   (predicate: x => sectionsIds.Contains(x.Id),
+                                                    cancellationToken: cancellationToken);
+
         if (existingSections.Count != sectionsIds.Count)
         {
             IEnumerable<long> missingSectionsIds = sectionsIds.Except(existingSections.Select(x => x.Id));
             string missingSectionsMessage = string.Join(',', missingSectionsIds);
+
             throw new EntityNotFoundException($"Sections with ids:{missingSectionsMessage} doesn't exist.");
         }
 

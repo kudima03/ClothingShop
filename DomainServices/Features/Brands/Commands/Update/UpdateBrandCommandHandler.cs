@@ -30,13 +30,16 @@ public class UpdateBrandCommandHandler : IRequestHandler<UpdateBrandCommand, Uni
         brand.Name = request.Name;
 
         await _brandsRepository.SaveChangesAsync(cancellationToken);
+
         return Unit.Value;
     }
 
     private async Task<Brand> GetBrandToUpdateAsync(long id, CancellationToken cancellationToken = default)
     {
-        Brand? brand = await _brandsRepository.GetFirstOrDefaultAsync(predicate: brand => brand.Id == id,
-            cancellationToken: cancellationToken);
+        Brand? brand = await _brandsRepository.GetFirstOrDefaultAsync
+                           (predicate: brand => brand.Id == id,
+                            cancellationToken: cancellationToken);
+
         if (brand is null)
         {
             throw new EntityNotFoundException($"{nameof(Brand)} with id:{id} doesn't exist.");
@@ -48,9 +51,14 @@ public class UpdateBrandCommandHandler : IRequestHandler<UpdateBrandCommand, Uni
     private async Task ValidateBrandNameAsync(string name, CancellationToken cancellationToken = default)
     {
         bool nameExists = await _brandsRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+
         if (nameExists)
         {
-            throw new ValidationException(new[] { new ValidationFailure("Brand.Name", "Such brand already exists!") });
+            throw new ValidationException
+                (new[]
+                {
+                    new ValidationFailure("Brand.Name", "Such brand already exists!")
+                });
         }
     }
 }

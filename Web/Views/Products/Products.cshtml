@@ -1,4 +1,5 @@
-﻿@model IEnumerable<ApplicationCore.Entities.Product>
+﻿@using ApplicationCore.Entities
+@model IEnumerable<ApplicationCore.Entities.Product>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +19,7 @@
     <link rel="stylesheet" href="~/css/fontawesome.css">
     <link rel="stylesheet" href="~/css/mainStyles.css">
     <link rel="stylesheet" href="~/css/owl.css">
-    
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -32,126 +33,136 @@
 
 <body>
 
-    <div id="preloader">
-        <div class="jumper">
-            <div></div>
-            <div></div>
-            <div></div>
+<div id="preloader">
+    <div class="jumper">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+
+<header class="">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <h2>Clothing</h2>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Products" asp-action="GetAllProducts">Our Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="AboutUs">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="ContactUs">Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ShoppingCarts" asp-action="GetUserShoppingCartView">Shopping cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Orders" asp-action="GetUserOrders">My orders</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="page-heading products-heading header-text">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="text-content">
+                    <h2>products</h2>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <header class="">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index"><h2>Clothing</h2></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">
-                                Home
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Products" asp-action="GetAllProducts">Our Products</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="AboutUs">About Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="ContactUs">Contact Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="ShoppingCarts" asp-action="GetUserShoppingCartView">Shopping cart</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Orders" asp-action="GetUserOrders">My orders</a>
-                        </li>
+
+<div class="products">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="filters">
+                    <ul>
+                        <li class="active" data-filter="*">All Products</li>
+                        <li data-filter=".des">Featured</li>
                     </ul>
                 </div>
             </div>
-        </nav>
-    </header>
+            <div class="col-md-12">
+                <div class="filters-content">
+                    <div class="row grid">
+                        @foreach (Product item in Model)
+                        {
+                            <div class="col-lg-4 col-md-4 all des">
+                                <div class="product-item">
+                                    <a asp-action="GetProductById" asp-route-id="@item.Id">
+                                        <img src="@item.ProductOptions.FirstOrDefault()?.ProductColor.ImagesInfos.FirstOrDefault()?.Url" alt="">
+                                    </a>
+                                    <div class="down-content">
+                                        <a asp-action="GetProductById" asp-route-id="@item.Id">
+                                            <h4>@item.Name</h4>
+                                        </a>
+                                        <a asp-controller="Brands" asp-action="GetById" asp-route-id="@item.BrandId">
+                                            <h4>@item.Brand.Name</h4>
+                                        </a>
+                                        <h6>$@item.ProductOptions.Select(x => x.Price).Min()</h6>
+                                        @{
+                                            @if (item.Reviews.Count != 0)
+                                            {
+                                                double averageRate = item.Reviews.Average(x => x.Rate);
+                                                <ul class="stars">
 
-    <div class="page-heading products-heading header-text">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="text-content">
-                        <h2>products</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="products">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="filters">
-                        <ul>
-                            <li class="active" data-filter="*">All Products</li>
-                            <li data-filter=".des">Featured</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="filters-content">
-                        <div class="row grid">
-                            @foreach (var item in Model)
-                            {
-                                <div class="col-lg-4 col-md-4 all des">
-                                    <div class="product-item">
-                                        <a asp-action="GetProductById" asp-route-id="@item.Id"><img src="@item.ProductOptions.FirstOrDefault()?.ProductColor.ImagesInfos.FirstOrDefault()?.Url" alt=""></a>
-                                        <div class="down-content">
-                                            <a asp-action="GetProductById" asp-route-id="@item.Id"><h4>@item.Name</h4></a>
-                                            <a asp-controller="Brands" asp-action="GetById" asp-route-id="@item.BrandId"><h4>@item.Brand.Name</h4></a>
-                                            <h6>$@item.ProductOptions.Select(x=>x.Price).Min()</h6>
-                                            @{
-                                                @if (@item.Reviews.Count != 0)
-                                                {
-                                                    double averageRate = @item.Reviews.Average(x => x.Rate);
-                                                    <ul class="stars">
-
-                                                        @for (int i = 0; i < averageRate; i++)
-                                                        {
-                                                            <li><i class="fa fa-star"></i></li>
-                                                        }
-                                                        @(averageRate)
-                                                    </ul>
-                                                }
+                                                    @for (int i = 0; i < averageRate; i++)
+                                                    {
+                                                        <li>
+                                                            <i class="fa fa-star"></i>
+                                                        </li>
+                                                    }
+                                                    @(averageRate)
+                                                </ul>
                                             }
-                                            <span>Reviews (@item.Reviews.Count)</span>
-                                        </div>
+                                        }
+                                        <span>Reviews (@item.Reviews.Count)</span>
                                     </div>
                                 </div>
-                            }
-                        </div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="inner-content">
-                        <p>
-                        </p>
-                    </div>
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="inner-content">
+                    <p>
+                    </p>
                 </div>
             </div>
         </div>
-    </footer>
+    </div>
+</footer>
 
-    <script language="text/Javascript">
+<script language="text/Javascript">
         cleared[0] = cleared[1] = cleared[2] = 0;
         function clearField(t) {
             if (!cleared[t.id]) {

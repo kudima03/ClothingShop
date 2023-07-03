@@ -15,8 +15,9 @@ public class DeleteSectionCommandHandler : IRequestHandler<DeleteSectionCommand,
 
     public async Task<Unit> Handle(DeleteSectionCommand request, CancellationToken cancellationToken)
     {
-        Section? section = await _sectionsRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.Id,
-            cancellationToken: cancellationToken);
+        Section? section = await _sectionsRepository.GetFirstOrDefaultAsync
+                               (predicate: x => x.Id == request.Id,
+                                cancellationToken: cancellationToken);
 
         if (section is not null)
         {

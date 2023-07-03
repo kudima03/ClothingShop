@@ -5,6 +5,7 @@ using Infrastructure.Identity.Interfaces;
 using MediatR;
 
 namespace Infrastructure.Identity.Features.Register;
+
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Unit>
 {
     private readonly IAuthorizationService _authorizationService;
@@ -12,7 +13,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Unit>
     private readonly IRepository<ShoppingCart> _shoppingCartsRepository;
 
     public RegisterCommandHandler(IAuthorizationService authorizationService,
-        IRepository<ShoppingCart> shoppingCartsRepository)
+                                  IRepository<ShoppingCart> shoppingCartsRepository)
     {
         _authorizationService = authorizationService;
         _shoppingCartsRepository = shoppingCartsRepository;
@@ -20,7 +21,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Unit>
 
     public async Task<Unit> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        User user = new User()
+        User user = new User
         {
             UserName = request.Email,
             PasswordHash = request.Password,
@@ -29,12 +30,12 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Unit>
             Surname = request.Surname,
             Patronymic = request.Patronymic,
             Address = request.Address,
-            PhoneNumber = request.PhoneNumber,
+            PhoneNumber = request.PhoneNumber
         };
 
         long userId = await _authorizationService.RegisterAsync(user);
 
-        ShoppingCart? newShoppingCart = new ShoppingCart()
+        ShoppingCart? newShoppingCart = new ShoppingCart
         {
             UserId = userId
         };

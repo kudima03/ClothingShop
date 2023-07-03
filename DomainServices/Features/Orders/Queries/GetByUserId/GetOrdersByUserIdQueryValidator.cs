@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 
 namespace DomainServices.Features.Orders.Queries.GetByUserId;
+
 public class GetOrdersByUserIdQueryValidator : AbstractValidator<GetOrdersByUserIdQuery>
 {
     public GetOrdersByUserIdQueryValidator()

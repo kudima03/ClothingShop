@@ -18,6 +18,6 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, I
     public async Task<IEnumerable<Product>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
     {
         return await _productsRepository.ApplySpecification(new ProductWithBrandSubcategoryReviewsOptionsColorsImages())
-            .ToListAsync(cancellationToken);
+                                        .ToListAsync(cancellationToken);
     }
 }

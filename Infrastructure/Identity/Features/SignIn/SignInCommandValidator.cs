@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 
 namespace Infrastructure.Identity.Features.SignIn;
+
 public class SignInCommandValidator : AbstractValidator<SignInCommand>
 {
     public SignInCommandValidator()

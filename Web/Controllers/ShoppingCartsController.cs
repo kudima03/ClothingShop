@@ -30,6 +30,7 @@ public class ShoppingCartsController : Controller
         long id = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         GetShoppingCartByUserIdQuery query = new GetShoppingCartByUserIdQuery(id);
         ShoppingCart shoppingCart = await _mediator.Send(query);
+
         return Ok(shoppingCart);
     }
 
@@ -43,6 +44,7 @@ public class ShoppingCartsController : Controller
         long id = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         GetShoppingCartByUserIdQuery query = new GetShoppingCartByUserIdQuery(id);
         ShoppingCart shoppingCart = await _mediator.Send(query);
+
         return View("ShoppingCart", shoppingCart);
     }
 
@@ -50,11 +52,12 @@ public class ShoppingCartsController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<ShoppingCart>> UpdateShoppingCart([FromBody]UpdateShoppingCartCommand command)
+    public async Task<ActionResult<ShoppingCart>> UpdateShoppingCart([FromBody] UpdateShoppingCartCommand command)
     {
         long userId = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         command.UserId = userId;
         await _mediator.Send(command);
+
         return Ok();
     }
 }

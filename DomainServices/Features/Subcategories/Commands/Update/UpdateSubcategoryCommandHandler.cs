@@ -15,7 +15,7 @@ public class UpdateSubcategoryCommandHandler : IRequestHandler<UpdateSubcategory
     private readonly IRepository<Subcategory> _subcategoriesRepository;
 
     public UpdateSubcategoryCommandHandler(IRepository<Subcategory> subcategoriesRepository,
-        IRepository<Category> categoriesRepository)
+                                           IRepository<Category> categoriesRepository)
     {
         _subcategoriesRepository = subcategoriesRepository;
         _categoriesRepository = categoriesRepository;
@@ -51,19 +51,18 @@ public class UpdateSubcategoryCommandHandler : IRequestHandler<UpdateSubcategory
         }
         catch (DbUpdateException)
         {
-            throw new OperationFailureException(
-                $"Unable to perform update {nameof(Subcategory)} operation. Check input.");
+            throw new OperationFailureException($"Unable to perform update {nameof(Subcategory)} operation. Check input.");
         }
 
         return Unit.Value;
     }
 
     private async Task<Subcategory> ValidateAndGetSubcategoryAsync(long subcategoryId,
-        CancellationToken cancellationToken = default)
+                                                                   CancellationToken cancellationToken = default)
     {
-        Subcategory? subcategory = await _subcategoriesRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Id == subcategoryId,
-            cancellationToken: cancellationToken);
+        Subcategory? subcategory = await _subcategoriesRepository.GetFirstOrDefaultAsync
+                                       (predicate: x => x.Id == subcategoryId,
+                                        cancellationToken: cancellationToken);
 
         if (subcategory is null)
         {
@@ -79,22 +78,27 @@ public class UpdateSubcategoryCommandHandler : IRequestHandler<UpdateSubcategory
 
         if (nameExists)
         {
-            throw new ValidationException(new[]
-            {
-                new ValidationFailure("Subcategory.Name", "Such subcategory name already exists!")
-            });
+            throw new ValidationException
+                (new[]
+                {
+                    new ValidationFailure("Subcategory.Name", "Such subcategory name already exists!")
+                });
         }
     }
 
     private async Task<IList<Category>> ValidateAndGetCategoriesAsync(ICollection<long> categoriesIds,
-        CancellationToken cancellationToken = default)
+                                                                      CancellationToken cancellationToken = default)
     {
         IList<Category>? existingCategories = await _categoriesRepository
-            .GetAllAsync(predicate: x => categoriesIds.Contains(x.Id), cancellationToken: cancellationToken);
+                                                  .GetAllAsync
+                                                      (predicate: x => categoriesIds.Contains(x.Id),
+                                                       cancellationToken: cancellationToken);
+
         if (existingCategories.Count != categoriesIds.Count)
         {
             IEnumerable<long> missingCategoriesIds = categoriesIds.Except(existingCategories.Select(x => x.Id));
             string missingCategoriesMessage = string.Join(',', missingCategoriesIds);
+
             throw new EntityNotFoundException($"Categories with ids:{missingCategoriesMessage} doesn't exist.");
         }
 

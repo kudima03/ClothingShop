@@ -4,11 +4,12 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Identity.QueryHandlers;
+
 public class CheckUserExistsQueryHandler : IRequestHandler<CheckUserExistsQuery, bool>
 {
     private readonly IdentityContext.IdentityContext _context;
 
-    public CheckUserExistsQueryHandler(IdentityContext.IdentityContext context) 
+    public CheckUserExistsQueryHandler(IdentityContext.IdentityContext context)
     {
         _context = context;
     }

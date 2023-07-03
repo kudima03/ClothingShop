@@ -1,5 +1,4 @@
 ﻿using ApplicationCore.Entities;
-using ApplicationCore.EqualityComparers;
 using ApplicationCore.Exceptions;
 using ApplicationCore.Interfaces;
 using FluentValidation;
@@ -9,13 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using static DomainServices.Features.ShoppingCarts.Commands.UpdateShoppingCartDtos;
 
 namespace DomainServices.Features.ShoppingCarts.Commands.Update;
+
 public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCartCommand, Unit>
 {
-    private readonly IRepository<ShoppingCart> _shoppingCartRepository;
     private readonly IRepository<ProductOption> _productOptionsRepository;
+    private readonly IRepository<ShoppingCart> _shoppingCartRepository;
 
     public UpdateShoppingCartCommandHandler(IRepository<ShoppingCart> shoppingCartRepository,
-        IRepository<ProductOption> productOptionsRepository)
+                                            IRepository<ProductOption> productOptionsRepository)
     {
         _shoppingCartRepository = shoppingCartRepository;
         _productOptionsRepository = productOptionsRepository;
@@ -27,17 +27,9 @@ public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCa
 
         UpdateExistingItems(shoppingCart, request.ItemsDtos);
 
-        ICollection<ShoppingCartItem> existingItems =
-            await ValidateAndGetProductOptionsAsync(request.ItemsDtos, cancellationToken);
-        
-        IEnumerable<ShoppingCartItem> itemsToAdd =
-            existingItems.Except(shoppingCart.Items, new ShoppingCartItemEqualityComparerByProductOptionId());
+        ICollection<ShoppingCartItem> itemsToAdd = await ValidateAndGetShoppingCartItemsToAdd(shoppingCart, request.ItemsDtos);
 
-        ValidateItemsToAddQuantity(existingItems, itemsToAdd);
-
-        IEnumerable<ShoppingCartItem> itemsToRemove =
-            shoppingCart.Items
-                .Except(existingItems, new ShoppingCartItemEqualityComparerByProductOptionId());
+        ICollection<ShoppingCartItem> itemsToRemove = ValidateAndGetShoppingCartItemsToRemove(shoppingCart, request.ItemsDtos);
 
         shoppingCart.Items.RemoveAll(productOption => itemsToRemove.Contains(productOption));
 
@@ -58,6 +50,53 @@ public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCa
         return Unit.Value;
     }
 
+    private async Task<ICollection<ShoppingCartItem>> ValidateAndGetShoppingCartItemsToAdd(
+        ShoppingCart shoppingCart,
+        ICollection<ShoppingCartItemDto> requestedItems)
+    {
+        IEnumerable<ShoppingCartItemDto> newItems = requestedItems.Where
+            (x => !shoppingCart.Items.Select(c => c.ProductOptionId).Contains(x.ProductOptionId));
+
+        IList<ProductOption>? productOptions = await _productOptionsRepository.GetAllAsync
+                                                   (predicate: x => newItems.Select(c => c.ProductOptionId).Contains(x.Id));
+
+        if (productOptions.Count != newItems.Count())
+        {
+            IEnumerable<long> missingShoppingCartItems = newItems.Select
+                                                                     (x => x.ProductOptionId)
+                                                                 .Except(productOptions.Select(x => x.Id));
+
+            string missingShoppingCartItemsMessage = string.Join(',', missingShoppingCartItems);
+
+            throw new EntityNotFoundException($"ShoppingCartItemsDtos with ids:{missingShoppingCartItemsMessage} doesn't exist.");
+        }
+
+        foreach (ShoppingCartItemDto item in newItems)
+        {
+            ProductOption? productOption = productOptions.Single(x => x.Id == item.ProductOptionId);
+
+            if (item.Quantity > productOption.Quantity)
+            {
+                throw new ValidationException
+                    (new[]
+                    {
+                        new ValidationFailure
+                            ("Order.OrderItemsDtos.Quantity",
+                             $"Requested quantity({item.Quantity}) for ProductOption " +
+                             $"with id:{item.ProductOptionId} is not available.")
+                    });
+            }
+        }
+
+        return newItems.Select
+                           (x => new ShoppingCartItem
+                           {
+                               Amount = x.Quantity,
+                               ProductOptionId = x.ProductOptionId
+                           })
+                       .ToList();
+    }
+
     private void IncrementQuantityInRepository(IEnumerable<ShoppingCartItem> abandonedShoppingCartItems)
     {
         foreach (ShoppingCartItem item in abandonedShoppingCartItems)
@@ -74,66 +113,38 @@ public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCa
         }
     }
 
-    private async Task<ICollection<ShoppingCartItem>> ValidateAndGetProductOptionsAsync(
-        IEnumerable<UpdateShoppingCartDtos.ShoppingCartItemDto> shoppingCartItemsDtos,
-        CancellationToken cancellationToken = default)
+    private ICollection<ShoppingCartItem> ValidateAndGetShoppingCartItemsToRemove(
+        ShoppingCart shoppingCart,
+        ICollection<ShoppingCartItemDto> requestedItems)
     {
-        IList<ProductOption>? existingProductOptions =
-            await _productOptionsRepository.GetAllAsync(predicate: productOption =>
-                    shoppingCartItemsDtos.Select(x => x.ProductOptionId).Contains(productOption.Id),
-                cancellationToken: cancellationToken);
+        IEnumerable<ShoppingCartItem> itemsToRemove = shoppingCart.Items.Where
+            (x => !requestedItems.Select(c => c.ProductOptionId).Contains(x.ProductOptionId));
 
-        if (existingProductOptions.Count != shoppingCartItemsDtos.Count())
-        {
-            IEnumerable<long> missingShoppingCartItems = shoppingCartItemsDtos.Select(x => x.ProductOptionId).Except(existingProductOptions.Select(x => x.Id));
-            string missingShoppingCartItemsMessage = string.Join(',', missingShoppingCartItems);
-            throw new EntityNotFoundException($"ShoppingCartItemsDtos with ids:{missingShoppingCartItemsMessage} doesn't exist.");
-        }
-        
-        return shoppingCartItemsDtos.Select(x => new ShoppingCartItem
-        {
-            ProductOptionId = x.ProductOptionId,
-            ProductOption = existingProductOptions.Single(c => c.Id == x.ProductOptionId),
-            Amount = x.Quantity
-        }).ToList();
-    }
-
-    private void ValidateItemsToAddQuantity(IEnumerable<ShoppingCartItem> existingItems, IEnumerable<ShoppingCartItem> itemsToAdd)
-    {
-        foreach (var item in itemsToAdd)
-        {
-            var existingItem =
-                existingItems.Single(x => x.ProductOptionId == item.ProductOptionId);
-            if (existingItem.Amount - item.Amount  < 0)
-            {
-                throw new ValidationException(new[]
-                {
-                    new ValidationFailure("Order.OrderItemsDtos.Quantity",
-                        $"Requested quantity({item.Amount}) for ProductOption " +
-                        $"with id:{item.ProductOptionId} is not available.")
-                });
-            }
-        }
+        return itemsToRemove.ToList();
     }
 
     private void UpdateExistingItems(ShoppingCart shoppingCart,
-        IEnumerable<UpdateShoppingCartDtos.ShoppingCartItemDto> shoppingCartItemsDtos)
+                                     IEnumerable<ShoppingCartItemDto> shoppingCartItemsDtos)
     {
         foreach (ShoppingCartItem? item in shoppingCart.Items)
         {
-            UpdateShoppingCartDtos.ShoppingCartItemDto? updatedValue = shoppingCartItemsDtos.SingleOrDefault(x => x.ProductOptionId == item.ProductOptionId);
-            if (updatedValue is not null)
+            ShoppingCartItemDto? updatedValue = shoppingCartItemsDtos.SingleOrDefault
+                (x => x.ProductOptionId == item.ProductOptionId);
+
+            if (updatedValue is not null && updatedValue.Quantity != item.Amount)
             {
                 int diff = item.Amount - updatedValue.Quantity;
 
                 if (diff < 0 && item.ProductOption.Quantity - Math.Abs(diff) < 0)
                 {
-                    throw new ValidationException(new[]
-                    {
-                        new ValidationFailure("Order.OrderItemsDtos.Quantity",
-                            $"Requested quantity({item.Amount}) for ProductOption " +
-                            $"with id:{item.ProductOptionId} is not available.")
-                    });
+                    throw new ValidationException
+                        (new[]
+                        {
+                            new ValidationFailure
+                                ("Order.OrderItemsDtos.Quantity",
+                                 $"Requested quantity({item.Amount}) for ProductOption " +
+                                 $"with id:{item.ProductOptionId} is not available.")
+                        });
                 }
 
                 item.ProductOption.Quantity += diff;
@@ -146,9 +157,10 @@ public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCa
     private async Task<ShoppingCart> ValidateAndGetShoppingCart(long userId, CancellationToken cancellationToken = default)
     {
         ShoppingCart? shoppingCart =
-            await _shoppingCartRepository.GetFirstOrDefaultAsync(predicate: x => x.UserId == userId,
-                include: x => x.Include(c => c.Items).ThenInclude(c => c.ProductOption),
-                cancellationToken: cancellationToken);
+            await _shoppingCartRepository.GetFirstOrDefaultAsync
+                (x => x.UserId == userId,
+                 x => x.Include(c => c.Items).ThenInclude(c => c.ProductOption),
+                 cancellationToken);
 
         if (shoppingCart is null)
         {

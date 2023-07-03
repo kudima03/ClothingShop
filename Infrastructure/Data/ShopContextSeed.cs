@@ -3,6 +3,7 @@ using ApplicationCore.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
+
 public class ShopContextSeed
 {
     private static List<Brand> _brands;
@@ -35,46 +36,55 @@ public class ShopContextSeed
 
     private static void InitSections()
     {
-        _sections = new List<Section>()
+        _sections = new List<Section>
         {
-            new Section() { Name = "Men", },
-            new Section() { Name = "Women" },
-            new Section() { Name = "Children" }
+            new Section
+            {
+                Name = "Men"
+            },
+            new Section
+            {
+                Name = "Women"
+            },
+            new Section
+            {
+                Name = "Children"
+            }
         };
     }
 
     private static void InitCategories()
     {
-        _categories = new List<Category>()
+        _categories = new List<Category>
         {
-            new Category()
+            new Category
             {
                 Name = "Outerwear",
-                Sections = new List<Section>()
+                Sections = new List<Section>
                 {
                     _sections.Single(x => x.Name == "Men"),
                     _sections.Single(x => x.Name == "Women"),
-                    _sections.Single(x => x.Name == "Children"),
+                    _sections.Single(x => x.Name == "Children")
                 }
             },
-            new Category()
+            new Category
             {
                 Name = "Sportswear",
-                Sections = new List<Section>()
+                Sections = new List<Section>
                 {
                     _sections.Single(x => x.Name == "Men"),
                     _sections.Single(x => x.Name == "Women"),
-                    _sections.Single(x => x.Name == "Children"),
+                    _sections.Single(x => x.Name == "Children")
                 }
             },
-            new Category()
+            new Category
             {
                 Name = "Swimwear",
-                Sections = new List<Section>()
+                Sections = new List<Section>
                 {
                     _sections.Single(x => x.Name == "Men"),
                     _sections.Single(x => x.Name == "Women"),
-                    _sections.Single(x => x.Name == "Children"),
+                    _sections.Single(x => x.Name == "Children")
                 }
             }
         };
@@ -82,193 +92,239 @@ public class ShopContextSeed
 
     private static void InitSubcategories()
     {
-        _subcategories = new List<Subcategory>()
+        _subcategories = new List<Subcategory>
         {
-            new Subcategory()
+            new Subcategory
             {
                 Name = "Jackets",
-                Categories = new List<Category>() { _categories.Single(x => x.Name == "Outerwear"), }
+                Categories = new List<Category>
+                {
+                    _categories.Single(x => x.Name == "Outerwear")
+                }
             },
-            new Subcategory()
+            new Subcategory
             {
                 Name = "Jerseys",
-                Categories = new List<Category>() { _categories.Single(x => x.Name == "Outerwear"), }
+                Categories = new List<Category>
+                {
+                    _categories.Single(x => x.Name == "Outerwear")
+                }
             },
-            new Subcategory()
+            new Subcategory
             {
                 Name = "Coats",
-                Categories = new List<Category>() { _categories.Single(x => x.Name == "Outerwear"), }
+                Categories = new List<Category>
+                {
+                    _categories.Single(x => x.Name == "Outerwear")
+                }
             },
-            new Subcategory()
+            new Subcategory
             {
                 Name = "Jumpers",
-                Categories = new List<Category>() { _categories.Single(x => x.Name == "Outerwear"), }
+                Categories = new List<Category>
+                {
+                    _categories.Single(x => x.Name == "Outerwear")
+                }
             },
-            new Subcategory()
+            new Subcategory
             {
                 Name = "Polo",
-                Categories = new List<Category>() { _categories.Single(x => x.Name == "Outerwear"), }
+                Categories = new List<Category>
+                {
+                    _categories.Single(x => x.Name == "Outerwear")
+                }
             },
-            new Subcategory()
+            new Subcategory
             {
                 Name = "Joggers",
-                Categories = new List<Category>() { _categories.Single(x => x.Name == "Sportswear"), }
+                Categories = new List<Category>
+                {
+                    _categories.Single(x => x.Name == "Sportswear")
+                }
             },
-            new Subcategory()
+            new Subcategory
             {
                 Name = "Ski suites",
-                Categories = new List<Category>() { _categories.Single(x => x.Name == "Sportswear"), }
+                Categories = new List<Category>
+                {
+                    _categories.Single(x => x.Name == "Sportswear")
+                }
             },
-            new Subcategory()
+            new Subcategory
             {
                 Name = "Swimsuites",
-                Categories = new List<Category>() { _categories.Single(x => x.Name == "Swimwear"), }
+                Categories = new List<Category>
+                {
+                    _categories.Single(x => x.Name == "Swimwear")
+                }
             },
-            new Subcategory()
+            new Subcategory
             {
                 Name = "Flippers",
-                Categories = new List<Category>() { _categories.Single(x => x.Name == "Swimwear"), }
-            },
+                Categories = new List<Category>
+                {
+                    _categories.Single(x => x.Name == "Swimwear")
+                }
+            }
         };
     }
 
     private static void InitBrands()
     {
-        _brands = new List<Brand>()
+        _brands = new List<Brand>
         {
-            new Brand() { Name = "H&M" },
-            new Brand() { Name = "Adidas" },
-            new Brand() { Name = "Nike" },
-            new Brand() { Name = "Zara" },
-            new Brand() { Name = "Pull&Bear" },
-            new Brand() { Name = "Bershka" },
-            new Brand() { Name = "Armani" },
+            new Brand
+            {
+                Name = "H&M"
+            },
+            new Brand
+            {
+                Name = "Adidas"
+            },
+            new Brand
+            {
+                Name = "Nike"
+            },
+            new Brand
+            {
+                Name = "Zara"
+            },
+            new Brand
+            {
+                Name = "Pull&Bear"
+            },
+            new Brand
+            {
+                Name = "Bershka"
+            },
+            new Brand
+            {
+                Name = "Armani"
+            }
         };
     }
 
     private static void InitProductColors()
     {
-        _productColors = new List<ProductColor>()
+        _productColors = new List<ProductColor>
         {
-            new ProductColor()
+            new ProductColor
             {
                 ColorHex = "#1A1B24",
-                ImagesInfos = new List<ImageInfo>()
+                ImagesInfos = new List<ImageInfo>
                 {
-                    new ImageInfo()
+                    new ImageInfo
                     {
                         Url =
                             "https://drive.google.com/uc?export=view&id=1kOj0KG9O4QvxVq-TdLIlfHDUTXlmVB6c"
                     },
-                    new ImageInfo()
+                    new ImageInfo
                     {
                         Url =
                             "https://drive.google.com/uc?export=view&id=1Lwea5dpel5EVhwV-_LRXfD9lSt8opkbW"
                     },
-                    new ImageInfo()
+                    new ImageInfo
                     {
                         Url =
                             "https://drive.google.com/uc?export=view&id=13z_pBZHdjUQQhPSkUeOnAknRIENQwI2b"
                     }
                 }
             },
-            new ProductColor()
+            new ProductColor
             {
                 ColorHex = "#1F2029",
-                ImagesInfos = new List<ImageInfo>()
+                ImagesInfos = new List<ImageInfo>
                 {
-                    new ImageInfo()
+                    new ImageInfo
                     {
                         Url =
                             "https://drive.google.com/uc?export=view&id=1SwvTDmWKnUnc-CCGXza4iQIPUSfXq6-m"
                     },
-                    new ImageInfo()
+                    new ImageInfo
                     {
                         Url =
                             "https://drive.google.com/uc?export=view&id=1qjUQhFaG73HmnRg6W4t8hk0wevbQCHut"
                     },
-                    new ImageInfo()
+                    new ImageInfo
                     {
                         Url =
                             "https://drive.google.com/uc?export=view&id=14p7YGdnd59VhrXoJCTUd7ObGv-2gcuxW"
                     }
                 }
             },
-            new ProductColor()
+            new ProductColor
             {
                 ColorHex = "#17181F",
-                ImagesInfos = new List<ImageInfo>()
+                ImagesInfos = new List<ImageInfo>
                 {
-                    new ImageInfo()
+                    new ImageInfo
                     {
                         Url =
                             "https://drive.google.com/uc?export=view&id=1oHBtL9ocZUTAdq_f60pf9ql0WaK6H6Lc"
-
                     },
-                    new ImageInfo()
+                    new ImageInfo
                     {
                         Url =
                             "https://drive.google.com/uc?export=view&id=1SydnrR511t3XTC5LUld_4hqOqhM7INdr"
                     },
-                    new ImageInfo()
+                    new ImageInfo
                     {
                         Url =
                             "https://drive.google.com/uc?export=view&id=1VcDJul5zWVk_LK6yzfg6J8oAyQCQLcoN"
                     }
                 }
             },
-            new ProductColor()
+            new ProductColor
             {
                 ColorHex = "#EBEAEF",
-                ImagesInfos = new List<ImageInfo>()
+                ImagesInfos = new List<ImageInfo>
                 {
-                    new ImageInfo()
+                    new ImageInfo
                     {
                         Url =
                             "https://drive.google.com/uc?export=view&id=1RvsxR8lWGPbY-BF4wzvDw9ldGhXeTZSr"
-
                     },
-                    new ImageInfo()
+                    new ImageInfo
                     {
                         Url =
                             "https://drive.google.com/uc?export=view&id=1-A6inF7Awblbod7VcILOEyL1HvLJehfK"
                     },
-                    new ImageInfo()
+                    new ImageInfo
                     {
                         Url =
                             "https://drive.google.com/uc?export=view&id=1d1yuijG-MST7OZybzUDIyJ0EY58vTJUz"
                     }
                 }
-            },
+            }
         };
     }
 
     private static void InitProducts()
     {
-        _products = new List<Product>()
+        _products = new List<Product>
         {
-            new Product()
+            new Product
             {
                 Name = "Jersey polo shirt",
                 Brand = _brands.Single(x => x.Name == "Armani"),
                 Subcategory = _subcategories.Single(x => x.Name == "Jerseys"),
-                ProductOptions = new List<ProductOption>()
+                ProductOptions = new List<ProductOption>
                 {
-                    new ProductOption()
+                    new ProductOption
                     {
                         Price = 310,
                         Quantity = 254,
                         Size = "S",
                         ProductColor = _productColors.Single(x => x.ColorHex == "#1A1B24")
                     },
-                    new ProductOption()
+                    new ProductOption
                     {
                         Price = 330,
                         Quantity = 128,
                         Size = "M",
                         ProductColor = _productColors.Single(x => x.ColorHex == "#1A1B24")
                     },
-                    new ProductOption()
+                    new ProductOption
                     {
                         Price = 340,
                         Quantity = 83,
@@ -277,28 +333,28 @@ public class ShopContextSeed
                     }
                 }
             },
-            new Product()
+            new Product
             {
                 Name = "Tencel-blend jersey shirt",
                 Brand = _brands.Single(x => x.Name == "Armani"),
                 Subcategory = _subcategories.Single(x => x.Name == "Jerseys"),
-                ProductOptions = new List<ProductOption>()
+                ProductOptions = new List<ProductOption>
                 {
-                    new ProductOption()
+                    new ProductOption
                     {
                         Price = 450,
                         Quantity = 134,
                         Size = "S",
                         ProductColor = _productColors.Single(x => x.ColorHex == "#1F2029")
                     },
-                    new ProductOption()
+                    new ProductOption
                     {
                         Price = 460,
                         Quantity = 28,
                         Size = "M",
                         ProductColor = _productColors.Single(x => x.ColorHex == "#1F2029")
                     },
-                    new ProductOption()
+                    new ProductOption
                     {
                         Price = 470,
                         Quantity = 93,
@@ -307,28 +363,28 @@ public class ShopContextSeed
                     }
                 }
             },
-            new Product()
+            new Product
             {
                 Name = "Stretch polo shirt",
                 Brand = _brands.Single(x => x.Name == "Armani"),
                 Subcategory = _subcategories.Single(x => x.Name == "Polo"),
-                ProductOptions = new List<ProductOption>()
+                ProductOptions = new List<ProductOption>
                 {
-                    new ProductOption()
+                    new ProductOption
                     {
                         Price = 314,
                         Quantity = 59,
                         Size = "S",
                         ProductColor = _productColors.Single(x => x.ColorHex == "#EBEAEF")
                     },
-                    new ProductOption()
+                    new ProductOption
                     {
                         Price = 329,
                         Quantity = 75,
                         Size = "M",
                         ProductColor = _productColors.Single(x => x.ColorHex == "#EBEAEF")
                     },
-                    new ProductOption()
+                    new ProductOption
                     {
                         Price = 329,
                         Quantity = 76,
@@ -336,15 +392,15 @@ public class ShopContextSeed
                         ProductColor = _productColors.Single(x => x.ColorHex == "#EBEAEF")
                     }
                 }
-            },
+            }
         };
     }
 
     private static void InitReviews()
     {
-        _reviews = new List<Review>()
+        _reviews = new List<Review>
         {
-            new Review()
+            new Review
             {
                 UserId = 1,
                 Product = _products.Single(x => x.Name == "Jersey polo shirt"),
@@ -352,7 +408,7 @@ public class ShopContextSeed
                 DateTime = DateTime.UtcNow,
                 Rate = 5
             },
-            new Review()
+            new Review
             {
                 UserId = 1,
                 Product = _products.Single(x => x.Name == "Jersey polo shirt"),
@@ -360,7 +416,7 @@ public class ShopContextSeed
                 DateTime = DateTime.UtcNow,
                 Rate = 5
             },
-            new Review()
+            new Review
             {
                 UserId = 1,
                 Product = _products.Single(x => x.Name == "Jersey polo shirt"),
@@ -368,7 +424,7 @@ public class ShopContextSeed
                 DateTime = DateTime.UtcNow,
                 Rate = 5
             },
-            new Review()
+            new Review
             {
                 UserId = 1,
                 Product = _products.Single(x => x.Name == "Tencel-blend jersey shirt"),
@@ -376,7 +432,7 @@ public class ShopContextSeed
                 DateTime = DateTime.UtcNow,
                 Rate = 4
             },
-            new Review()
+            new Review
             {
                 UserId = 1,
                 Product = _products.Single(x => x.Name == "Tencel-blend jersey shirt"),
@@ -384,25 +440,37 @@ public class ShopContextSeed
                 DateTime = DateTime.UtcNow,
                 Rate = 4
             },
-            new Review()
+            new Review
             {
                 UserId = 1,
                 Product = _products.Single(x => x.Name == "Stretch polo shirt"),
                 Comment = "Very lightweight product.",
                 DateTime = DateTime.UtcNow,
                 Rate = 3
-            },
+            }
         };
     }
 
     private static void InitOrderStatuses()
     {
-        _orderStatuses = new List<OrderStatus>()
+        _orderStatuses = new List<OrderStatus>
         {
-            new OrderStatus() { Name = OrderStatusName.InReview, },
-            new OrderStatus() { Name = OrderStatusName.InDelivery, },
-            new OrderStatus() { Name = OrderStatusName.Completed, },
-            new OrderStatus() { Name = OrderStatusName.Cancelled, },
+            new OrderStatus
+            {
+                Name = OrderStatusName.InReview
+            },
+            new OrderStatus
+            {
+                Name = OrderStatusName.InDelivery
+            },
+            new OrderStatus
+            {
+                Name = OrderStatusName.Completed
+            },
+            new OrderStatus
+            {
+                Name = OrderStatusName.Cancelled
+            }
         };
     }
 

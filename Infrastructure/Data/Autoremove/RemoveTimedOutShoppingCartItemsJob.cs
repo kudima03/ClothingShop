@@ -5,11 +5,11 @@ using Microsoft.Extensions.Logging;
 using Quartz;
 
 namespace Infrastructure.Data.Autoremove;
+
 public class RemoveTimedOutShoppingCartItemsJob : IJob
 {
-    private readonly IMediator _mediator;
-
     private readonly ILogger<RemoveTimedOutShoppingCartItemsJob> _logger;
+    private readonly IMediator _mediator;
 
     public RemoveTimedOutShoppingCartItemsJob(IMediator mediator, ILogger<RemoveTimedOutShoppingCartItemsJob> logger)
     {

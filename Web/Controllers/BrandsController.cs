@@ -31,6 +31,7 @@ public class BrandsController : ControllerBase
     {
         GetAllBrandsQuery query = new GetAllBrandsQuery();
         IEnumerable<Brand> brands = await _mediator.Send(query);
+
         return Ok(brands);
     }
 
@@ -43,6 +44,7 @@ public class BrandsController : ControllerBase
     {
         GetBrandByIdQuery query = new GetBrandByIdQuery(id);
         Brand brand = await _mediator.Send(query);
+
         return Ok(brand);
     }
 
@@ -55,6 +57,7 @@ public class BrandsController : ControllerBase
     public async Task<ActionResult> Create([FromBody] CreateBrandCommand createCommand)
     {
         Brand createdBrand = await _mediator.Send(createCommand);
+
         return Ok(createdBrand.Id);
     }
 
@@ -68,6 +71,7 @@ public class BrandsController : ControllerBase
     public async Task<ActionResult> Update([FromBody] UpdateBrandCommand updateCommand)
     {
         await _mediator.Send(updateCommand);
+
         return Ok();
     }
 
@@ -80,6 +84,7 @@ public class BrandsController : ControllerBase
     {
         DeleteBrandCommand command = new DeleteBrandCommand(id);
         await _mediator.Send(command);
+
         return Ok();
     }
 }

@@ -63,6 +63,20 @@ a.filled-button {
 	transition: all 0.3s;
 }
 
+a.filled-button-disabled {
+	pointer-events: none;
+	cursor: default;
+	background-color: #9a9a9a;
+	color: #fff;
+	font-size: 14px;
+	text-transform: capitalize;
+	font-weight: 300;
+	padding: 10px 20px;
+	border-radius: 5px;
+	display: inline-block;
+	transition: all 0.3s;
+}
+
 a.filled-button:hover {
 	background-color: #121212;
 	color: #fff;

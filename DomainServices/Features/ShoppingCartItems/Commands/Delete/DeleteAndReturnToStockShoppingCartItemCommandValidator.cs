@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
 
 namespace DomainServices.Features.ShoppingCartItems.Commands.Delete;
-public class DeleteAndReturnToStockShoppingCartItemCommandValidator : AbstractValidator<DeleteAndReturnToStockShoppingCartItemCommand>
+
+public class DeleteAndReturnToStockShoppingCartItemCommandValidator
+    : AbstractValidator<DeleteAndReturnToStockShoppingCartItemCommand>
 {
     public DeleteAndReturnToStockShoppingCartItemCommandValidator()
     {

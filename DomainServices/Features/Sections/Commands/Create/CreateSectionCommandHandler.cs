@@ -21,7 +21,7 @@ public class CreateSectionCommandHandler : IRequestHandler<CreateSectionCommand,
     {
         await ValidateSectionNameAsync(request.Name, cancellationToken);
 
-        Section newSection = new()
+        Section newSection = new Section
         {
             Name = request.Name
         };
@@ -30,6 +30,7 @@ public class CreateSectionCommandHandler : IRequestHandler<CreateSectionCommand,
         {
             Section? section = await _sectionsRepository.InsertAsync(newSection, cancellationToken);
             await _sectionsRepository.SaveChangesAsync(cancellationToken);
+
             return section;
         }
         catch (DbUpdateException)
@@ -44,10 +45,11 @@ public class CreateSectionCommandHandler : IRequestHandler<CreateSectionCommand,
 
         if (nameExists)
         {
-            throw new ValidationException(new[]
-            {
-                new ValidationFailure("Section.Name", "Such section name already exists!")
-            });
+            throw new ValidationException
+                (new[]
+                {
+                    new ValidationFailure("Section.Name", "Such section name already exists!")
+                });
         }
     }
 }

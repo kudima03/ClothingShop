@@ -10,16 +10,17 @@ namespace DomainServices.Services.OrdersService;
 
 public class OrdersService : IOrdersService
 {
+    private readonly IMediator _mediator;
+    private readonly IRepository<Order> _ordersRepository;
+    private readonly IRepository<OrderStatus> _orderStatusesRepository;
     private readonly IRepository<ProductOption> _productOptionsRepository;
     private readonly IRepository<ShoppingCartItem> _shoppingCartItemsRepository;
-    private readonly IRepository<OrderStatus> _orderStatusesRepository;
-    private readonly IRepository<Order> _ordersRepository;
-    private readonly IMediator _mediator;
 
     public OrdersService(IRepository<ProductOption> productOptionsRepository,
-        IRepository<OrderStatus> orderStatusesRepository,
-        IRepository<Order> ordersRepository,
-        IMediator mediator, IRepository<ShoppingCartItem> shoppingCartItemsRepository)
+                         IRepository<OrderStatus> orderStatusesRepository,
+                         IRepository<Order> ordersRepository,
+                         IMediator mediator,
+                         IRepository<ShoppingCartItem> shoppingCartItemsRepository)
     {
         _productOptionsRepository = productOptionsRepository;
         _orderStatusesRepository = orderStatusesRepository;
@@ -28,19 +29,20 @@ public class OrdersService : IOrdersService
         _shoppingCartItemsRepository = shoppingCartItemsRepository;
     }
 
-    public async Task<Order> CreateOrder(long userId, ICollection<long> shoppingCartItemsIds,
-        CancellationToken cancellationToken = default)
+    public async Task<Order> CreateOrder(long userId,
+                                         ICollection<long> shoppingCartItemsIds,
+                                         CancellationToken cancellationToken = default)
     {
         await ValidateOrderInitiator(userId, cancellationToken);
 
         List<OrderItem> orderItems =
             await ValidateAndCreateOrderItems(shoppingCartItemsIds, cancellationToken);
 
-        OrderStatus orderStatus = (await _orderStatusesRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Name == OrderStatusName.InReview,
-            cancellationToken: cancellationToken))!;
+        OrderStatus orderStatus = (await _orderStatusesRepository.GetFirstOrDefaultAsync
+                                       (predicate: x => x.Name == OrderStatusName.InReview,
+                                        cancellationToken: cancellationToken))!;
 
-        Order newOrder = new()
+        Order newOrder = new Order
         {
             UserId = userId,
             OrderedProductsOptionsInfo = orderItems,
@@ -54,6 +56,7 @@ public class OrdersService : IOrdersService
             await _ordersRepository.SaveChangesAsync(cancellationToken);
             await DeleteShoppingCartItems(shoppingCartItemsIds, cancellationToken);
             await _productOptionsRepository.SaveChangesAsync(cancellationToken);
+
             return insertedOrder;
         }
         catch (DbUpdateException)
@@ -71,8 +74,9 @@ public class OrdersService : IOrdersService
             item.ProductOption.Quantity += item.Amount;
         }
 
-        order.OrderStatus = await _orderStatusesRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Name == OrderStatusName.Cancelled, cancellationToken: cancellationToken);
+        order.OrderStatus =
+            await _orderStatusesRepository.GetFirstOrDefaultAsync
+                (predicate: x => x.Name == OrderStatusName.Cancelled, cancellationToken: cancellationToken);
 
         await _ordersRepository.SaveChangesAsync(cancellationToken);
     }
@@ -87,45 +91,50 @@ public class OrdersService : IOrdersService
         }
     }
 
-    private async Task<List<OrderItem>> ValidateAndCreateOrderItems(
-        ICollection<long> shoppingCartItemsIds,
-        CancellationToken cancellationToken = default)
+    private async Task<List<OrderItem>> ValidateAndCreateOrderItems(ICollection<long> shoppingCartItemsIds,
+                                                                    CancellationToken cancellationToken = default)
     {
-        IList<ShoppingCartItem>? shoppingCartItems = await _shoppingCartItemsRepository.GetAllAsync(
-            predicate: x => shoppingCartItemsIds.Contains(x.Id), cancellationToken: cancellationToken);
-
+        IList<ShoppingCartItem>? shoppingCartItems =
+            await _shoppingCartItemsRepository.GetAllAsync
+                (predicate: x => shoppingCartItemsIds.Contains(x.Id), cancellationToken: cancellationToken);
 
         if (shoppingCartItems.Count != shoppingCartItemsIds.Count)
         {
             IEnumerable<long> missingShoppingCartItems =
                 shoppingCartItemsIds.Except(shoppingCartItems.Select(x => x.Id));
+
             string missingShoppingCartItemsMessage = string.Join(',', missingShoppingCartItems);
-            throw new EntityNotFoundException(
-                $"ShoppingCartItems with ids:{missingShoppingCartItemsMessage} doesn't exist.");
+
+            throw new EntityNotFoundException($"ShoppingCartItems with ids:{missingShoppingCartItemsMessage} doesn't exist.");
         }
 
-        return shoppingCartItems.Select(x => new OrderItem
-        {
-            ProductOptionId = x.ProductOptionId,
-            Amount = x.Amount,
-        }).ToList();
+        return shoppingCartItems.Select
+                                    (x => new OrderItem
+                                    {
+                                        ProductOptionId = x.ProductOptionId,
+                                        Amount = x.Amount
+                                    })
+                                .ToList();
     }
 
-    private async Task DeleteShoppingCartItems(IEnumerable<long> shoppingCartItemsIds, CancellationToken cancellationToken = default)
+    private async Task DeleteShoppingCartItems(IEnumerable<long> shoppingCartItemsIds,
+                                               CancellationToken cancellationToken = default)
     {
         IList<ShoppingCartItem>? itemsToRemove =
-            await _shoppingCartItemsRepository.GetAllAsync(predicate: x => shoppingCartItemsIds.Contains(x.Id),
-                cancellationToken: cancellationToken);
+            await _shoppingCartItemsRepository.GetAllAsync
+                (predicate: x => shoppingCartItemsIds.Contains(x.Id),
+                 cancellationToken: cancellationToken);
 
         _shoppingCartItemsRepository.Delete(itemsToRemove);
     }
-    
+
     private async Task<Order> ValidateAndGetOrder(long orderId, CancellationToken cancellationToken = default)
     {
-        Order? order = await _ordersRepository.GetFirstOrDefaultAsync(x => x.Id == orderId,
-            x => x.Include(c => c.OrderedProductsOptionsInfo)
-                .ThenInclude(c => c.ProductOption),
-            cancellationToken);
+        Order? order = await _ordersRepository.GetFirstOrDefaultAsync
+                           (x => x.Id == orderId,
+                            x => x.Include(c => c.OrderedProductsOptionsInfo)
+                                  .ThenInclude(c => c.ProductOption),
+                            cancellationToken);
 
         if (order is null)
         {

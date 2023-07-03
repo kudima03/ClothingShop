@@ -15,37 +15,15 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
     private readonly IRepository<Product> _productsRepository;
     private readonly IRepository<Subcategory> _subcategoriesRepository;
 
-    public CreateProductCommandHandler(IRepository<Product> productsRepository, IRepository<Brand> brandsRepository,
-                                       IRepository<Subcategory> subcategoriesRepository, IRepository<ProductColor> productColorsRepository)
+    public CreateProductCommandHandler(IRepository<Product> productsRepository,
+                                       IRepository<Brand> brandsRepository,
+                                       IRepository<Subcategory> subcategoriesRepository,
+                                       IRepository<ProductColor> productColorsRepository)
     {
         _productsRepository = productsRepository;
         _brandsRepository = brandsRepository;
         _subcategoriesRepository = subcategoriesRepository;
         _productColorsRepository = productColorsRepository;
-    }
-
-    private List<ProductOption> MapToProductOptions(
-        IEnumerable<CreateUpdateProductCommandsDtos.ProductOptionDto> productOptionDtos)
-    {
-        return productOptionDtos.Select(x => new ProductOption
-        {
-            Id = x.Id,
-            Price = x.Price,
-            Quantity = x.Quantity,
-            Size = x.Size,
-            ProductColorId = x.ProductColorId,
-            ProductColor = new ProductColor()
-            {
-                Id = x.ProductColor.Id,
-                ColorHex = x.ProductColor.ColorHex,
-                ImagesInfos = x.ProductColor.ImagesInfos.Select(c => new ImageInfo()
-                {
-                    Id = c.Id,
-                    ProductColorId = x.ProductColorId,
-                    Url = c.Url
-                }).ToList()
-            }
-        }).ToList();
     }
 
     public async Task<Product> Handle(CreateProductCommand request, CancellationToken cancellationToken)
@@ -57,8 +35,8 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
         await ValidateSubcategoryAsync(request.SubcategoryId, cancellationToken);
 
         List<ProductOption> productOptions = MapToProductOptions(request.ProductOptionsDtos);
-        
-        Product newProduct = new()
+
+        Product newProduct = new Product
         {
             BrandId = request.BrandId,
             Name = request.Name,
@@ -80,6 +58,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
         {
             Product? product = await _productsRepository.InsertAsync(newProduct, cancellationToken);
             await _productsRepository.SaveChangesAsync(cancellationToken);
+
             return product;
         }
         catch (DbUpdateException)
@@ -88,21 +67,52 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
         }
     }
 
+    private List<ProductOption> MapToProductOptions(
+        IEnumerable<CreateUpdateProductCommandsDtos.ProductOptionDto> productOptionDtos)
+    {
+        return productOptionDtos.Select
+                                    (x => new ProductOption
+                                    {
+                                        Id = x.Id,
+                                        Price = x.Price,
+                                        Quantity = x.Quantity,
+                                        Size = x.Size,
+                                        ProductColorId = x.ProductColorId,
+                                        ProductColor = new ProductColor
+                                        {
+                                            Id = x.ProductColor.Id,
+                                            ColorHex = x.ProductColor.ColorHex,
+                                            ImagesInfos = x.ProductColor.ImagesInfos.Select
+                                                               (c => new ImageInfo
+                                                               {
+                                                                   Id = c.Id,
+                                                                   ProductColorId = x.ProductColorId,
+                                                                   Url = c.Url
+                                                               })
+                                                           .ToList()
+                                        }
+                                    })
+                                .ToList();
+    }
+
     private async Task ValidateProductNameAsync(string name, CancellationToken cancellationToken)
     {
         bool nameExists = await _productsRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+
         if (nameExists)
         {
-            throw new ValidationException(new[]
-            {
-                new ValidationFailure("Product.Name", "Such product name already exists!")
-            });
+            throw new ValidationException
+                (new[]
+                {
+                    new ValidationFailure("Product.Name", "Such product name already exists!")
+                });
         }
     }
 
     private async Task ValidateBrandAsync(long brandId, CancellationToken cancellationToken = default)
     {
         bool brandExists = await _brandsRepository.ExistsAsync(x => x.Id == brandId, cancellationToken);
+
         if (!brandExists)
         {
             throw new EntityNotFoundException($"{nameof(Brand)} with id:{brandId} doesn't exist.");
@@ -110,7 +120,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
     }
 
     private async Task ValidateSubcategoryAsync(long subcategoryId,
-        CancellationToken cancellationToken = default)
+                                                CancellationToken cancellationToken = default)
     {
         bool subcategoryExists = await _subcategoriesRepository.ExistsAsync(x => x.Id == subcategoryId, cancellationToken);
 

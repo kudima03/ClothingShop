@@ -24,7 +24,7 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
 
         List<Section> sections = await ValidateAndGetSectionsAsync(request.SectionsIds, cancellationToken);
 
-        Category newCategory = new()
+        Category newCategory = new Category
         {
             Name = request.Name,
             Sections = sections
@@ -38,14 +38,18 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
     }
 
     private async Task<List<Section>> ValidateAndGetSectionsAsync(ICollection<long> sectionsIds,
-        CancellationToken cancellationToken = default)
+                                                                  CancellationToken cancellationToken = default)
     {
         IList<Section>? existingSections = await _sectionsRepository
-            .GetAllAsync(predicate: x => sectionsIds.Contains(x.Id), cancellationToken: cancellationToken);
+                                               .GetAllAsync
+                                                   (predicate: x => sectionsIds.Contains(x.Id),
+                                                    cancellationToken: cancellationToken);
+
         if (existingSections.Count != sectionsIds.Count)
         {
             IEnumerable<long> missingSectionsIds = sectionsIds.Except(existingSections.Select(x => x.Id));
             string missingSectionsMessage = string.Join(',', missingSectionsIds);
+
             throw new EntityNotFoundException($"Sections with ids:{missingSectionsMessage} doesn't exist.");
         }
 
@@ -58,10 +62,11 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
 
         if (nameExists)
         {
-            throw new ValidationException(new[]
-            {
-                new ValidationFailure("Category.Name", "Such category name already exists!")
-            });
+            throw new ValidationException
+                (new[]
+                {
+                    new ValidationFailure("Category.Name", "Such category name already exists!")
+                });
         }
     }
 }

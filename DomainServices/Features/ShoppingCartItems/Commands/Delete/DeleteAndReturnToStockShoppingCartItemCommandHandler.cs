@@ -4,7 +4,9 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.ShoppingCartItems.Commands.Delete;
-public class DeleteAndReturnToStockShoppingCartItemCommandHandler : IRequestHandler<DeleteAndReturnToStockShoppingCartItemCommand, Unit>
+
+public class DeleteAndReturnToStockShoppingCartItemCommandHandler
+    : IRequestHandler<DeleteAndReturnToStockShoppingCartItemCommand, Unit>
 {
     private readonly IRepository<ShoppingCartItem> _repository;
 
@@ -15,9 +17,10 @@ public class DeleteAndReturnToStockShoppingCartItemCommandHandler : IRequestHand
 
     public async Task<Unit> Handle(DeleteAndReturnToStockShoppingCartItemCommand request, CancellationToken cancellationToken)
     {
-        ShoppingCartItem? item = await _repository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.ShoppingCartItemId,
-            include: x => x.Include(c => c.ProductOption),
-            cancellationToken: cancellationToken);
+        ShoppingCartItem? item = await _repository.GetFirstOrDefaultAsync
+                                     (x => x.Id == request.ShoppingCartItemId,
+                                      x => x.Include(c => c.ProductOption),
+                                      cancellationToken);
 
         if (item is not null)
         {

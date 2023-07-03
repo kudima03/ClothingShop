@@ -33,7 +33,8 @@ public class ProductsController : Controller
     {
         GetAllProductsQuery query = new GetAllProductsQuery();
         IEnumerable<Product> products = await _mediator.Send(query);
-        return View("Products" ,products);
+
+        return View("Products", products);
     }
 
     [HttpGet("{id:long}")]
@@ -45,6 +46,7 @@ public class ProductsController : Controller
     {
         GetProductByIdQuery query = new GetProductByIdQuery(id);
         Product product = await _mediator.Send(query);
+
         return View("Product", product);
     }
 
@@ -57,6 +59,7 @@ public class ProductsController : Controller
     {
         GetProductsBySubcategoryIdQuery query = new GetProductsBySubcategoryIdQuery(subcategoryId);
         IEnumerable<Product> product = await _mediator.Send(query);
+
         return Ok(product);
     }
 
@@ -69,6 +72,7 @@ public class ProductsController : Controller
     {
         GetProductsByBrandIdQuery query = new GetProductsByBrandIdQuery(brandId);
         IEnumerable<Product> product = await _mediator.Send(query);
+
         return Ok(product);
     }
 
@@ -81,6 +85,7 @@ public class ProductsController : Controller
     public async Task<ActionResult> CreateProduct([FromBody] CreateProductCommand createCommand)
     {
         Product createdProduct = await _mediator.Send(createCommand);
+
         return Ok(createdProduct.Id);
     }
 
@@ -94,6 +99,7 @@ public class ProductsController : Controller
     public async Task<ActionResult> UpdateProduct([FromBody] UpdateProductCommand updateCommand)
     {
         await _mediator.Send(updateCommand);
+
         return Ok();
     }
 
@@ -106,6 +112,7 @@ public class ProductsController : Controller
     {
         DeleteProductCommand command = new DeleteProductCommand(id);
         await _mediator.Send(command);
+
         return Ok();
     }
 }

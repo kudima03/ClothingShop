@@ -1,6 +1,7 @@
 ﻿using MediatR;
 
 namespace DomainServices.Features.ProductOptions.Notifications;
+
 public class ProductOptionReservedQuantityChangedNotification : INotification
 {
     public ProductOptionReservedQuantityChangedNotification(long productOptionId, long productId, int newReservedQuantity)
@@ -11,6 +12,8 @@ public class ProductOptionReservedQuantityChangedNotification : INotification
     }
 
     public long ProductOptionId { get; }
+
     public long ProductId { get; }
+
     public int NewReservedQuantity { get; }
 }

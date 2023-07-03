@@ -12,7 +12,8 @@ public class UpdateReviewCommandValidator : AbstractValidator<UpdateReviewComman
 
         RuleFor(x => x.Rate)
             .GreaterThanOrEqualTo(0)
-            .WithMessage(x =>
-                $"{nameof(x.Rate)} must be equal or greater than 0.");
+            .WithMessage
+                (x =>
+                    $"{nameof(x.Rate)} must be equal or greater than 0.");
     }
 }

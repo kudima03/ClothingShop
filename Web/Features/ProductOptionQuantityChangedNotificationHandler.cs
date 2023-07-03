@@ -9,12 +9,11 @@ namespace Web.Features;
 
 public class ProductOptionQuantityChangedNotificationHandler : INotificationHandler<ProductOptionQuantityChangedNotification>
 {
+    private readonly IHubContext<RealTimeProductInfoHub> _hubContext;
     private readonly ISubscribesToProductsManager _subscribesToProductsManager;
 
-    private readonly IHubContext<RealTimeProductInfoHub> _hubContext;
-
     public ProductOptionQuantityChangedNotificationHandler(IHubContext<RealTimeProductInfoHub> hubContext,
-        ISubscribesToProductsManager subscribesToProductsManager)
+                                                           ISubscribesToProductsManager subscribesToProductsManager)
     {
         _hubContext = hubContext;
         _subscribesToProductsManager = subscribesToProductsManager;
@@ -25,8 +24,11 @@ public class ProductOptionQuantityChangedNotificationHandler : INotificationHand
         IEnumerable<string> connectionsWatchingProduct = _subscribesToProductsManager
             .ConnectionsSubscribedToProduct(notification.ProductId);
 
-        return _hubContext.Clients.Clients(connectionsWatchingProduct).SendAsync(
-            SignalRConstants.ProductOptionQuantityChanged,
-            notification.ProductOptionId, notification.NewQuantity, cancellationToken);
+        return _hubContext.Clients.Clients(connectionsWatchingProduct)
+                          .SendAsync
+                              (SignalRConstants.ProductOptionQuantityChanged,
+                               notification.ProductOptionId,
+                               notification.NewQuantity,
+                               cancellationToken);
     }
 }

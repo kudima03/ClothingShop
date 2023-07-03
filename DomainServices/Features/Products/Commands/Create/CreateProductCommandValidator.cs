@@ -13,32 +13,38 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProductComm
 
         RuleForEach(x => x.ProductOptionsDtos)
             .NotNull()
-            .ChildRules(x =>
-            {
-                x.RuleFor(c => c.Quantity)
-                    .InclusiveBetween(1, int.MaxValue);
-                x.RuleFor(c => c.Price)
-                    .InclusiveBetween(1, decimal.MaxValue);
-                x.RuleFor(c => c.Size)
-                    .NotNull()
-                    .NotEmpty();
-                x.RuleFor(c => c.ProductColor)
-                    .NotNull()
-                    .ChildRules(v =>
-                    {
-                        v.RuleFor(b => b.ColorHex)
-                            .NotNull()
-                            .NotEmpty();
+            .ChildRules
+                (x =>
+                {
+                    x.RuleFor(c => c.Quantity)
+                     .InclusiveBetween(1, int.MaxValue);
 
-                        v.RuleForEach(n => n.ImagesInfos)
-                            .NotNull()
-                            .ChildRules(a =>
-                            {
-                                a.RuleFor(s => s.Url)
-                                    .NotNull()
-                                    .NotEmpty();
-                            });
-                    });
-            });
+                    x.RuleFor(c => c.Price)
+                     .InclusiveBetween(1, decimal.MaxValue);
+
+                    x.RuleFor(c => c.Size)
+                     .NotNull()
+                     .NotEmpty();
+
+                    x.RuleFor(c => c.ProductColor)
+                     .NotNull()
+                     .ChildRules
+                         (v =>
+                         {
+                             v.RuleFor(b => b.ColorHex)
+                              .NotNull()
+                              .NotEmpty();
+
+                             v.RuleForEach(n => n.ImagesInfos)
+                              .NotNull()
+                              .ChildRules
+                                  (a =>
+                                  {
+                                      a.RuleFor(s => s.Url)
+                                       .NotNull()
+                                       .NotEmpty();
+                                  });
+                         });
+                });
     }
 }

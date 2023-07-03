@@ -23,18 +23,21 @@ public class RealTimeProductInfoHub : Hub
         _subscribesManager.AddSubscribe(userId, productId, Context.ConnectionId);
         int watchersAfterNewConnection = _subscribesManager.SubscribedToProductUsersCount(productId);
         bool productWatchersAmountChanged = watchersAfterNewConnection != watchersBeforeNewConnection;
-        
+
         if (productWatchersAmountChanged)
         {
             IEnumerable<string> connectionsWatchingProduct = _subscribesManager.ConnectionsSubscribedToProduct(productId);
-            return Clients.Clients(connectionsWatchingProduct).SendAsync(SignalRConstants.ProductWatchersCountChanged, watchersAfterNewConnection);
+
+            return Clients.Clients
+                              (connectionsWatchingProduct)
+                          .SendAsync(SignalRConstants.ProductWatchersCountChanged, watchersAfterNewConnection);
         }
-        else
-        {
-            return Clients.Client(Context.ConnectionId).SendAsync(SignalRConstants.ProductWatchersCountChanged, watchersAfterNewConnection);
-        }
+
+        return Clients.Client
+                          (Context.ConnectionId)
+                      .SendAsync(SignalRConstants.ProductWatchersCountChanged, watchersAfterNewConnection);
     }
-    
+
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         long productWithIdViewed = _subscribesManager.ProductConnectionSubscribedTo(Context.ConnectionId);
@@ -45,9 +48,14 @@ public class RealTimeProductInfoHub : Hub
 
         if (watchersAmountChanged)
         {
-            IEnumerable<string> connectionsWatchingProduct = _subscribesManager.ConnectionsSubscribedToProduct(productWithIdViewed);
-            await Clients.Clients(connectionsWatchingProduct).SendAsync(SignalRConstants.ProductWatchersCountChanged, watchersAfterDisconnect);
+            IEnumerable<string> connectionsWatchingProduct = _subscribesManager.ConnectionsSubscribedToProduct
+                (productWithIdViewed);
+
+            await Clients.Clients
+                             (connectionsWatchingProduct)
+                         .SendAsync(SignalRConstants.ProductWatchersCountChanged, watchersAfterDisconnect);
         }
+
         await base.OnDisconnectedAsync(exception);
     }
 }

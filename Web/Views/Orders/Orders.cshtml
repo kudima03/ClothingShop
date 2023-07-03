@@ -1,4 +1,5 @@
-﻿@model IEnumerable<ApplicationCore.Entities.Order>
+﻿@using ApplicationCore.Entities
+@model IEnumerable<ApplicationCore.Entities.Order>
 
 <head>
     <title>Shopping cart</title>
@@ -18,108 +19,110 @@
 
 <body>
 
-    <header class="">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                    <h2>Clothing</h2>
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">
-                                Home
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Products" asp-action="GetAllProducts">Our Products</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="AboutUs">About Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="ContactUs">Contact Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="ShoppingCarts" asp-action="GetUserShoppingCartView">Shopping cart</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Orders" asp-action="GetUserOrders">My orders</a>
-                        </li>
-                    </ul>
-                </div>
+<header class="">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <h2>Clothing</h2>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Products" asp-action="GetAllProducts">Our Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="AboutUs">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="ContactUs">Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ShoppingCarts" asp-action="GetUserShoppingCartView">Shopping cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Orders" asp-action="GetUserOrders">My orders</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
+</header>
 
-    <h1>&nbsp;</h1>
-    <h1>&nbsp;</h1>
-    <h1>&nbsp;</h1>
+<h1>&nbsp;</h1>
+<h1>&nbsp;</h1>
+<h1>&nbsp;</h1>
 
-    <div class="container-fluid">
+<div class="container-fluid">
 
-        @foreach (var order in Model)
-        {
-            <div class="container">
-                <div class="d-flex justify-content-between align-items-center py-3">
-                    <h2 class="h5 mb-0"><a href="#" class="text-muted"></a> Order #@order.Id</h2>
-                </div>
+    @foreach (Order order in Model)
+    {
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center py-3">
+                <h2 class="h5 mb-0"><a href="#" class="text-muted"></a> Order #@order.Id</h2>
+            </div>
 
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <div class="mb-3 d-flex justify-content-between">
-                                    <div>
-                                        <span class="me-3">@order.DateTime.ToShortDateString()</span>
-                                        <span class="badge rounded-pill bg-info">@order.OrderStatus.Name.ToUpper()</span>
-                                    </div>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="mb-3 d-flex justify-content-between">
+                                <div>
+                                    <span class="me-3">@order.DateTime.ToShortDateString() @order.DateTime.ToShortTimeString()</span>
+                                    <span class="badge rounded-pill bg-info">@order.OrderStatus.Name.ToUpper()</span>
                                 </div>
-                                <table class="table table-borderless">
-                                    <tbody>
-                                        @foreach (var orderItem in order.OrderedProductsOptionsInfo)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex mb-2">
-                                                        <div class="flex-shrink-0">
-                                                            <img src="@orderItem.ProductOption.ProductColor.ImagesInfos.FirstOrDefault()?.Url" alt="" height="35" width="35" class="img-fluid">
-                                                        </div>
-                                                        <div class="flex-lg-grow-1 ms-3">
-                                                            <h6 class="small mb-0">
-                                                                <a asp-controller="Products" asp-action="GetProductById" asp-route-id="@orderItem.ProductOption.ProductId"
-                                                                   class="text-reset">@orderItem.ProductOption.Product.Name (@orderItem.ProductOption.Size)</a>
-                                                            </h6>
-                                                            <span class="small">Color: @orderItem.ProductOption.ProductColor.ColorHex</span>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>@orderItem.Amount</td>
-                                                <td class="text-end">$@orderItem.ProductOption.Price</td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                    <tfoot>
-                                    <tr class="fw-bold">
-                                        <td colspan="2">TOTAL</td>
-                                        <td class="text-end">$@order.OrderedProductsOptionsInfo.Sum(x=>x.Amount * x.ProductOption.Price)</td>
-                                    </tr>
-                                    </tfoot>
-                                    <tfoot>
-                                    <tr class="fw-bold">
-                                        <td colspan="2">Address</td>
-                                            <td class="text-end">st. Kosmonavtov 50-11, Minsk, Belarus</td>
-                                    </tr>
-                                    </tfoot>
-                                </table>
                             </div>
+                            <table class="table table-borderless">
+                                <tbody>
+                                @foreach (OrderItem? orderItem in order.OrderedProductsOptionsInfo)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex mb-2">
+                                                <div class="flex-shrink-0">
+                                                    <img src="@orderItem.ProductOption.ProductColor.ImagesInfos.FirstOrDefault()?.Url" alt="" height="35" width="35" class="img-fluid">
+                                                </div>
+                                                <div class="flex-lg-grow-1 ms-3">
+                                                    <h6 class="small mb-0">
+                                                        <a asp-controller="Products" asp-action="GetProductById" asp-route-id="@orderItem.ProductOption.ProductId"
+                                                           class="text-reset">
+                                                            @orderItem.ProductOption.Product.Name (@orderItem.ProductOption.Size)
+                                                        </a>
+                                                    </h6>
+                                                    <span class="small">Color: @orderItem.ProductOption.ProductColor.ColorHex</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>@orderItem.Amount</td>
+                                        <td class="text-end">$@orderItem.ProductOption.Price</td>
+                                    </tr>
+                                }
+                                </tbody>
+                                <tfoot>
+                                <tr class="fw-bold">
+                                    <td colspan="2">TOTAL</td>
+                                    <td class="text-end">$@order.OrderedProductsOptionsInfo.Sum(x => x.Amount * x.ProductOption.Price)</td>
+                                </tr>
+                                </tfoot>
+                                <tfoot>
+                                <tr class="fw-bold">
+                                    <td colspan="2">Address</td>
+                                    <td class="text-end">st. Kosmonavtov 50-11, Minsk, Belarus</td>
+                                </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-        }
-    </div>
+        </div>
+    }
+</div>
 </body>
