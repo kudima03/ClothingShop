@@ -9,17 +9,17 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
 
 namespace Infrastructure.Identity.Features.DeleteAccount;
+
 public class DeleteAccountCommandHandler : IRequestHandler<DeleteAccountCommand, Unit>
 {
-    private readonly UserManager<User> _userManager;
-
     private readonly IHttpContextAccessor _contextAccessor;
-
-    private readonly IRepository<Review> _reviewsRepository;
 
     private readonly IRepository<Order> _ordersRepository;
 
     private readonly IRepository<OrderStatus> _orderStatusesRepository;
+
+    private readonly IRepository<Review> _reviewsRepository;
+    private readonly UserManager<User> _userManager;
 
     public DeleteAccountCommandHandler(UserManager<User> userManager,
                                        IHttpContextAccessor contextAccessor,
@@ -42,19 +42,23 @@ public class DeleteAccountCommandHandler : IRequestHandler<DeleteAccountCommand,
 
         User? user = await _userManager.FindByEmailAsync(email);
 
-        IList<Review>? reviewsToRemove = await 
-                                             _reviewsRepository.GetAllAsync(predicate: x => x.UserId == user.Id,
-                                                                              cancellationToken: cancellationToken);
+        IList<Review>? reviewsToRemove = await
+                                             _reviewsRepository.GetAllAsync
+                                                 (predicate: x => x.UserId == user.Id,
+                                                  cancellationToken: cancellationToken);
+
         _reviewsRepository.Delete(reviewsToRemove);
 
         await _reviewsRepository.SaveChangesAsync(cancellationToken);
 
-        IList<Order>? ordersToCancel = await 
-                                           _ordersRepository.GetAllAsync(predicate: x => x.UserId == user.Id, cancellationToken: cancellationToken);
+        IList<Order>? ordersToCancel = await
+                                           _ordersRepository.GetAllAsync
+                                               (predicate: x => x.UserId == user.Id, cancellationToken: cancellationToken);
 
         OrderStatus? cancelledOrderStatus =
-            await _orderStatusesRepository.GetFirstOrDefaultAsync(predicate: x => x.Name == OrderStatusName.Cancelled,
-                                                                  cancellationToken: cancellationToken);
+            await _orderStatusesRepository.GetFirstOrDefaultAsync
+                (predicate: x => x.Name == OrderStatusName.Cancelled,
+                 cancellationToken: cancellationToken);
 
         foreach (Order? item in ordersToCancel)
         {

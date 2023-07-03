@@ -15,8 +15,9 @@ public class DeleteBrandCommandHandler : IRequestHandler<DeleteBrandCommand, Uni
 
     public async Task<Unit> Handle(DeleteBrandCommand request, CancellationToken cancellationToken)
     {
-        Brand? brand = await _brandsRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == request.Id,
-            cancellationToken: cancellationToken);
+        Brand? brand = await _brandsRepository.GetFirstOrDefaultAsync
+                           (predicate: x => x.Id == request.Id,
+                            cancellationToken: cancellationToken);
 
         if (brand is not null)
         {

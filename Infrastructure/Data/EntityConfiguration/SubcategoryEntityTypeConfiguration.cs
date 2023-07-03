@@ -12,25 +12,31 @@ internal class SubcategoryEntityTypeConfiguration
     {
         builder.ToTable("subcategories");
         builder.HasKey(x => x.Id);
+
         builder.Property(x => x.Id)
-            .HasColumnName("id")
-            .IsRequired()
-            .ValueGeneratedOnAdd()
-            .Metadata
-            .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+               .HasColumnName("id")
+               .IsRequired()
+               .ValueGeneratedOnAdd()
+               .Metadata
+               .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
         builder.HasIndex(x => x.Name)
-            .IsUnique();
+               .IsUnique();
+
         builder.Property(x => x.Name)
-            .HasColumnName("name")
-            .IsRequired();
+               .HasColumnName("name")
+               .IsRequired();
+
         builder.HasMany(x => x.Categories)
-            .WithMany(x => x.Subcategories)
-            .UsingEntity("categories_subcategories",
-                l => l.HasOne(typeof(Category)).WithMany().HasForeignKey("category_id"),
-                r => r.HasOne(typeof(Subcategory)).WithMany().HasForeignKey("subcategory_id"));
+               .WithMany(x => x.Subcategories)
+               .UsingEntity
+                   ("categories_subcategories",
+                    l => l.HasOne(typeof(Category)).WithMany().HasForeignKey("category_id"),
+                    r => r.HasOne(typeof(Subcategory)).WithMany().HasForeignKey("subcategory_id"));
+
         builder.HasMany(x => x.Products)
-            .WithOne(x => x.Subcategory)
-            .HasForeignKey(x => x.SubcategoryId)
-            .IsRequired();
+               .WithOne(x => x.Subcategory)
+               .HasForeignKey(x => x.SubcategoryId)
+               .IsRequired();
     }
 }

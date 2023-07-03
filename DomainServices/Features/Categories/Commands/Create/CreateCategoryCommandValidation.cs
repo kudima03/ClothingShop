@@ -16,10 +16,12 @@ internal class CreateCategoryCommandValidation : AbstractValidator<CreateCategor
 
         RuleForEach(x => x.SectionsIds)
             .NotNull()
-            .ChildRules(c =>
-            {
-                c.RuleFor(id => id).InclusiveBetween(1, long.MaxValue)
-                    .WithMessage("Section id out of possible range.");
-            });
+            .ChildRules
+                (c =>
+                {
+                    c.RuleFor(id => id)
+                     .InclusiveBetween(1, long.MaxValue)
+                     .WithMessage("Section id out of possible range.");
+                });
     }
 }

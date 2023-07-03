@@ -31,9 +31,10 @@ public class CategoriesController : ControllerBase
     {
         GetAllCategoriesQuery query = new GetAllCategoriesQuery();
         IEnumerable<Category> categories = await _mediator.Send(query);
+
         return Ok(categories);
     }
-    
+
     [HttpGet("{id:long}")]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -43,6 +44,7 @@ public class CategoriesController : ControllerBase
     {
         GetCategoryByIdQuery query = new GetCategoryByIdQuery(id);
         Category category = await _mediator.Send(query);
+
         return Ok(category);
     }
 
@@ -55,6 +57,7 @@ public class CategoriesController : ControllerBase
     public async Task<ActionResult> Create([FromBody] CreateCategoryCommand createCommand)
     {
         Category createdCategory = await _mediator.Send(createCommand);
+
         return Ok(createdCategory.Id);
     }
 
@@ -68,6 +71,7 @@ public class CategoriesController : ControllerBase
     public async Task<ActionResult> Update([FromBody] UpdateCategoryCommand updateCommand)
     {
         await _mediator.Send(updateCommand);
+
         return Ok();
     }
 
@@ -80,6 +84,7 @@ public class CategoriesController : ControllerBase
     {
         DeleteCategoryCommand command = new DeleteCategoryCommand(id);
         await _mediator.Send(command);
+
         return Ok();
     }
 }

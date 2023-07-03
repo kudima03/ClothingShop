@@ -19,8 +19,9 @@ public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery,
     public async Task<Category> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
         Category? category = await _categoriesRepository
-            .ApplySpecification(new CategoryWithSectionsAndSubcategories(category => category.Id == request.Id))
-            .FirstOrDefaultAsync(cancellationToken);
+                                   .ApplySpecification
+                                       (new CategoryWithSectionsAndSubcategories(category => category.Id == request.Id))
+                                   .FirstOrDefaultAsync(cancellationToken);
 
         if (category is null)
         {

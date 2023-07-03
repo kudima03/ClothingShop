@@ -14,4 +14,16 @@ public class HomeController : Controller
     {
         return View("Index");
     }
+
+    [HttpGet]
+    public IActionResult AboutUs()
+    {
+        return View("AboutUs");
+    }
+
+    [HttpGet]
+    public IActionResult ContactUs()
+    {
+        return View("ContactUs");
+    }
 }

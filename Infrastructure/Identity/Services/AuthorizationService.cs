@@ -11,13 +11,12 @@ namespace Infrastructure.Identity.Services;
 
 public class AuthorizationService : IAuthorizationService
 {
+    private readonly IConfiguration _configuration;
+
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ITokenClaimsService _tokenClaimsService;
 
     private readonly UserManager<User> _userManager;
-
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    private readonly IConfiguration _configuration;
 
     public AuthorizationService(ITokenClaimsService tokenClaimsService,
                                 UserManager<User> userManager,
@@ -48,27 +47,35 @@ public class AuthorizationService : IAuthorizationService
 
         string token = await _tokenClaimsService.GetTokenAsync(user.Email);
 
-        _httpContextAccessor.HttpContext?.Response.Cookies.Append(JwtConstants.TokenType, token, new CookieOptions()
-        {
-            Expires = DateTimeOffset.Now.AddMinutes(_configuration.GetValue("TokenLifetimeMinutes", 120))
-        });
+        _httpContextAccessor.HttpContext?.Response.Cookies.Append
+            (JwtConstants.TokenType,
+             token,
+             new CookieOptions
+             {
+                 Expires =
+                     DateTimeOffset.Now.AddMinutes(_configuration.GetValue("TokenLifetimeMinutes", 120))
+             });
     }
 
-    public async Task RegisterAsync(User user)
+    public async Task<long> RegisterAsync(User user)
     {
         IdentityResult result = await _userManager.CreateAsync(user, user.PasswordHash);
 
         if (!result.Succeeded)
         {
-            throw new AuthorizationException($"Unable to register such user. Reasons: {string.Join(',', result.Errors.Select(x => x.Description))}");
+            throw new AuthorizationException
+                ($"Unable to register such user. Reasons: {string.Join(',', result.Errors.Select(x => x.Description))}");
         }
 
         await _userManager.AddToRoleAsync(user, RoleName.Customer);
+
+        return user.Id;
     }
 
     public Task SingOutAsync()
     {
         _httpContextAccessor.HttpContext?.Response.Cookies.Delete(JwtConstants.TokenType);
+
         return Task.CompletedTask;
     }
 }

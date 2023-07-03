@@ -37,16 +37,19 @@ public class AccountController : Controller
         try
         {
             await _mediator.Send(signInCommand);
+
             return RedirectToAction("Index", "Home");
         }
         catch (ValidationException e)
         {
             AddValidationErrorsToModelState(e);
+
             throw;
         }
         catch (AuthorizationException e)
         {
             ModelState.AddModelError("Authorization error: ", e.Message);
+
             throw;
         }
     }
@@ -65,16 +68,19 @@ public class AccountController : Controller
         try
         {
             await _mediator.Send(registerCommand);
+
             return RedirectToAction("Login");
         }
         catch (ValidationException e)
         {
             AddValidationErrorsToModelState(e);
+
             throw;
         }
         catch (AuthorizationException e)
         {
             ModelState.AddModelError("Authorization error: ", e.Message);
+
             throw;
         }
     }
@@ -85,11 +91,13 @@ public class AccountController : Controller
         try
         {
             await _mediator.Send(new SignOutCommand());
+
             return RedirectToAction("Login");
         }
         catch (AuthorizationException e)
         {
             ModelState.AddModelError("Authorization error: ", e.Message);
+
             throw;
         }
     }
@@ -100,11 +108,13 @@ public class AccountController : Controller
         try
         {
             await _mediator.Send(new DeleteAccountCommand());
+
             return RedirectToAction("Login");
         }
         catch (AuthorizationException e)
         {
             ModelState.AddModelError("Authorization error: ", e.Message);
+
             throw;
         }
     }

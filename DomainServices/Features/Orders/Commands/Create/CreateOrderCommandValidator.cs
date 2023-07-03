@@ -10,16 +10,12 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
             .InclusiveBetween(1, long.MaxValue)
             .WithMessage(x => $"{nameof(x.UserId)} out of possible range.");
 
-        RuleForEach(x => x.OrderItemsDtos)
-            .ChildRules(x =>
-            {
-                x.RuleFor(c => c.ProductOptionId)
-                    .InclusiveBetween(1, long.MaxValue)
-                    .WithMessage(x => $"{nameof(x.ProductOptionId)} out of possible range.");
+        RuleFor(x => x.ShoppingCartItemsIds)
+            .NotEmpty()
+            .WithMessage(x => $"{nameof(x.ShoppingCartItemsIds)} can't be empty");
 
-                x.RuleFor(c => c.Quantity)
-                    .InclusiveBetween(1, int.MaxValue)
-                    .WithMessage(x => $"{nameof(x.Quantity)} out of possible range.");
-            });
+        RuleForEach(x => x.ShoppingCartItemsIds)
+            .InclusiveBetween(1, long.MaxValue)
+            .WithMessage(x => $"{nameof(x.UserId)} out of possible range.");
     }
 }

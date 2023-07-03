@@ -15,19 +15,21 @@ public class SubscribesToProductsManager : ISubscribesToProductsManager
     {
         Subscribe subscribe =
             _subscribes.Single(subscribe => subscribe.ConnectionId == connectionId);
+
         _subscribes.Remove(subscribe);
     }
 
     public IEnumerable<string> ConnectionsSubscribedToProduct(long productId)
     {
         return _subscribes.Where(subscribe => subscribe.ProductId == productId)
-            .Select(subscribe => subscribe.ConnectionId);
+                          .Select(subscribe => subscribe.ConnectionId);
     }
 
     public int SubscribedToProductUsersCount(long productId)
     {
         return _subscribes.Where(subscribe => subscribe.ProductId == productId)
-            .DistinctBy(subscribe => subscribe.UserId).Count();
+                          .DistinctBy(subscribe => subscribe.UserId)
+                          .Count();
     }
 
     public long ProductConnectionSubscribedTo(string connectionId)
@@ -44,7 +46,10 @@ public class Subscribe
         ProductId = productId;
         ConnectionId = connectionId;
     }
+
     public long UserId { get; }
+
     public long ProductId { get; }
+
     public string ConnectionId { get; }
 }

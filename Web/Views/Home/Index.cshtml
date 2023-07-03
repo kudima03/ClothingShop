@@ -1,9 +1,163 @@
-﻿<div class="welcome-page container">
-    <div class="row page-header">
-        <div class="col-sm-10">
-            <h1>
-                Welcome to cloth shop!
-            </h1>
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+
+    <title>Clothing Shop</title>
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/fontawesome.css">
+    <link rel="stylesheet" href="~/css/mainStyles.css">
+    <link rel="stylesheet" href="~/css/owl.css">
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/custom.js"></script>
+    <script src="~/js/owl.js"></script>
+    <script src="~/js/slick.js"></script>
+    <script src="~/js/isotope.js"></script>
+    <script src="~/js/accordions.js"></script>
+</head>
+
+<body>
+
+<div id="preloader">
+    <div class="jumper">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+
+<header class="">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" asp-action="Index">
+                <h2> Clothing</h2>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" asp-action="Index">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Products" asp-action="GetAllProducts">Our Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="AboutUs">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="ContactUs">Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ShoppingCarts" asp-action="GetUserShoppingCartView">Shopping cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Orders" asp-action="GetUserOrders">My orders</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="banner header-text">
+    <div class="owl-banner owl-carousel">
+        <div class="banner-item-01">
+            <div class="text-content">
+                <h4>Best Offer</h4>
+                <h2>New Arrivals On Sale</h2>
+            </div>
+        </div>
+        <div class="banner-item-02">
+            <div class="text-content">
+                <h4>Flash Deals</h4>
+                <h2>Get your best products</h2>
+            </div>
         </div>
     </div>
 </div>
+
+<div class="best-features">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section-heading">
+                    <h2>About Clothing shop</h2>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="left-content">
+                    <h4>Looking for the best products?</h4>
+                    <p>
+                        Our cloth shop is a lifestyle retailer dedicated to inspiring customers through a unique combination of product,
+                        creativity and cultural understanding.Our shop now operates over 200 stores in the United States,
+                        Canada and Europe, offering experiential retail environments and
+                        a well-curated mix of on-trend women’s and men’s clothes, from boho dresses, denim and graphics to shoes, hats, and
+                    </p>
+                    <ul class="featured-list">
+                        <li>
+                            <a href="#">Fast delivery</a>
+                        </li>
+                        <li>
+                            <a href="#">Best prices</a>
+                        </li>
+                        <li>
+                            <a href="#">Unique products</a>
+                        </li>
+                    </ul>
+                    <a asp-action="AboutUs" class="filled-button">Read More</a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="right-image">
+                    <img src="~/images/feature-image.jpg" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="call-to-action">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="inner-content">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4>Creative &amp; Unique products</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="#" class="filled-button">Purchase Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="inner-content">
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

@@ -10,10 +10,11 @@ namespace DomainServices.Features.Subcategories.Commands.Create;
 
 public class CreateSubcategoryCommandHandler : IRequestHandler<CreateSubcategoryCommand, Subcategory>
 {
-    private readonly IRepository<Subcategory> _subcategoriesRepository;
     private readonly IRepository<Category> _categoriesRepository;
+    private readonly IRepository<Subcategory> _subcategoriesRepository;
 
-    public CreateSubcategoryCommandHandler(IRepository<Subcategory> subcategoriesRepository, IRepository<Category> categoriesRepository)
+    public CreateSubcategoryCommandHandler(IRepository<Subcategory> subcategoriesRepository,
+                                           IRepository<Category> categoriesRepository)
     {
         _subcategoriesRepository = subcategoriesRepository;
         _categoriesRepository = categoriesRepository;
@@ -25,7 +26,7 @@ public class CreateSubcategoryCommandHandler : IRequestHandler<CreateSubcategory
 
         List<Category> categories = await ValidateAndGetCategoriesAsync(request.CategoriesIds, cancellationToken);
 
-        Subcategory newSubcategory = new()
+        Subcategory newSubcategory = new Subcategory
         {
             Name = request.Name,
             Categories = categories
@@ -35,12 +36,12 @@ public class CreateSubcategoryCommandHandler : IRequestHandler<CreateSubcategory
         {
             Subcategory? subcategory = await _subcategoriesRepository.InsertAsync(newSubcategory, cancellationToken);
             await _subcategoriesRepository.SaveChangesAsync(cancellationToken);
+
             return subcategory;
         }
         catch (DbUpdateException)
         {
-            throw new OperationFailureException(
-                $"Unable to perform create {nameof(Subcategory)} operation. Check input.");
+            throw new OperationFailureException($"Unable to perform create {nameof(Subcategory)} operation. Check input.");
         }
     }
 
@@ -50,22 +51,27 @@ public class CreateSubcategoryCommandHandler : IRequestHandler<CreateSubcategory
 
         if (nameExists)
         {
-            throw new ValidationException(new[]
-            {
-                new ValidationFailure("Subcategory.Name", "Such subcategory name already exists!")
-            });
+            throw new ValidationException
+                (new[]
+                {
+                    new ValidationFailure("Subcategory.Name", "Such subcategory name already exists!")
+                });
         }
     }
 
     private async Task<List<Category>> ValidateAndGetCategoriesAsync(ICollection<long> categoriesIds,
-        CancellationToken cancellationToken = default)
+                                                                     CancellationToken cancellationToken = default)
     {
         IList<Category>? existingCategories = await _categoriesRepository
-            .GetAllAsync(predicate: x => categoriesIds.Contains(x.Id), cancellationToken: cancellationToken);
+                                                  .GetAllAsync
+                                                      (predicate: x => categoriesIds.Contains(x.Id),
+                                                       cancellationToken: cancellationToken);
+
         if (existingCategories.Count != categoriesIds.Count)
         {
             IEnumerable<long> missingCategoriesIds = categoriesIds.Except(existingCategories.Select(x => x.Id));
             string missingCategoriesMessage = string.Join(',', missingCategoriesIds);
+
             throw new EntityNotFoundException($"Categories with ids:{missingCategoriesMessage} doesn't exist.");
         }
 

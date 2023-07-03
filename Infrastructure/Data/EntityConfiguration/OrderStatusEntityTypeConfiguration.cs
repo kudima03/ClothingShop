@@ -11,14 +11,16 @@ internal class OrderStatusEntityTypeConfiguration : IEntityTypeConfiguration<Ord
     {
         builder.ToTable("order_statuses");
         builder.HasKey(x => x.Id);
+
         builder.Property(x => x.Id)
-            .HasColumnName("id")
-            .IsRequired()
-            .ValueGeneratedOnAdd()
-            .Metadata
-            .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+               .HasColumnName("id")
+               .IsRequired()
+               .ValueGeneratedOnAdd()
+               .Metadata
+               .SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
         builder.Property(x => x.Name)
-            .HasColumnName("name")
-            .IsRequired();
+               .HasColumnName("name")
+               .IsRequired();
     }
 }

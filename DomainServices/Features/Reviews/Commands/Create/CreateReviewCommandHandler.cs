@@ -17,7 +17,7 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, R
 
     public async Task<Review> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
     {
-        Review newReview = new()
+        Review newReview = new Review
         {
             Comment = request.Comment,
             DateTime = DateTime.Now,
@@ -30,6 +30,7 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, R
         {
             Review? review = await _repository.InsertAsync(newReview, cancellationToken);
             await _repository.SaveChangesAsync(cancellationToken);
+
             return review;
         }
         catch (DbUpdateException)

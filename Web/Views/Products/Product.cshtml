@@ -1,13 +1,160 @@
-﻿@using Web.SignalR
+﻿@using ApplicationCore.Entities
+@using Web.SignalR
 @model ApplicationCore.Entities.Product
 
-<h1 hidden="">Name: @Model.Name</h1>
-<h1>BrandId: @Model.BrandId</h1>
-<h1>SubcategoryId: @Model.SubcategoryId</h1>
-<h1>Users on current product: </h1>
-<h2 id="usersOnPage">0</h2>
-<h2>Quantity</h2>
-<h2 id="quantity">@Model.ProductOptions.FirstOrDefault()?.Quantity</h2>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+
+    <title>Product</title>
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="~/js/shoppingCart.js"></script>
+
+    <link rel="stylesheet" href="~/css/fontawesome.css">
+    <link rel="stylesheet" href="~/css/mainStyles.css">
+    <link rel="stylesheet" href="~/css/owl.css">
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/custom.js"></script>
+    <script src="~/js/owl.js"></script>
+    <script src="~/js/slick.js"></script>
+    <script src="~/js/isotope.js"></script>
+    <script src="~/js/accordions.js"></script>
+
+</head>
+
+<body>
+
+<div id="preloader">
+    <div class="jumper">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+
+<header class="">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <h2>Clothing</h2>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Products" asp-action="GetAllProducts">Our Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="AboutUs">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="ContactUs">Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ShoppingCarts" asp-action="GetUserShoppingCartView">Shopping cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Orders" asp-action="GetUserOrders">My orders</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="page-heading products-heading header-text">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="text-content">
+                    <h2>options</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="products">
+    <div class="container">
+        <div class="filters">
+            <img width="30" height="30" src="~/images/view.png"/> <h7 id="usersOnPage"></h7>
+        </div>
+        <div class="col-md-12">
+
+            <div class="filters-content">
+
+                <div class="row grid">
+                    @foreach (ProductOption? item in Model.ProductOptions)
+                    {
+                        <div class="col-lg-4 col-md-4 all des">
+                            <div class="product-item">
+                                <div class="owl-banner owl-carousel">
+                                    @foreach (ImageInfo? imageInfo in Model.ProductOptions.FirstOrDefault()?.ProductColor.ImagesInfos!)
+                                    {
+                                        <img src="@imageInfo.Url" alt="">
+                                    }
+                                </div>
+                                <div class="down-content">
+                                    <h4>@item.Product.Name (@item.Size)</h4>
+                                    <h6>$@item.Price</h6>
+                                    <h4>Brand: @item.Product.Brand.Name</h4>
+                                    <h4>Available:<h7 id="quantityOf @item.Id"> @item.Quantity</h7></h4>
+                                    <h4>Reserved:<h7 id="reservedQuantityOf @item.Id"> @item.ReservedProductOptions.Sum(x => x.Amount)</h7></h4>
+                                    @{
+                                        string style = item.Quantity == 0 ? "filled-button-disabled" : "filled-button";
+                                    }
+                                    <a id="add @item.Id toCart" onclick="addNewProductOptionToCart(@item.Id)" class="@style">Add to cart</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="inner-content">
+                    <p>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script language="text/Javascript">
+        cleared[0] = cleared[1] = cleared[2] = 0;
+        function clearField(t) {
+            if (!cleared[t.id]) {
+                cleared[t.id] = 1;
+                t.value = '';
+                t.style.color = '#fff';
+            }
+        }
+    </script>
+</body>
 
 <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
 <script>
@@ -15,19 +162,34 @@
 
     var connection = new signalR
         .HubConnectionBuilder()
-        .withUrl("@SignalRConstants.RealTimeProductInfoHubRoute").build();
+        .withUrl("@SignalRConstants.RealTimeProductInfoHubRoute")
+        .build();
 
-    connection.on("@SignalRConstants.ProductWatchersCountChanged", function (newAmount) {
-        document.getElementById("usersOnPage").innerHTML = newAmount;
-    });
+    connection.on("@SignalRConstants.ProductWatchersCountChanged",
+        function(newAmount) {
+            document.getElementById("usersOnPage").innerHTML = newAmount;
+        });
 
-    connection.on("@SignalRConstants.ProductQuantityChanged", function (newAmount) {
-        document.getElementById("quantity").innerHTML = newAmount;
-    });
-    
-    connection.start().then(function () {
-        connection.invoke("@SignalRConstants.SubscribeForProductInfoChanges", @Model.Id);
-    }).catch (function (err) {
-        return console.error(err.toString());
-    });
+    connection.on("@SignalRConstants.ProductOptionQuantityChanged",
+        function(productOptionId, newAmount) {
+            document.getElementById(`quantityOf ${productOptionId}`).innerHTML = newAmount;
+            if (newAmount === 0) {
+                document.getElementById(`add ${productOptionId} toCart`).setAttribute("class", "filled-button-disabled");
+            } else {
+                document.getElementById(`add ${productOptionId} toCart`).setAttribute("class", "filled-button");
+            }
+        });
+
+    connection.on("@SignalRConstants.ProductOptionReservedQuantityChanged",
+        function(productOptionId, newAmount) {
+            document.getElementById(`reservedQuantityOf ${productOptionId}`).innerHTML = newAmount;
+        });
+
+    connection.start()
+        .then(function() {
+            connection.invoke("@SignalRConstants.SubscribeForProductInfoChanges", @Model.Id);
+        })
+        .catch(function(err) {
+            return console.error(err.toString());
+        });
 </script>

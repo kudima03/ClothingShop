@@ -30,6 +30,7 @@ public class ReviewsController : ControllerBase
     public async Task<ActionResult> Create([FromBody] CreateReviewCommand createCommand)
     {
         Review createdReview = await _mediator.Send(createCommand);
+
         return Ok(createdReview.Id);
     }
 
@@ -42,6 +43,7 @@ public class ReviewsController : ControllerBase
     public async Task<ActionResult> Update([FromBody] UpdateReviewCommand updateCommand)
     {
         await _mediator.Send(updateCommand);
+
         return Ok();
     }
 
@@ -53,6 +55,7 @@ public class ReviewsController : ControllerBase
     {
         DeleteReviewCommand command = new DeleteReviewCommand(id);
         await _mediator.Send(command);
+
         return Ok();
     }
 }

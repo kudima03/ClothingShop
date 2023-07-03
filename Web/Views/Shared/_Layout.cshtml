@@ -1,25 +1,10 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-</head>
 <body>
 <div>
     @RenderBody()
-    <br/><br/>
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6">
-                    <br>
-                    <div class="brand"></div>
-                </div>
-            </div>
-        </div>
-    </footer>
 </div>
-
-
-<script src="~/lib/jquery/jquery.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
 @await RenderSectionAsync("scripts", false)
 </body>

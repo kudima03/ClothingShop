@@ -9,8 +9,7 @@ namespace Infrastructure.Identity.IdentityContext;
 public class IdentityContext : IdentityDbContext<User, IdentityRole<long>, long>
 {
     public IdentityContext(DbContextOptions<IdentityContext> options)
-        : base(options)
-    { }
+        : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 
 namespace DomainServices.Services.OrdersService.Queries;
+
 public class CheckUserExistsQueryValidator : AbstractValidator<CheckUserExistsQuery>
 {
     public CheckUserExistsQueryValidator()

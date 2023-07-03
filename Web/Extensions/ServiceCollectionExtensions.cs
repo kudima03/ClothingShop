@@ -4,6 +4,7 @@ using DomainServices.Behaviors;
 using DomainServices.Services.OrdersService;
 using FluentValidation;
 using Infrastructure.Data;
+using Infrastructure.Data.Autoremove;
 using Infrastructure.Data.Triggers;
 using Infrastructure.EntityRepository;
 using Infrastructure.Identity.Constants;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
@@ -64,6 +66,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRepository<Section>, EntityFrameworkRepository<Section>>();
         services.AddScoped<IReadOnlyRepository<Section>, EntityFrameworkReadOnlyRepository<Section>>();
 
+        services.AddScoped<IRepository<ShoppingCart>, EntityFrameworkRepository<ShoppingCart>>();
+        services.AddScoped<IReadOnlyRepository<ShoppingCart>, EntityFrameworkReadOnlyRepository<ShoppingCart>>();
+
+        services.AddScoped<IRepository<ShoppingCartItem>, EntityFrameworkRepository<ShoppingCartItem>>();
+        services.AddScoped<IReadOnlyRepository<ShoppingCartItem>, EntityFrameworkReadOnlyRepository<ShoppingCartItem>>();
+
         services.AddScoped<IRepository<Subcategory>, EntityFrameworkRepository<Subcategory>>();
         services.AddScoped<IReadOnlyRepository<Subcategory>, EntityFrameworkReadOnlyRepository<Subcategory>>();
     }
@@ -71,91 +79,119 @@ public static class ServiceCollectionExtensions
     public static void AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddEntityFrameworkNpgsql()
-            .AddDbContext<DbContext, ShopContext>(options =>
-            {
-                options.UseNpgsql(configuration["ConnectionStrings:ShopConnection"],
-                    sqlOptions =>
+                .AddDbContext<DbContext, ShopContext>
+                    (options =>
                     {
-                        sqlOptions.MigrationsAssembly(typeof(ShopContext).GetTypeInfo().Assembly.GetName().Name);
-                        sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
-                    });
+                        options.UseNpgsql
+                            (configuration["ConnectionStrings:ShopConnection"],
+                             sqlOptions =>
+                             {
+                                 sqlOptions.MigrationsAssembly(typeof(ShopContext).GetTypeInfo().Assembly.GetName().Name);
+                                 sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
+                             });
 
-                options.UseTriggers(triggerOptions =>
-                {
-                    triggerOptions.AddTrigger<AfterProductOptionSavedTrigger>();
-                });
-            });
+                        options.UseTriggers
+                            (triggerOptions =>
+                            {
+                                triggerOptions.AddTrigger<AfterProductOptionSavedTrigger>();
+                                triggerOptions.AddTrigger<AfterShoppingCartItemSavedTrigger>();
+                            });
+                    });
     }
 
     public static void AddMediatRServices(this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
         services.AddValidatorsFromAssembly(typeof(IdentityContext).Assembly);
-        services.AddMediatR(options =>
-        {
-            options.RegisterServicesFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
-            options.RegisterServicesFromAssembly(typeof(IdentityContext).Assembly);
-            options.RegisterServicesFromAssembly(typeof(Program).Assembly);
-        });
+
+        services.AddMediatR
+            (options =>
+            {
+                options.RegisterServicesFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
+                options.RegisterServicesFromAssembly(typeof(IdentityContext).Assembly);
+                options.RegisterServicesFromAssembly(typeof(Program).Assembly);
+            });
+
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
     }
 
     public static void AddCustomServices(this IServiceCollection services)
     {
         services.AddScoped<IOrdersService, OrdersService>();
+        services.AddTransient<ShoppingCartItemsAutoremoveScheduler>();
+    }
+
+    public static void AddAndConfigureQuartzNet(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddQuartz
+            (options =>
+            {
+                options.UseMicrosoftDependencyInjectionJobFactory();
+            });
     }
 
     public static void AddAndConfigureAuthorization(this IServiceCollection services)
     {
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy(PolicyName.Administrator, builder =>
+        services.AddAuthorization
+            (options =>
             {
-                builder.RequireClaim(ClaimTypes.Role, RoleName.Administrator);
-                builder.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
-            });
+                options.AddPolicy
+                    (PolicyName.Administrator,
+                     builder =>
+                     {
+                         builder.RequireClaim(ClaimTypes.Role, RoleName.Administrator);
+                         builder.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                     });
 
-            options.AddPolicy(PolicyName.Customer, builder =>
-            {
-                builder.RequireAssertion(x => x.User.HasClaim(ClaimTypes.Role, RoleName.Customer) ||
-                                              x.User.HasClaim(ClaimTypes.Role, RoleName.Administrator));
-                builder.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                options.AddPolicy
+                    (PolicyName.Customer,
+                     builder =>
+                     {
+                         builder.RequireAssertion
+                             (x => x.User.HasClaim(ClaimTypes.Role, RoleName.Customer) ||
+                                   x.User.HasClaim(ClaimTypes.Role, RoleName.Administrator));
+
+                         builder.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                     });
             });
-        });
     }
 
     public static void AddAndConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication()
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new()
+                .AddJwtBearer
+                    (options =>
                     {
-                        ValidAudience = JwtSettings.Audience,
-                        ValidIssuer = JwtSettings.Issuer,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey)),
-                    };
-
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
+                        options.TokenValidationParameters = new TokenValidationParameters
                         {
-                            context.Token = context.Request.Cookies[JwtConstants.TokenType];
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
+                            ValidAudience = JwtSettings.Audience,
+                            ValidIssuer = JwtSettings.Issuer,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey))
+                        };
+
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnMessageReceived = context =>
+                            {
+                                context.Token = context.Request.Cookies[JwtConstants.TokenType];
+
+                                return Task.CompletedTask;
+                            }
+                        };
+                    });
 
         services.AddEntityFrameworkNpgsql()
-                .AddDbContext<IdentityContext>(options =>
-                {
-                    options.UseNpgsql(configuration["ConnectionStrings:IdentityConnection"],
-                                      sqlOptions =>
-                                      {
-                                          sqlOptions.MigrationsAssembly(typeof(IdentityContext).GetTypeInfo().Assembly.GetName().Name);
-                                          sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
-                                      });
-                });
+                .AddDbContext<IdentityContext>
+                    (options =>
+                    {
+                        options.UseNpgsql
+                            (configuration["ConnectionStrings:IdentityConnection"],
+                             sqlOptions =>
+                             {
+                                 sqlOptions.MigrationsAssembly(typeof(IdentityContext).GetTypeInfo().Assembly.GetName().Name);
+                                 sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
+                             });
+                    });
 
         services.AddIdentity<User, IdentityRole<long>>()
                 .AddEntityFrameworkStores<IdentityContext>()

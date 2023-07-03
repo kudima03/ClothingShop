@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
 namespace ApplicationCore.Constants;
+
 public static class RegularExpressions
 {
     public static readonly Regex AtLeastOneDigit = new Regex(".*[0-9].*");

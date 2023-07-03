@@ -4,6 +4,7 @@ using EntityFrameworkCore.Triggered;
 using MediatR;
 
 namespace Infrastructure.Data.Triggers;
+
 public class AfterProductOptionSavedTrigger : IAfterSaveTrigger<ProductOption>
 {
     private readonly IMediator _mediator;
@@ -24,10 +25,12 @@ public class AfterProductOptionSavedTrigger : IAfterSaveTrigger<ProductOption>
         long productId = context.Entity.ProductId;
         int newQuantity = context.Entity.Quantity;
         int? oldQuantity = context.UnmodifiedEntity?.Quantity;
+
         if (oldQuantity != newQuantity)
         {
-            return _mediator.Publish(new ProductOptionQuantityChangedNotification(productOptionId, productId, newQuantity),
-                cancellationToken);
+            return _mediator.Publish
+                (new ProductOptionQuantityChangedNotification(productOptionId, productId, newQuantity),
+                 cancellationToken);
         }
 
         return Task.CompletedTask;

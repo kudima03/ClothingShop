@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Text;
 
 namespace Infrastructure.Identity.Services;
+
 public class IdentityTokenClaimsService : ITokenClaimsService
 {
     private readonly IConfiguration _configuration;
@@ -24,7 +25,12 @@ public class IdentityTokenClaimsService : ITokenClaimsService
     public async Task<string> GetTokenAsync(string userEmail)
     {
         User? user = await _userManager.FindByEmailAsync(userEmail);
-        if (user is null) throw new EntityNotFoundException($"User with email {userEmail} doesn't exist.");
+
+        if (user is null)
+        {
+            throw new EntityNotFoundException($"User with email {userEmail} doesn't exist.");
+        }
+
         IList<string> roles = await _userManager.GetRolesAsync(user);
 
         List<Claim> claims = new List<Claim>
@@ -38,12 +44,15 @@ public class IdentityTokenClaimsService : ITokenClaimsService
         }
 
         JwtSecurityToken token =
-            new JwtSecurityToken(JwtSettings.Issuer,
-                   JwtSettings.Audience,
-                   claims: claims,
-                   notBefore: DateTime.Now,
-                   expires: DateTime.Now.AddMinutes(_configuration.GetValue("TokenLifetimeMinutes", 120)),
-                   new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey)), SecurityAlgorithms.HmacSha256));
+            new JwtSecurityToken
+                (JwtSettings.Issuer,
+                 JwtSettings.Audience,
+                 claims,
+                 DateTime.Now,
+                 DateTime.Now.AddMinutes(_configuration.GetValue("TokenLifetimeMinutes", 120)),
+                 new SigningCredentials
+                     (new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey)),
+                      SecurityAlgorithms.HmacSha256));
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }

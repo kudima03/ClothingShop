@@ -19,8 +19,12 @@ public class Startup
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddControllersWithViews().AddJsonOptions(options =>
-            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+        services.AddControllersWithViews()
+                .AddJsonOptions
+                    (options =>
+                        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
         services.AddHttpContextAccessor();
         services.AddAndConfigureAuthentication(Configuration);
         services.AddAndConfigureAuthorization();
@@ -29,6 +33,7 @@ public class Startup
         services.AddSignalRWithRelatedServices();
         services.AddCustomRepositories();
         services.AddCustomServices();
+        services.AddAndConfigureQuartzNet(Configuration);
         services.AddScoped<GlobalExceptionHandlingMiddleware>();
     }
 
@@ -40,7 +45,7 @@ public class Startup
             app.UseSwaggerUI();
             app.UseDeveloperExceptionPage();
         }
-        
+
         app.UseHttpsRedirection();
 
         app.UseStaticFiles();
@@ -53,10 +58,11 @@ public class Startup
 
         app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-            endpoints.MapHub<RealTimeProductInfoHub>(SignalRConstants.RealTimeProductInfoHubRoute);
-        });
+        app.UseEndpoints
+            (endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHub<RealTimeProductInfoHub>(SignalRConstants.RealTimeProductInfoHubRoute);
+            });
     }
 }
