@@ -21,7 +21,7 @@ public class GetShoppingCartByUserIdQueryHandler : IRequestHandler<GetShoppingCa
                     x => x.Include(shoppingCart => shoppingCart.Items)
                           .ThenInclude(cartItem => cartItem.ProductOption.ProductColor.ImagesInfos)
                           .Include(shoppingCart => shoppingCart.Items)
-                          .ThenInclude(v => v.ProductOption.Product),
+                          .ThenInclude(v => v.ProductOption.Product.Brand),
                     cancellationToken);
     }
 }
