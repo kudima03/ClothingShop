@@ -8,33 +8,46 @@ public class SubscribesToProductsManager : ISubscribesToProductsManager
 
     public void AddSubscribe(long userId, long productId, string connectionId)
     {
-        _subscribes.Add(new Subscribe(userId, productId, connectionId));
+        lock (_subscribes)
+        {
+            _subscribes.Add(new Subscribe(userId, productId, connectionId));
+        }
     }
 
     public void RemoveSubscribe(string connectionId)
     {
-        Subscribe subscribe =
-            _subscribes.Single(subscribe => subscribe.ConnectionId == connectionId);
-
-        _subscribes.Remove(subscribe);
+        lock (_subscribes)
+        {
+            Subscribe subscribe = _subscribes.Single(subscribe => subscribe.ConnectionId == connectionId);
+            _subscribes.Remove(subscribe);
+        }
     }
 
     public IEnumerable<string> ConnectionsSubscribedToProduct(long productId)
     {
-        return _subscribes.Where(subscribe => subscribe.ProductId == productId)
-                          .Select(subscribe => subscribe.ConnectionId);
+        lock (_subscribes)
+        {
+            return _subscribes.Where(subscribe => subscribe.ProductId == productId)
+                              .Select(subscribe => subscribe.ConnectionId);
+        }
     }
 
     public int SubscribedToProductUsersCount(long productId)
     {
-        return _subscribes.Where(subscribe => subscribe.ProductId == productId)
-                          .DistinctBy(subscribe => subscribe.UserId)
-                          .Count();
+        lock (_subscribes)
+        {
+            return _subscribes.Where(subscribe => subscribe.ProductId == productId)
+                              .DistinctBy(subscribe => subscribe.UserId)
+                              .Count();
+        }
     }
 
     public long ProductConnectionSubscribedTo(string connectionId)
     {
-        return _subscribes.Single(subscribe => subscribe.ConnectionId == connectionId).ProductId;
+        lock (_subscribes)
+        {
+            return _subscribes.Single(subscribe => subscribe.ConnectionId == connectionId).ProductId;
+        }
     }
 }
 
