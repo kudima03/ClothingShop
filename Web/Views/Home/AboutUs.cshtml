@@ -3,234 +3,227 @@
 
 <head>
 
-    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
 
     <title>Cloth shop - About Page</title>
 
-    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="~/css/fontawesome.css">
     <link rel="stylesheet" href="~/css/mainStyles.css">
-    <link rel="stylesheet" href="~/css/owl.css">
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    
+    <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/accordion@3.0.2/src/accordion.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.js"></script>
     <script src="~/js/custom.js"></script>
-    <script src="~/js/owl.js"></script>
-    <script src="~/js/slick.js"></script>
-    <script src="~/js/isotope.js"></script>
-    <script src="~/js/accordions.js"></script>
-
 </head>
 
 <body>
 
-<div id="preloader">
-    <div class="jumper">
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-</div>
-
-<header class="">
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" asp-action="Index">
-                <h2>Clothing </h2>
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" asp-action="Index">
-                            Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Products" asp-action="GetAllProducts">Our Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-action="AboutUs">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-action="ContactUs">Contact Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="ShoppingCarts" asp-action="GetUserShoppingCartView">Shopping cart</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Orders" asp-action="GetUserOrders">My orders</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
-
-<div class="page-heading about-heading header-text">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="text-content">
-                    <h4>about us</h4>
-                    <h2>our company</h2>
-                </div>
-            </div>
+    <div id="preloader">
+        <div class="jumper">
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
     </div>
-</div>
 
-
-<div class="best-features about-features">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="section-heading">
-                    <h2>Our Background</h2>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="right-image">
-                    <img src="~/images/feature-image.jpg" alt="">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="left-content">
-                    <h4>Who we are &amp; What we do?</h4>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed voluptate nihil eum consectetur similique? Consectetur, quod, incidunt, harum nisi dolores delectus reprehenderit voluptatem perferendis dicta dolorem non blanditiis ex fugiat. Lorem ipsum dolor sit amet, consectetur adipisicing elit.<br><br>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et, consequuntur, modi mollitia corporis ipsa voluptate corrupti eum ratione ex ea praesentium quibusdam? Aut, in eum facere corrupti necessitatibus perspiciatis quis.</p>
-                    <ul class="social-icons">
-                        <li>
-                            <a href="#">
-                                <i class="fa fa-facebook"></i>
+    <header class="">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" asp-action="Index">
+                    <h2>Clothing </h2>
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" asp-action="Index">
+                                Home
                             </a>
                         </li>
-                        <li>
-                            <a href="#">
-                                <i class="fa fa-twitter"></i>
-                            </a>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Products" asp-action="GetAllProducts">Our Products</a>
                         </li>
-                        <li>
-                            <a href="#">
-                                <i class="fa fa-linkedin"></i>
-                            </a>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="AboutUs">About Us</a>
                         </li>
-                        <li>
-                            <a href="#">
-                                <i class="fa fa-behance"></i>
-                            </a>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="ContactUs">Contact Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="ShoppingCarts" asp-action="GetUserShoppingCartView">Shopping cart</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Orders" asp-action="GetUserOrders">My orders</a>
                         </li>
                     </ul>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+        </nav>
+    </header>
 
-<div class="services">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="service-item">
-                    <div class="icon">
-                        <i class="fa fa-gear"></i>
-                    </div>
-                    <div class="down-content">
-                        <h4>Product Management</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur an adipisicing elit. Itaque, corporis nulla at quia quaerat.</p>
-                        <a href="#" class="filled-button">Read More</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="service-item">
-                    <div class="icon">
-                        <i class="fa fa-gear"></i>
-                    </div>
-                    <div class="down-content">
-                        <h4>Customer Relations</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur an adipisicing elit. Itaque, corporis nulla at quia quaerat.</p>
-                        <a href="#" class="filled-button">Details</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="service-item">
-                    <div class="icon">
-                        <i class="fa fa-gear"></i>
-                    </div>
-                    <div class="down-content">
-                        <h4>Global Collection</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur an adipisicing elit. Itaque, corporis nulla at quia quaerat.</p>
-                        <a href="#" class="filled-button">Read More</a>
+    <div class="page-heading about-heading header-text">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-content">
+                        <h4>about us</h4>
+                        <h2>our company</h2>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<div class="happy-clients">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="section-heading">
-                    <h2>Happy Partners</h2>
+    <div class="best-features about-features">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="section-heading">
+                        <h2>Our Background</h2>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="right-image">
+                        <img src="~/images/feature-image.jpg" alt="">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="left-content">
+                        <h4>Who we are &amp; What we do?</h4>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed voluptate nihil eum consectetur similique? Consectetur, quod, incidunt, harum nisi dolores delectus reprehenderit voluptatem perferendis dicta dolorem non blanditiis ex fugiat. Lorem ipsum dolor sit amet, consectetur adipisicing elit.<br><br>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et, consequuntur, modi mollitia corporis ipsa voluptate corrupti eum ratione ex ea praesentium quibusdam? Aut, in eum facere corrupti necessitatibus perspiciatis quis.</p>
+                        <ul class="social-icons">
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-facebook"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-twitter"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-linkedin"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-behance"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-12">
-                <div class="owl-clients owl-carousel">
-                    <div class="client-item">
-                        <img src="~/images/client-01.png" alt="1">
-                    </div>
+        </div>
+    </div>
 
-                    <div class="client-item">
-                        <img src="~/images/client-01.png" alt="2">
+    <div class="services">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="service-item">
+                        <div class="icon">
+                            <i class="fa fa-gear"></i>
+                        </div>
+                        <div class="down-content">
+                            <h4>Product Management</h4>
+                            <p>Lorem ipsum dolor sit amet, consectetur an adipisicing elit. Itaque, corporis nulla at quia quaerat.</p>
+                            <a href="#" class="filled-button">Read More</a>
+                        </div>
                     </div>
-
-                    <div class="client-item">
-                        <img src="~/images/client-01.png" alt="3">
+                </div>
+                <div class="col-md-4">
+                    <div class="service-item">
+                        <div class="icon">
+                            <i class="fa fa-gear"></i>
+                        </div>
+                        <div class="down-content">
+                            <h4>Customer Relations</h4>
+                            <p>Lorem ipsum dolor sit amet, consectetur an adipisicing elit. Itaque, corporis nulla at quia quaerat.</p>
+                            <a href="#" class="filled-button">Details</a>
+                        </div>
                     </div>
-
-                    <div class="client-item">
-                        <img src="~/images/client-01.png" alt="4">
-                    </div>
-
-                    <div class="client-item">
-                        <img src="~/images/client-01.png" alt="5">
-                    </div>
-
-                    <div class="client-item">
-                        <img src="~/images/client-01.png" alt="6">
+                </div>
+                <div class="col-md-4">
+                    <div class="service-item">
+                        <div class="icon">
+                            <i class="fa fa-gear"></i>
+                        </div>
+                        <div class="down-content">
+                            <h4>Global Collection</h4>
+                            <p>Lorem ipsum dolor sit amet, consectetur an adipisicing elit. Itaque, corporis nulla at quia quaerat.</p>
+                            <a href="#" class="filled-button">Read More</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<footer>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="inner-content">
+    <div class="happy-clients">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="section-heading">
+                        <h2>Happy Partners</h2>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="owl-clients owl-carousel">
+                        <div class="client-item">
+                            <img src="~/images/client-01.png" alt="1">
+                        </div>
+
+                        <div class="client-item">
+                            <img src="~/images/client-01.png" alt="2">
+                        </div>
+
+                        <div class="client-item">
+                            <img src="~/images/client-01.png" alt="3">
+                        </div>
+
+                        <div class="client-item">
+                            <img src="~/images/client-01.png" alt="4">
+                        </div>
+
+                        <div class="client-item">
+                            <img src="~/images/client-01.png" alt="5">
+                        </div>
+
+                        <div class="client-item">
+                            <img src="~/images/client-01.png" alt="6">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</footer>
 
 
-<script language="text/Javascript">
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="inner-content">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <script language="text/Javascript">
         cleared[0] = cleared[1] = cleared[2] = 0; //set a cleared flag for each field
         function clearField(t) {                   //declaring the array outside of the
             if (!cleared[t.id]) {                      // function makes it static and global
