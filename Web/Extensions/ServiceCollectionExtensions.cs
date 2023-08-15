@@ -20,6 +20,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
+using Redis.OM;
+using Redis.OM.Contracts;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
@@ -207,5 +209,11 @@ public static class ServiceCollectionExtensions
         services.AddSignalR();
         services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
         services.AddSingleton<ISubscribesToProductsManager, SubscribesToProductsManager>();
+    }
+
+    public static void AddAndConfigureRedisCache(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<IRedisConnectionProvider>
+            (new RedisConnectionProvider(configuration.GetConnectionString("RedisConnection")!));
     }
 }

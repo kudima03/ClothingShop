@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Web.Extensions;
+using Web.HostedServices;
 using Web.Hubs;
 using Web.Middlewares;
 using Web.SignalR;
@@ -34,7 +35,9 @@ public class Startup
         services.AddCustomRepositories();
         services.AddCustomServices();
         services.AddAndConfigureQuartzNet(Configuration);
+        services.AddAndConfigureRedisCache(Configuration);
         services.AddScoped<GlobalExceptionHandlingMiddleware>();
+        services.AddHostedService<RedisInitService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

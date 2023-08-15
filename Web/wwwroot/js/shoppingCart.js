@@ -1,6 +1,7 @@
 const getUri = "/shoppingCarts/GetUserShoppingCartData";
 const putUri = "/shoppingCarts";
 const ordersUri = "/orders";
+
 function changeProductOptionQuantity(productOptionId, increment) {
 
     var totalSum = 0;
@@ -10,7 +11,7 @@ function changeProductOptionQuantity(productOptionId, increment) {
 
             var itemToEdit = json.items.find(x => x.productOptionId === productOptionId);
 
-            var quantity = parseInt(document.getElementById("quantityOf " + productOptionId).value, 0);
+            var quantity = parseInt(document.getElementById(`quantityOf ${productOptionId}`).value, 0);
 
             itemToEdit.amount = quantity;
 
@@ -27,27 +28,28 @@ function changeProductOptionQuantity(productOptionId, increment) {
             var requestBody = {
                 "UserId": 0,
                 "ItemsDtos": requestItems
-            }
+            };
 
             return requestBody;
         })
         .then((requestBody) => {
             fetch(putUri,
-                {
-                    method: "PUT",
-                    headers: {
-                        'Content-Type': "application/json"
-                    },
-                    body: JSON.stringify(requestBody)
-                }).then((response) => {
+                    {
+                        method: "PUT",
+                        headers: {
+                            'Content-Type': "application/json"
+                        },
+                        body: JSON.stringify(requestBody)
+                    })
+                .then((response) => {
                     if (!response.ok) {
                         if (increment) {
-                            document.getElementById("quantityOf " + productOptionId).value--;
+                            document.getElementById(`quantityOf ${productOptionId}`).value--;
                         } else {
-                            document.getElementById("quantityOf " + productOptionId).value++;
+                            document.getElementById(`quantityOf ${productOptionId}`).value++;
                         }
                     } else {
-                        document.getElementById("totalPrice").innerHTML = "$" + totalSum;
+                        document.getElementById("totalPrice").innerHTML = `$${totalSum}`;
                     }
                 });
         });
@@ -77,7 +79,7 @@ function addNewProductOptionToCart(productOptionId) {
             var requestBody = {
                 "UserId": 0,
                 "ItemsDtos": requestItems
-            }
+            };
 
             return requestBody;
         })
@@ -113,7 +115,7 @@ function removeProductOptionFromCart(productOptionId) {
             var requestBody = {
                 "UserId": 0,
                 "ItemsDtos": requestItems
-            }
+            };
 
             console.log(requestBody);
 
@@ -121,13 +123,13 @@ function removeProductOptionFromCart(productOptionId) {
         })
         .then((requestBody) => {
             fetch(putUri,
-                {
-                    method: "PUT",
-                    headers: {
-                        'Content-Type': "application/json"
-                    },
-                    body: JSON.stringify(requestBody)
-                })
+                    {
+                        method: "PUT",
+                        headers: {
+                            'Content-Type': "application/json"
+                        },
+                        body: JSON.stringify(requestBody)
+                    })
                 .then(() => {
                     location.reload();
                 });
@@ -149,19 +151,21 @@ function createOrderFromCartItems() {
             var requestBody = {
                 "UserId": 0,
                 "ShoppingCartItemsIds": requestItems
-            }
+            };
 
             return requestBody;
 
-        }).then((requestBody) => {
+        })
+        .then((requestBody) => {
             fetch(ordersUri,
-                {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': "application/json"
-                    },
-                    body: JSON.stringify(requestBody)
-                }).then(() => {
+                    {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': "application/json"
+                        },
+                        body: JSON.stringify(requestBody)
+                    })
+                .then(() => {
                     location.reload();
                 });
         });

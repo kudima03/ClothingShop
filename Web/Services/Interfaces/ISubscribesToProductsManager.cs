@@ -2,13 +2,13 @@
 
 public interface ISubscribesToProductsManager
 {
-    void AddSubscribe(long userId, long productId, string connectionId);
+    Task AddSubscribeAsync(long userId, long productId, string connectionId);
 
-    void RemoveSubscribe(string connectionId);
+    Task RemoveSubscribeAsync(string connectionId);
 
-    IEnumerable<string> ConnectionsSubscribedToProduct(long productId);
+    Task<IEnumerable<string>> GetConnectionsSubscribedToProductAsync(long productId);
 
-    int SubscribedToProductUsersCount(long productId);
+    Task<int> GetSubscribedToProductUsersCountAsync(long productId);
 
-    long ProductConnectionSubscribedTo(string connectionId);
+    Task<long> GetProductIdConnectionSubscribedToAsync(string connectionId);
 }
