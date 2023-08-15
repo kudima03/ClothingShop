@@ -20,16 +20,16 @@ public class ProductOptionReservedQuantityChangedNotificationHandler
         _hubContext = hubContext;
     }
 
-    public Task Handle(ProductOptionReservedQuantityChangedNotification notification, CancellationToken cancellationToken)
+    public async Task Handle(ProductOptionReservedQuantityChangedNotification notification, CancellationToken cancellationToken)
     {
-        IEnumerable<string> connectionsWatchingProduct = _subscribesToProductsManager
-            .ConnectionsSubscribedToProduct(notification.ProductId);
+        IEnumerable<string> connectionsWatchingProduct = await _subscribesToProductsManager
+                                                             .GetConnectionsSubscribedToProductAsync(notification.ProductId);
 
-        return _hubContext.Clients.Clients(connectionsWatchingProduct)
-                          .SendAsync
-                              (SignalRConstants.ProductOptionReservedQuantityChanged,
-                               notification.ProductOptionId,
-                               notification.NewReservedQuantity,
-                               cancellationToken);
+        _hubContext.Clients.Clients(connectionsWatchingProduct)
+                   .SendAsync
+                       (SignalRConstants.ProductOptionReservedQuantityChanged,
+                        notification.ProductOptionId,
+                        notification.NewReservedQuantity,
+                        cancellationToken);
     }
 }

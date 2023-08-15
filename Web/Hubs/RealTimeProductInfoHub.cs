@@ -16,43 +16,41 @@ public class RealTimeProductInfoHub : Hub
         _subscribesManager = subscribesManager;
     }
 
-    public Task SubscribeForProductInfoChanges(long productId)
+    public async Task SubscribeForProductInfoChanges(long productId)
     {
-        int watchersBeforeNewConnection = _subscribesManager.SubscribedToProductUsersCount(productId);
+        int watchersBeforeNewConnection = await _subscribesManager.GetSubscribedToProductUsersCountAsync(productId);
         long userId = long.Parse(Context.UserIdentifier!);
-        _subscribesManager.AddSubscribe(userId, productId, Context.ConnectionId);
-        int watchersAfterNewConnection = _subscribesManager.SubscribedToProductUsersCount(productId);
+        await _subscribesManager.AddSubscribeAsync(userId, productId, Context.ConnectionId);
+        int watchersAfterNewConnection = await _subscribesManager.GetSubscribedToProductUsersCountAsync(productId);
         bool productWatchersAmountChanged = watchersAfterNewConnection != watchersBeforeNewConnection;
 
         if (productWatchersAmountChanged)
         {
-            IEnumerable<string> connectionsWatchingProduct = _subscribesManager.ConnectionsSubscribedToProduct(productId);
+            IEnumerable<string> connectionsWatchingProduct =
+                await _subscribesManager.GetConnectionsSubscribedToProductAsync(productId);
 
-            return Clients.Clients
-                              (connectionsWatchingProduct)
-                          .SendAsync(SignalRConstants.ProductWatchersCountChanged, watchersAfterNewConnection);
+            Clients.Clients
+                       (connectionsWatchingProduct)
+                   .SendAsync(SignalRConstants.ProductWatchersCountChanged, watchersAfterNewConnection);
         }
 
-        return Clients.Client
-                          (Context.ConnectionId)
-                      .SendAsync(SignalRConstants.ProductWatchersCountChanged, watchersAfterNewConnection);
+        Clients.Client(Context.ConnectionId).SendAsync(SignalRConstants.ProductWatchersCountChanged, watchersAfterNewConnection);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        long productWithIdViewed = _subscribesManager.ProductConnectionSubscribedTo(Context.ConnectionId);
-        int watchersBeforeDisconnect = _subscribesManager.SubscribedToProductUsersCount(productWithIdViewed);
-        _subscribesManager.RemoveSubscribe(Context.ConnectionId);
-        int watchersAfterDisconnect = _subscribesManager.SubscribedToProductUsersCount(productWithIdViewed);
+        long productWithIdViewed = await _subscribesManager.GetProductIdConnectionSubscribedToAsync(Context.ConnectionId);
+        int watchersBeforeDisconnect = await _subscribesManager.GetSubscribedToProductUsersCountAsync(productWithIdViewed);
+        await _subscribesManager.RemoveSubscribeAsync(Context.ConnectionId);
+        int watchersAfterDisconnect = await _subscribesManager.GetSubscribedToProductUsersCountAsync(productWithIdViewed);
         bool watchersAmountChanged = watchersAfterDisconnect != watchersBeforeDisconnect;
 
         if (watchersAmountChanged)
         {
-            IEnumerable<string> connectionsWatchingProduct = _subscribesManager.ConnectionsSubscribedToProduct
-                (productWithIdViewed);
+            IEnumerable<string> connectionsWatchingProduct = await _subscribesManager.GetConnectionsSubscribedToProductAsync
+                                                                 (productWithIdViewed);
 
-            await Clients.Clients
-                             (connectionsWatchingProduct)
+            await Clients.Clients(connectionsWatchingProduct)
                          .SendAsync(SignalRConstants.ProductWatchersCountChanged, watchersAfterDisconnect);
         }
 

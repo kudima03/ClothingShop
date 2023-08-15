@@ -1,56 +1,55 @@
-﻿using Web.Services.Interfaces;
+﻿using Redis.OM;
+using Redis.OM.Contracts;
+using Redis.OM.Modeling;
+using Redis.OM.Searching;
+using Web.Services.Interfaces;
 
 namespace Web.Services.Implementations;
 
 public class SubscribesToProductsManager : ISubscribesToProductsManager
 {
-    private readonly List<Subscribe> _subscribes = new List<Subscribe>();
+    private readonly IRedisCollection<Subscribe> _subscriptions;
 
-    public void AddSubscribe(long userId, long productId, string connectionId)
+    public SubscribesToProductsManager(IRedisConnectionProvider redisConnection)
     {
-        lock (_subscribes)
-        {
-            _subscribes.Add(new Subscribe(userId, productId, connectionId));
-        }
+        _subscriptions = redisConnection.RedisCollection<Subscribe>();
     }
 
-    public void RemoveSubscribe(string connectionId)
+    public Task AddSubscribeAsync(long userId, long productId, string connectionId)
     {
-        lock (_subscribes)
-        {
-            Subscribe subscribe = _subscribes.Single(subscribe => subscribe.ConnectionId == connectionId);
-            _subscribes.Remove(subscribe);
-        }
+        _subscriptions.InsertAsync(new Subscribe(userId, productId, connectionId));
+
+        return Task.CompletedTask;
     }
 
-    public IEnumerable<string> ConnectionsSubscribedToProduct(long productId)
+    public async Task RemoveSubscribeAsync(string connectionId)
     {
-        lock (_subscribes)
-        {
-            return _subscribes.Where(subscribe => subscribe.ProductId == productId)
-                              .Select(subscribe => subscribe.ConnectionId);
-        }
+        Subscribe subscription = await _subscriptions.FindByIdAsync(connectionId);
+        _subscriptions.DeleteAsync(subscription);
     }
 
-    public int SubscribedToProductUsersCount(long productId)
+    public async Task<IEnumerable<string>> GetConnectionsSubscribedToProductAsync(long productId)
     {
-        lock (_subscribes)
-        {
-            return _subscribes.Where(subscribe => subscribe.ProductId == productId)
-                              .DistinctBy(subscribe => subscribe.UserId)
-                              .Count();
-        }
+        return await _subscriptions.Where(subscribe => subscribe.ProductId == productId)
+                                   .Select(subscribe => subscribe.ConnectionId)
+                                   .ToListAsync();
     }
 
-    public long ProductConnectionSubscribedTo(string connectionId)
+    public Task<int> GetSubscribedToProductUsersCountAsync(long productId)
     {
-        lock (_subscribes)
-        {
-            return _subscribes.Single(subscribe => subscribe.ConnectionId == connectionId).ProductId;
-        }
+        return Task.FromResult
+            (_subscriptions.Where(subscribe => subscribe.ProductId == productId)
+                           .DistinctBy(subscribe => subscribe.UserId)
+                           .Count());
+    }
+
+    public async Task<long> GetProductIdConnectionSubscribedToAsync(string connectionId)
+    {
+        return (await _subscriptions.SingleAsync(subscribe => subscribe.ConnectionId == connectionId)).ProductId;
     }
 }
 
+[Document(StorageType = StorageType.Json)]
 public class Subscribe
 {
     public Subscribe(long userId, long productId, string connectionId)
@@ -60,9 +59,13 @@ public class Subscribe
         ConnectionId = connectionId;
     }
 
+    [Indexed]
+    [RedisIdField]
+    public string ConnectionId { get; }
+
+    [Indexed]
     public long UserId { get; }
 
+    [Indexed]
     public long ProductId { get; }
-
-    public string ConnectionId { get; }
 }

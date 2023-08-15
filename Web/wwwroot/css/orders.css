@@ -1,21 +1,17 @@
-﻿body {
-    background: #eee;
-}
+﻿body { background: #eee; }
+
+.card { box-shadow: 0 20px 27px 0 rgba(0 0 0 5); }
 
 .card {
-    box-shadow: 0 20px 27px 0 rgba(0 0 0 5);
-}
-
-.card {
-    position: relative;
+    background-clip: border-box;
+    background-color: #fff;
+    border: 0 solid rgba(0, 0, 0, .125);
+    border-radius: 1rem;
     display: flex;
     flex-direction: column;
     min-width: 0;
+    position: relative;
     word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: 0 solid rgba(0,0,0,.125);
-    border-radius: 1rem;
 }
 
 .text-reset {
