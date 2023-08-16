@@ -25,6 +25,7 @@ using Redis.OM.Contracts;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using Web.HostedServices;
 using Web.Services.Implementations;
 using Web.Services.Interfaces;
 using Web.SignalR;
@@ -215,5 +216,13 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IRedisConnectionProvider>
             (new RedisConnectionProvider(configuration.GetConnectionString("RedisConnection")!));
+    }
+
+    public static void AddAndConfigureHostedServices(this IServiceCollection services)
+    {
+        services.AddHostedService<RedisInitService>();
+        services.AddHostedService<ShopContextSeedService>();
+        services.AddHostedService<AuthorizationRolesInitService>();
+        services.AddHostedService<AutoremoveSchedulerInitService>();
     }
 }
