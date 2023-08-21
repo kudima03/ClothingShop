@@ -50,8 +50,7 @@ public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCa
         return Unit.Value;
     }
 
-    private async Task<ICollection<ShoppingCartItem>> ValidateAndGetShoppingCartItemsToAdd(
-        ShoppingCart shoppingCart,
+    private async Task<ICollection<ShoppingCartItem>> ValidateAndGetShoppingCartItemsToAdd(ShoppingCart shoppingCart,
         ICollection<ShoppingCartItemDto> requestedItems)
     {
         IEnumerable<ShoppingCartItemDto> newItems = requestedItems.Where
@@ -62,8 +61,7 @@ public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCa
 
         if (productOptions.Count != newItems.Count())
         {
-            IEnumerable<long> missingShoppingCartItems = newItems.Select
-                                                                     (x => x.ProductOptionId)
+            IEnumerable<long> missingShoppingCartItems = newItems.Select(x => x.ProductOptionId)
                                                                  .Except(productOptions.Select(x => x.Id));
 
             string missingShoppingCartItemsMessage = string.Join(',', missingShoppingCartItems);
@@ -113,9 +111,8 @@ public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCa
         }
     }
 
-    private ICollection<ShoppingCartItem> ValidateAndGetShoppingCartItemsToRemove(
-        ShoppingCart shoppingCart,
-        ICollection<ShoppingCartItemDto> requestedItems)
+    private ICollection<ShoppingCartItem> ValidateAndGetShoppingCartItemsToRemove(ShoppingCart shoppingCart,
+                                                                                  ICollection<ShoppingCartItemDto> requestedItems)
     {
         IEnumerable<ShoppingCartItem> itemsToRemove = shoppingCart.Items.Where
             (x => !requestedItems.Select(c => c.ProductOptionId).Contains(x.ProductOptionId));
