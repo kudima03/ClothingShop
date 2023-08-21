@@ -1,0 +1,37 @@
+version: '3.4'
+
+services:
+  web:
+    image: kudima03/clothing_shop:latest
+    build: 
+      context: .
+      dockerfile: Web/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConnectionStrings__ShopConnection=Host=db;Database=cloth_shop_database;Username=admin;Password=admin;
+      - ConnectionStrings__IdentityConnection=Host=db;Database=cloth_shop_database;Username=admin;Password=admin;
+      - ConnectionStrings__RedisConnection=redis://redis
+    ports:
+      - "5000:80"
+      - "5001:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=cloth_shop_database
+    volumes:
+      - /usr/local/var/postgres
+
+  redis:
+    image: redis/redis-stack:latest
+    restart: always

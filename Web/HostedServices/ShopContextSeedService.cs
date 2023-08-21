@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Web.HostedServices;
 
@@ -16,6 +17,7 @@ public class ShopContextSeedService : IHostedService
         await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
 
         ShopContext shopContext = scope.ServiceProvider.GetRequiredService<ShopContext>();
+        await shopContext.Database.MigrateAsync(cancellationToken);
         await ShopContextSeed.SeedAsync(shopContext);
     }
 

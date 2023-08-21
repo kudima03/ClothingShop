@@ -29,8 +29,7 @@ public class RealTimeProductInfoHub : Hub
             IEnumerable<string> connectionsWatchingProduct =
                 await _subscribesManager.GetConnectionsSubscribedToProductAsync(productId);
 
-            Clients.Clients
-                       (connectionsWatchingProduct)
+            Clients.Clients(connectionsWatchingProduct)
                    .SendAsync(SignalRConstants.ProductWatchersCountChanged, watchersAfterNewConnection);
         }
 

@@ -19,8 +19,9 @@ public class RedisInitService : IHostedService
         await _provider.Connection.CreateIndexAsync(typeof(Subscribe));
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;
+        IList<Subscribe> itemsToDelete = await _provider.RedisCollection<Subscribe>().ToListAsync();
+        await _provider.RedisCollection<Subscribe>().DeleteAsync(itemsToDelete);
     }
 }
