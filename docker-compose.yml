@@ -16,8 +16,8 @@ services:
       - "5000:80"
       - "5001:443"
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - /root/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - /root/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
       - db
       - redis
