@@ -10,7 +10,7 @@ jobs:
 
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v3
@@ -19,3 +19,8 @@ jobs:
         compose-file: "./docker-compose.yml"
         services: |
           web
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        name: ClothingShop
+        if-no-files-found: error
