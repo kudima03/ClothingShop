@@ -26,6 +26,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
+        tag_name: release
         release_name: Clothing-shop-release
         draft: true
         prerelease: false
