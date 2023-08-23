@@ -26,10 +26,6 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Publish Release
-    - uses: eregon/publish-release@v1.0.3
-      with:
-        release_id: 123
 
   release:
     runs-on: ubuntu-latest
