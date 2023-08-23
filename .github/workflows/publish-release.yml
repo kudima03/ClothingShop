@@ -23,7 +23,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build Web --no-restore
+      run: dotnet build ./Web --no-restore
 
   release:
     runs-on: ubuntu-latest
