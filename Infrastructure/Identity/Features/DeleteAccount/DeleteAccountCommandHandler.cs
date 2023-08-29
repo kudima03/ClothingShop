@@ -36,6 +36,7 @@ public class DeleteAccountCommandHandler : IRequestHandler<DeleteAccountCommand,
 
     public async Task<Unit> Handle(DeleteAccountCommand request, CancellationToken cancellationToken)
     {
+        //Don't use cancellationToken here because of transaction consistence on 3 separate repositories.
         ClaimsIdentity? claimsIdentity = _contextAccessor.HttpContext?.User.Identity as ClaimsIdentity;
 
         string email = claimsIdentity.FindFirst(ClaimTypes.Email).Value;
@@ -43,29 +44,24 @@ public class DeleteAccountCommandHandler : IRequestHandler<DeleteAccountCommand,
         User? user = await _userManager.FindByEmailAsync(email);
 
         IList<Review>? reviewsToRemove = await
-                                             _reviewsRepository.GetAllAsync
-                                                 (predicate: x => x.UserId == user.Id,
-                                                  cancellationToken: cancellationToken);
+                                             _reviewsRepository.GetAllAsync(predicate: x => x.UserId == user.Id);
 
         _reviewsRepository.Delete(reviewsToRemove);
 
-        await _reviewsRepository.SaveChangesAsync(cancellationToken);
+        await _reviewsRepository.SaveChangesAsync();
 
         IList<Order>? ordersToCancel = await
-                                           _ordersRepository.GetAllAsync
-                                               (predicate: x => x.UserId == user.Id, cancellationToken: cancellationToken);
+                                           _ordersRepository.GetAllAsync(predicate: x => x.UserId == user.Id);
 
         OrderStatus? cancelledOrderStatus =
-            await _orderStatusesRepository.GetFirstOrDefaultAsync
-                (predicate: x => x.Name == OrderStatusName.Cancelled,
-                 cancellationToken: cancellationToken);
+            await _orderStatusesRepository.GetFirstOrDefaultAsync(predicate: x => x.Name == OrderStatusName.Cancelled);
 
         foreach (Order? item in ordersToCancel)
         {
             item.OrderStatus = cancelledOrderStatus;
         }
 
-        await _ordersRepository.SaveChangesAsync(cancellationToken);
+        await _ordersRepository.SaveChangesAsync();
 
         user.Delete();
 

@@ -27,10 +27,10 @@ public class CategoriesController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Category>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<Category>>> GetAll()
+    public async Task<ActionResult<IEnumerable<Category>>> GetAll(CancellationToken cancellationToken)
     {
         GetAllCategoriesQuery query = new GetAllCategoriesQuery();
-        IEnumerable<Category> categories = await _mediator.Send(query);
+        IEnumerable<Category> categories = await _mediator.Send(query, cancellationToken);
 
         return Ok(categories);
     }
@@ -40,10 +40,10 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<Category>> GetById([FromRoute] long id)
+    public async Task<ActionResult<Category>> GetById([FromRoute] long id, CancellationToken cancellationToken)
     {
         GetCategoryByIdQuery query = new GetCategoryByIdQuery(id);
-        Category category = await _mediator.Send(query);
+        Category category = await _mediator.Send(query, cancellationToken);
 
         return Ok(category);
     }
@@ -54,9 +54,9 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] CreateCategoryCommand createCommand)
+    public async Task<ActionResult> Create([FromBody] CreateCategoryCommand createCommand, CancellationToken cancellationToken)
     {
-        Category createdCategory = await _mediator.Send(createCommand);
+        Category createdCategory = await _mediator.Send(createCommand, cancellationToken);
 
         return Ok(createdCategory.Id);
     }
@@ -68,9 +68,9 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Update([FromBody] UpdateCategoryCommand updateCommand)
+    public async Task<ActionResult> Update([FromBody] UpdateCategoryCommand updateCommand, CancellationToken cancellationToken)
     {
-        await _mediator.Send(updateCommand);
+        await _mediator.Send(updateCommand, cancellationToken);
 
         return Ok();
     }
@@ -80,10 +80,10 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Delete([FromRoute] long id)
+    public async Task<ActionResult> Delete([FromRoute] long id, CancellationToken cancellationToken)
     {
         DeleteCategoryCommand command = new DeleteCategoryCommand(id);
-        await _mediator.Send(command);
+        await _mediator.Send(command, cancellationToken);
 
         return Ok();
     }

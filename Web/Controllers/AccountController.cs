@@ -32,11 +32,11 @@ public class AccountController : Controller
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<IActionResult> Login([FromForm] SignInCommand signInCommand)
+    public async Task<IActionResult> Login([FromForm] SignInCommand signInCommand, CancellationToken cancellationToken)
     {
         try
         {
-            await _mediator.Send(signInCommand);
+            await _mediator.Send(signInCommand, cancellationToken);
 
             return RedirectToAction("Index", "Home");
         }
@@ -63,11 +63,11 @@ public class AccountController : Controller
 
     [HttpPost]
     [AllowAnonymous]
-    public async Task<IActionResult> Register([FromForm] RegisterCommand registerCommand)
+    public async Task<IActionResult> Register([FromForm] RegisterCommand registerCommand, CancellationToken cancellationToken)
     {
         try
         {
-            await _mediator.Send(registerCommand);
+            await _mediator.Send(registerCommand, cancellationToken);
 
             return RedirectToAction("Login");
         }
@@ -86,11 +86,11 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> SignOut()
+    public async Task<IActionResult> SignOut(CancellationToken cancellationToken)
     {
         try
         {
-            await _mediator.Send(new SignOutCommand());
+            await _mediator.Send(new SignOutCommand(), cancellationToken);
 
             return RedirectToAction("Login");
         }

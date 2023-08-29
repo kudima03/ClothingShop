@@ -27,10 +27,10 @@ public class SubcategoriesController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Subcategory>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<Subcategory>>> GetAll()
+    public async Task<ActionResult<IEnumerable<Subcategory>>> GetAll(CancellationToken cancellationToken)
     {
         GetAllSubcategoriesQuery query = new GetAllSubcategoriesQuery();
-        IEnumerable<Subcategory> subcategories = await _mediator.Send(query);
+        IEnumerable<Subcategory> subcategories = await _mediator.Send(query, cancellationToken);
 
         return Ok(subcategories);
     }
@@ -40,10 +40,10 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<Subcategory>> GetById([FromRoute] long id)
+    public async Task<ActionResult<Subcategory>> GetById([FromRoute] long id, CancellationToken cancellationToken)
     {
         GetSubcategoryByIdQuery query = new GetSubcategoryByIdQuery(id);
-        Subcategory subcategory = await _mediator.Send(query);
+        Subcategory subcategory = await _mediator.Send(query, cancellationToken);
 
         return Ok(subcategory);
     }
@@ -54,9 +54,9 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] CreateSubcategoryCommand createCommand)
+    public async Task<ActionResult> Create([FromBody] CreateSubcategoryCommand createCommand, CancellationToken cancellationToken)
     {
-        Subcategory createdCategory = await _mediator.Send(createCommand);
+        Subcategory createdCategory = await _mediator.Send(createCommand, cancellationToken);
 
         return Ok(createdCategory.Id);
     }
@@ -68,9 +68,9 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Update([FromBody] UpdateSubcategoryCommand updateCommand)
+    public async Task<ActionResult> Update([FromBody] UpdateSubcategoryCommand updateCommand, CancellationToken cancellationToken)
     {
-        await _mediator.Send(updateCommand);
+        await _mediator.Send(updateCommand, cancellationToken);
 
         return Ok();
     }
@@ -80,10 +80,10 @@ public class SubcategoriesController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Delete([FromRoute] long id)
+    public async Task<ActionResult> Delete([FromRoute] long id, CancellationToken cancellationToken)
     {
         DeleteSubcategoryCommand command = new DeleteSubcategoryCommand(id);
-        await _mediator.Send(command);
+        await _mediator.Send(command, cancellationToken);
 
         return Ok();
     }

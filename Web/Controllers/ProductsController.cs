@@ -29,10 +29,10 @@ public class ProductsController : Controller
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Product>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
+    public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts(CancellationToken cancellationToken)
     {
         GetAllProductsQuery query = new GetAllProductsQuery();
-        IEnumerable<Product> products = await _mediator.Send(query);
+        IEnumerable<Product> products = await _mediator.Send(query, cancellationToken);
 
         return View("Products", products);
     }
@@ -42,10 +42,10 @@ public class ProductsController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<Product>> GetProductById([FromRoute] long id)
+    public async Task<ActionResult<Product>> GetProductById([FromRoute] long id, CancellationToken cancellationToken)
     {
         GetProductByIdQuery query = new GetProductByIdQuery(id);
-        Product product = await _mediator.Send(query);
+        Product product = await _mediator.Send(query, cancellationToken);
 
         return View("Product", product);
     }
@@ -55,10 +55,12 @@ public class ProductsController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubcategory([FromQuery] long subcategoryId)
+    public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubcategory(
+        [FromQuery] long subcategoryId,
+        CancellationToken cancellationToken)
     {
         GetProductsBySubcategoryIdQuery query = new GetProductsBySubcategoryIdQuery(subcategoryId);
-        IEnumerable<Product> product = await _mediator.Send(query);
+        IEnumerable<Product> product = await _mediator.Send(query, cancellationToken);
 
         return Ok(product);
     }
@@ -68,10 +70,11 @@ public class ProductsController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProductByBrand([FromQuery] long brandId)
+    public async Task<ActionResult<IEnumerable<Product>>> GetProductByBrand([FromQuery] long brandId,
+                                                                            CancellationToken cancellationToken)
     {
         GetProductsByBrandIdQuery query = new GetProductsByBrandIdQuery(brandId);
-        IEnumerable<Product> product = await _mediator.Send(query);
+        IEnumerable<Product> product = await _mediator.Send(query, cancellationToken);
 
         return Ok(product);
     }
@@ -82,9 +85,10 @@ public class ProductsController : Controller
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> CreateProduct([FromBody] CreateProductCommand createCommand)
+    public async Task<ActionResult> CreateProduct([FromBody] CreateProductCommand createCommand,
+                                                  CancellationToken cancellationToken)
     {
-        Product createdProduct = await _mediator.Send(createCommand);
+        Product createdProduct = await _mediator.Send(createCommand, cancellationToken);
 
         return Ok(createdProduct.Id);
     }
@@ -96,9 +100,10 @@ public class ProductsController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> UpdateProduct([FromBody] UpdateProductCommand updateCommand)
+    public async Task<ActionResult> UpdateProduct([FromBody] UpdateProductCommand updateCommand,
+                                                  CancellationToken cancellationToken)
     {
-        await _mediator.Send(updateCommand);
+        await _mediator.Send(updateCommand, cancellationToken);
 
         return Ok();
     }
@@ -108,10 +113,10 @@ public class ProductsController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> DeleteProduct([FromRoute] long id)
+    public async Task<ActionResult> DeleteProduct([FromRoute] long id, CancellationToken cancellationToken)
     {
         DeleteProductCommand command = new DeleteProductCommand(id);
-        await _mediator.Send(command);
+        await _mediator.Send(command, cancellationToken);
 
         return Ok();
     }

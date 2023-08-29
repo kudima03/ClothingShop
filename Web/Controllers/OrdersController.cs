@@ -28,10 +28,10 @@ public class OrdersController : Controller
     [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(IEnumerable<Order>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<Order>>> GetAll()
+    public async Task<ActionResult<IEnumerable<Order>>> GetAll(CancellationToken cancellationToken)
     {
         GetAllOrdersQuery query = new GetAllOrdersQuery();
-        IEnumerable<Order> orders = await _mediator.Send(query);
+        IEnumerable<Order> orders = await _mediator.Send(query, cancellationToken);
 
         return Ok(orders);
     }
@@ -42,10 +42,10 @@ public class OrdersController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<Order>> GetById([FromRoute] long id)
+    public async Task<ActionResult<Order>> GetById([FromRoute] long id, CancellationToken cancellationToken)
     {
         GetOrderByIdQuery query = new GetOrderByIdQuery(id);
-        Order order = await _mediator.Send(query);
+        Order order = await _mediator.Send(query, cancellationToken);
 
         return Ok(order);
     }
@@ -55,11 +55,11 @@ public class OrdersController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<Order>> GetUserOrders()
+    public async Task<ActionResult<Order>> GetUserOrders(CancellationToken cancellationToken)
     {
         long userId = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         GetOrdersByUserIdQuery query = new GetOrdersByUserIdQuery(userId);
-        IEnumerable<Order> orders = await _mediator.Send(query);
+        IEnumerable<Order> orders = await _mediator.Send(query, cancellationToken);
 
         return View("Orders", orders);
     }
@@ -69,11 +69,11 @@ public class OrdersController : Controller
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] CreateOrderCommand createCommand)
+    public async Task<ActionResult> Create([FromBody] CreateOrderCommand createCommand, CancellationToken cancellationToken)
     {
         long userId = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         createCommand.UserId = userId;
-        Order createdOrder = await _mediator.Send(createCommand);
+        Order createdOrder = await _mediator.Send(createCommand, cancellationToken);
 
         return Ok(createdOrder.Id);
     }
@@ -83,10 +83,10 @@ public class OrdersController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Delete([FromRoute] long id)
+    public async Task<ActionResult> Delete([FromRoute] long id, CancellationToken cancellationToken)
     {
         CancelOrderCommand command = new CancelOrderCommand(id);
-        await _mediator.Send(command);
+        await _mediator.Send(command, cancellationToken);
 
         return Ok();
     }

@@ -38,6 +38,11 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
             await context.Response.WriteAsJsonAsync(e.Message);
         }
+        catch (OperationCanceledException e)
+        {
+            _logger.LogInformation($"Request to {context.Request.Path} was cancelled");
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        }
         catch (Exception e)
         {
             _logger.LogError(e, e.Message);

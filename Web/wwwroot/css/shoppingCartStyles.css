@@ -4,7 +4,7 @@
 
 .number-input input[type="number"] {
     -moz-appearance: textfield;
-    -webkit-appearance: textfield;   
+    -webkit-appearance: textfield;
 }
 
 .number-input input[type=number]::-webkit-inner-spin-button,

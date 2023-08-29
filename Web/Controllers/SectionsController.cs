@@ -27,10 +27,10 @@ public class SectionsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Section>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<Section>>> GetAll()
+    public async Task<ActionResult<IEnumerable<Section>>> GetAll(CancellationToken cancellationToken)
     {
         GetAllSectionsQuery query = new GetAllSectionsQuery();
-        IEnumerable<Section> sections = await _mediator.Send(query);
+        IEnumerable<Section> sections = await _mediator.Send(query, cancellationToken);
 
         return Ok(sections);
     }
@@ -40,10 +40,10 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<Section>> GetById([FromRoute] long id)
+    public async Task<ActionResult<Section>> GetById([FromRoute] long id, CancellationToken cancellationToken)
     {
         GetSectionByIdQuery query = new GetSectionByIdQuery(id);
-        Section section = await _mediator.Send(query);
+        Section section = await _mediator.Send(query, cancellationToken);
 
         return Ok(section);
     }
@@ -54,9 +54,9 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] CreateSectionCommand createCommand)
+    public async Task<ActionResult> Create([FromBody] CreateSectionCommand createCommand, CancellationToken cancellationToken)
     {
-        Section createdSection = await _mediator.Send(createCommand);
+        Section createdSection = await _mediator.Send(createCommand, cancellationToken);
 
         return Ok(createdSection.Id);
     }
@@ -68,9 +68,9 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Update([FromBody] UpdateSectionCommand updateCommand)
+    public async Task<ActionResult> Update([FromBody] UpdateSectionCommand updateCommand, CancellationToken cancellationToken)
     {
-        await _mediator.Send(updateCommand);
+        await _mediator.Send(updateCommand, cancellationToken);
 
         return Ok();
     }
@@ -80,10 +80,10 @@ public class SectionsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Delete([FromRoute] long id)
+    public async Task<ActionResult> Delete([FromRoute] long id, CancellationToken cancellationToken)
     {
         DeleteSectionCommand command = new DeleteSectionCommand(id);
-        await _mediator.Send(command);
+        await _mediator.Send(command, cancellationToken);
 
         return Ok();
     }
