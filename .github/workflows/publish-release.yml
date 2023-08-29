@@ -3,6 +3,9 @@
 
 name: .NET
 
+env:
+    PROJECT_PATH: Web/Web.csproj
+
 on:
   push:
     branches: [ "master" ]
@@ -10,6 +13,7 @@ on:
     branches: [ "master" ]
 
 jobs:
+
   build:
 
     runs-on: ubuntu-latest
@@ -21,33 +25,22 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore ./Web
+      run: dotnet restore ${{ env.PROJECT_PATH }}
     - name: Build
-      run: dotnet build ./Web --no-restore
+      run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
+    - name: Build
+      run: dotnet publish ${{ env.PROJECT_PATH }} -c Release --no-build
 
-  release:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Create Draft Release
+    - uses: actions/create-release@v1
       id: create_release
-      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: release
-        release_name: release
-        draft: true
-        prerelease: false
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
 
-    - uses: actions/upload-release-asset@v1.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: csexton/release-asset-action@v2
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_content_type: application/zip
-
-    - uses: eregon/publish-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        release_id: ${{ steps.create_release.outputs.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pattern: Web/bin/Release/net7.0/publish/*
+          release-url: ${{ steps.create_release.outputs.upload_url }}
