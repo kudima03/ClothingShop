@@ -41,7 +41,7 @@ jobs:
         filename: 'ClothingShop-release-win10-x64.zip'
         path: release-win10-x64
 
-    - name: Create release archive for linux
+    - name: Create release archive for linux-x64
       uses: thedoctor0/zip-release@0.7.1
       with:
         type: 'zip'
@@ -51,5 +51,7 @@ jobs:
     - name: Upload Release
       uses: ncipollo/release-action@v1.12.0
       with:
-        artifacts: "ClothingShop-release.zip"
+        artifacts: | 
+            "ClothingShop-release-win10-x64.zip"
+            "ClothingShop-release-linux-x64.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
