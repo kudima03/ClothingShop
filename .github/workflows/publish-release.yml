@@ -29,24 +29,24 @@ jobs:
       run: dotnet restore ${{ env.PROJECT_PATH }}
 
     - name: Build release for win10-x64
-      run: dotnet publish Web/Web.csproj -c release -r win10-x64
+      run: dotnet publish web/web.csproj --configuration release --runtime win10-x64 --self-contained true --output release-win10-x64
 
     - name: Build release for linux-x64
-      run: dotnet publish Web/Web.csproj -c release -r linux-x64
+      run: dotnet publish web/web.csproj --configuration release --runtime linux-x64 --self-contained true --output release-linux-x64
 
     - name: Create release archive for win10-x64
       uses: thedoctor0/zip-release@0.7.1
       with:
         type: 'zip'
         filename: 'ClothingShop-release-win10-x64.zip'
-        path: Web/bin/Release/net7.0/win10-x64
+        path: release-win10-x64
 
     - name: Create release archive for linux
       uses: thedoctor0/zip-release@0.7.1
       with:
         type: 'zip'
         filename: 'ClothingShop-release-linux-x64.zip'
-        path: Web/bin/Release/net7.0/linux-x64
+        path: release-linux-x64
 
     - name: Upload Release
       uses: ncipollo/release-action@v1.12.0
