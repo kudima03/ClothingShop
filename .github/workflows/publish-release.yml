@@ -20,18 +20,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+  
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
+
     - name: Restore dependencies
       run: dotnet restore ${{ env.PROJECT_PATH }}
+
     - name: Build
       run: dotnet build ${{ env.PROJECT_PATH }} -c Release --no-restore
-    - name: Build
-      run: dotnet publish ${{ env.PROJECT_PATH }} -c Release --no-build
 
-    - uses: actions/create-release@v1
+    - name: Init release
+      uses: actions/create-release@v1
       id: create_release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -39,8 +41,15 @@ jobs:
           tag_name: release
           release_name: release
 
-    - uses: csexton/release-asset-action@v2
+    - name: Create release archive
+      uses: thedoctor0/zip-release@0.7.1
       with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          pattern: Web/bin/Release/net7.0/*
-          release-url: ${{ steps.create_release.outputs.upload_url }}
+        type: 'zip'
+        filename: 'ClothingShop-release.zip'
+
+    - name: Upload Release
+      uses: ncipollo/release-action@v1.12.0
+      with:
+        path: Web/bin/Release/net7.0/
+        artifacts: "ClothingShop-release.zip"
+        token: ${{ secrets.GITHUB_TOKEN }}
