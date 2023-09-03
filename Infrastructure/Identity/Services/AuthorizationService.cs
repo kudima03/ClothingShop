@@ -4,16 +4,16 @@ using Infrastructure.Identity.Entity;
 using Infrastructure.Identity.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Infrastructure.Identity.Services;
 
 public class AuthorizationService : IAuthorizationService
 {
-    private readonly IConfiguration _configuration;
-
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly JwtSettings _jwtSettings;
+
     private readonly ITokenClaimsService _tokenClaimsService;
 
     private readonly UserManager<User> _userManager;
@@ -21,12 +21,12 @@ public class AuthorizationService : IAuthorizationService
     public AuthorizationService(ITokenClaimsService tokenClaimsService,
                                 UserManager<User> userManager,
                                 IHttpContextAccessor contextAccessor,
-                                IConfiguration configuration)
+                                IOptions<JwtSettings> settings)
     {
         _tokenClaimsService = tokenClaimsService;
         _userManager = userManager;
         _httpContextAccessor = contextAccessor;
-        _configuration = configuration;
+        _jwtSettings = settings.Value;
     }
 
     public async Task SignInAsync(string email, string password)
@@ -53,7 +53,7 @@ public class AuthorizationService : IAuthorizationService
              new CookieOptions
              {
                  Expires =
-                     DateTimeOffset.Now.AddMinutes(_configuration.GetValue("TokenLifetimeMinutes", 120))
+                     DateTimeOffset.Now.AddMinutes(_jwtSettings.TokenLifetimeMinutes)
              });
     }
 

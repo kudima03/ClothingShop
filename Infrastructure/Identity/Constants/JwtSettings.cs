@@ -1,8 +1,12 @@
 ﻿namespace Infrastructure.Identity.Constants;
 
-public static class JwtSettings
+public class JwtSettings
 {
-    public const string Issuer = "LocalIdentity";
-    public const string Audience = "Local";
-    public const string SecretKey = "secret_key_for_jwt";
+    public string Issuer { get; init; } = null!;
+
+    public string Audience { get; init; } = null!;
+
+    public string SecretKey { get; init; } = null!;
+
+    public long TokenLifetimeMinutes { get; init; } = 120;
 }

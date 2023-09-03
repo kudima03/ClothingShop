@@ -3,7 +3,7 @@ using Infrastructure.Identity.Constants;
 using Infrastructure.Identity.Entity;
 using Infrastructure.Identity.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,13 +13,13 @@ namespace Infrastructure.Identity.Services;
 
 public class IdentityTokenClaimsService : ITokenClaimsService
 {
-    private readonly IConfiguration _configuration;
+    private readonly JwtSettings _jwtSettings;
     private readonly UserManager<User> _userManager;
 
-    public IdentityTokenClaimsService(UserManager<User> userManager, IConfiguration configuration)
+    public IdentityTokenClaimsService(UserManager<User> userManager, IOptions<JwtSettings> settings)
     {
         _userManager = userManager;
-        _configuration = configuration;
+        _jwtSettings = settings.Value;
     }
 
     public async Task<string> GetTokenAsync(string userEmail)
@@ -45,13 +45,13 @@ public class IdentityTokenClaimsService : ITokenClaimsService
 
         JwtSecurityToken token =
             new JwtSecurityToken
-                (JwtSettings.Issuer,
-                 JwtSettings.Audience,
+                (_jwtSettings.Issuer,
+                 _jwtSettings.Audience,
                  claims,
                  DateTime.Now,
-                 DateTime.Now.AddMinutes(_configuration.GetValue("TokenLifetimeMinutes", 120)),
+                 DateTime.Now.AddMinutes(_jwtSettings.TokenLifetimeMinutes),
                  new SigningCredentials
-                     (new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey)),
+                     (new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)),
                       SecurityAlgorithms.HmacSha256));
 
         return new JwtSecurityTokenHandler().WriteToken(token);

@@ -55,9 +55,8 @@ public class ProductsController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubcategory(
-        [FromQuery] long subcategoryId,
-        CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<Product>>> GetProductBySubcategory([FromQuery] long subcategoryId,
+                                                                                  CancellationToken cancellationToken)
     {
         GetProductsBySubcategoryIdQuery query = new GetProductsBySubcategoryIdQuery(subcategoryId);
         IEnumerable<Product> product = await _mediator.Send(query, cancellationToken);
