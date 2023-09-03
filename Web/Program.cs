@@ -12,6 +12,11 @@ internal class Program
     public static IWebHostBuilder CreateHostBuilder(string[] args)
     {
         return WebHost.CreateDefaultBuilder(args)
+                      .ConfigureAppConfiguration
+                          (builder =>
+                          {
+                              builder.AddEnvironmentVariables();
+                          })
                       .UseStartup<Startup>();
     }
 }
