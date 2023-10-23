@@ -37,6 +37,7 @@ public class Startup
         services.AddAndConfigureRedisCache(Configuration);
         services.AddScoped<GlobalExceptionHandlingMiddleware>();
         services.AddAndConfigureHostedServices();
+        services.AddAndConfigureOptions(Configuration);
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

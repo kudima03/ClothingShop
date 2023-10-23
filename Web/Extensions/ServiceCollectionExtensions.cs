@@ -86,7 +86,7 @@ public static class ServiceCollectionExtensions
                     (options =>
                     {
                         options.UseNpgsql
-                            (configuration["ConnectionStrings:ShopConnection"],
+                            (configuration.GetConnectionString("ShopConnection"),
                              sqlOptions =>
                              {
                                  sqlOptions.MigrationsAssembly(typeof(ShopContext).GetTypeInfo().Assembly.GetName().Name);
@@ -161,15 +161,18 @@ public static class ServiceCollectionExtensions
 
     public static void AddAndConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
+        JwtSettings jwtSettings = new JwtSettings();
+        configuration.GetSection(nameof(JwtSettings)).Bind(jwtSettings);
+
         services.AddAuthentication()
                 .AddJwtBearer
                     (options =>
                     {
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
-                            ValidAudience = JwtSettings.Audience,
-                            ValidIssuer = JwtSettings.Issuer,
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings.SecretKey))
+                            ValidAudience = jwtSettings.Audience,
+                            ValidIssuer = jwtSettings.Issuer,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
                         };
 
                         options.Events = new JwtBearerEvents
@@ -188,7 +191,7 @@ public static class ServiceCollectionExtensions
                     (options =>
                     {
                         options.UseNpgsql
-                            (configuration["ConnectionStrings:IdentityConnection"],
+                            (configuration.GetConnectionString("IdentityConnection"),
                              sqlOptions =>
                              {
                                  sqlOptions.MigrationsAssembly(typeof(IdentityContext).GetTypeInfo().Assembly.GetName().Name);
@@ -224,5 +227,10 @@ public static class ServiceCollectionExtensions
         services.AddHostedService<ShopContextSeedService>();
         services.AddHostedService<AuthorizationRolesInitService>();
         services.AddHostedService<AutoremoveSchedulerInitService>();
+    }
+
+    public static void AddAndConfigureOptions(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<JwtSettings>().BindConfiguration(nameof(JwtSettings));
     }
 }
