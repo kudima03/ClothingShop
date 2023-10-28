@@ -26,7 +26,12 @@ public class AuthorizationRolesInitService : IHostedService
                                                            as RoleManager<IdentityRole<long>>;
 
         IdentityContext identityContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
-        await identityContext.Database.MigrateAsync(cancellationToken);
+
+        if (!identityContext.Database.IsInMemory())
+        {
+            await identityContext.Database.MigrateAsync(cancellationToken);
+        }
+
         ShopContext shopContext = scope.ServiceProvider.GetRequiredService<ShopContext>();
         await IdentityContextSeed.SeedAsync(identityContext, shopContext, userManager, roleManager);
     }
