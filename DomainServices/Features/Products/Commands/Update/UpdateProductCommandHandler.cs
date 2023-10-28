@@ -169,7 +169,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             modifiedImagesInfos.Where(x => !productColor.ImagesInfos.Select(x => x.Id).Contains(x.Id)).ToList();
 
         IEnumerable<ImageInfo> imagesToRemove =
-            productColor.ImagesInfos.Except(modifiedImagesInfos).ToList();
+            productColor.ImagesInfos.Except(modifiedImagesInfos, new ImageInfoEqualityComparerById()).ToList();
 
         productColor.ImagesInfos.RemoveAll(imageInfo => imagesToRemove.Contains(imageInfo));
 
@@ -230,7 +230,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
 
         IEnumerable<ProductOption> optionsToRemove = product.ProductOptions
                                                             .Except
-                                                                (modifiedProductOptions)
+                                                                (modifiedProductOptions, new ProductOptionEqualityComparerById())
                                                             .ToList();
 
         await CreateOrUpdateRelatedProductColors(product, modifiedProductOptions, cancellationToken);

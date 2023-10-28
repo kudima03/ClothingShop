@@ -36,10 +36,10 @@ public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryComman
         IList<Section> existingSections = await ValidateAndGetSectionsAsync(request.SectionsIds, cancellationToken);
 
         IEnumerable<Section> sectionsToAdd =
-            existingSections.Except(existingCategory.Sections);
+            existingSections.Except(existingCategory.Sections, new SectionEqualityComparerById());
 
         IEnumerable<Section> sectionsToRemove =
-            existingCategory.Sections.Except(existingSections);
+            existingCategory.Sections.Except(existingSections, new SectionEqualityComparerById());
 
         existingCategory.Sections.RemoveAll(section => sectionsToRemove.Contains(section));
 
