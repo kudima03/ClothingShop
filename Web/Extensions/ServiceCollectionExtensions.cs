@@ -81,25 +81,44 @@ public static class ServiceCollectionExtensions
 
     public static void AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddEntityFrameworkNpgsql()
-                .AddDbContext<DbContext, ShopContext>
-                    (options =>
-                    {
-                        options.UseNpgsql
-                            (configuration.GetConnectionString("ShopConnection"),
-                             sqlOptions =>
-                             {
-                                 sqlOptions.MigrationsAssembly(typeof(ShopContext).GetTypeInfo().Assembly.GetName().Name);
-                                 sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
-                             });
+        if (configuration.GetValue("UseInMemoryDatabase", defaultValue: false))
+        {
+            services.AddEntityFrameworkInMemoryDatabase()
+                    .AddDbContext<DbContext, ShopContext>
+                        (options =>
+                        {
+                            options.UseInMemoryDatabase("ShopContextDatabase");
 
-                        options.UseTriggers
-                            (triggerOptions =>
-                            {
-                                triggerOptions.AddTrigger<AfterProductOptionSavedTrigger>();
-                                triggerOptions.AddTrigger<AfterShoppingCartItemSavedTrigger>();
-                            });
-                    });
+                            options.UseTriggers
+                                (triggerOptions =>
+                                {
+                                    triggerOptions.AddTrigger<AfterProductOptionSavedTrigger>();
+                                    triggerOptions.AddTrigger<AfterShoppingCartItemSavedTrigger>();
+                                });
+                        });
+        }
+        else
+        {
+            services.AddEntityFrameworkNpgsql()
+                    .AddDbContext<DbContext, ShopContext>
+                        (options =>
+                        {
+                            options.UseNpgsql
+                                (configuration.GetConnectionString("ShopConnection"),
+                                 sqlOptions =>
+                                 {
+                                     sqlOptions.MigrationsAssembly(typeof(ShopContext).GetTypeInfo().Assembly.GetName().Name);
+                                     sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), errorCodesToAdd: null);
+                                 });
+
+                            options.UseTriggers
+                                (triggerOptions =>
+                                {
+                                    triggerOptions.AddTrigger<AfterProductOptionSavedTrigger>();
+                                    triggerOptions.AddTrigger<AfterShoppingCartItemSavedTrigger>();
+                                });
+                        });
+        }
     }
 
     public static void AddMediatRServices(this IServiceCollection services)
@@ -186,19 +205,31 @@ public static class ServiceCollectionExtensions
                         };
                     });
 
-        services.AddEntityFrameworkNpgsql()
-                .AddDbContext<IdentityContext>
-                    (options =>
-                    {
-                        options.UseNpgsql
-                            (configuration.GetConnectionString("IdentityConnection"),
-                             sqlOptions =>
-                             {
-                                 sqlOptions.MigrationsAssembly(typeof(IdentityContext).GetTypeInfo().Assembly.GetName().Name);
-                                 sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
-                             });
-                    });
-
+        if (configuration.GetValue("UseInMemoryDatabase", defaultValue: false))
+        {
+            services.AddEntityFrameworkInMemoryDatabase()
+                    .AddDbContext<IdentityContext>
+                        (options =>
+                        {
+                            options.UseInMemoryDatabase("IdentityContextDatabase");
+                        });
+        }
+        else
+        {
+            services.AddEntityFrameworkNpgsql()
+                    .AddDbContext<IdentityContext>
+                        (options =>
+                        {
+                            options.UseNpgsql
+                                (configuration.GetConnectionString("IdentityConnection"),
+                                 sqlOptions =>
+                                 {
+                                     sqlOptions.MigrationsAssembly(typeof(IdentityContext).GetTypeInfo().Assembly.GetName().Name);
+                                     sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(3), null);
+                                 });
+                        });
+        }
+        
         services.AddIdentity<User, IdentityRole<long>>()
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders();
