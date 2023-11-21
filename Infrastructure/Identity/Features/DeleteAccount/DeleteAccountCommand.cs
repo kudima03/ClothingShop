@@ -2,4 +2,4 @@
 
 namespace Infrastructure.Identity.Features.DeleteAccount;
 
-public class DeleteAccountCommand : IRequest<Unit> { }
+public class DeleteAccountCommand : IRequest<Unit>;

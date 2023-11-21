@@ -2,4 +2,4 @@
 
 namespace Infrastructure.Identity.Features.SignOut;
 
-public class SignOutCommand : IRequest<Unit> { }
+public class SignOutCommand : IRequest<Unit>;
