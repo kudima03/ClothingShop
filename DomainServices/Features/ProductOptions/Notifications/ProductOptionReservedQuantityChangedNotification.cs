@@ -2,18 +2,12 @@
 
 namespace DomainServices.Features.ProductOptions.Notifications;
 
-public class ProductOptionReservedQuantityChangedNotification : INotification
+public class ProductOptionReservedQuantityChangedNotification
+    (long productOptionId, long productId, int newReservedQuantity) : INotification
 {
-    public ProductOptionReservedQuantityChangedNotification(long productOptionId, long productId, int newReservedQuantity)
-    {
-        ProductOptionId = productOptionId;
-        ProductId = productId;
-        NewReservedQuantity = newReservedQuantity;
-    }
+    public long ProductOptionId { get; } = productOptionId;
 
-    public long ProductOptionId { get; }
+    public long ProductId { get; } = productId;
 
-    public long ProductId { get; }
-
-    public int NewReservedQuantity { get; }
+    public int NewReservedQuantity { get; } = newReservedQuantity;
 }

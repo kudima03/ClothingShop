@@ -14,15 +14,8 @@ namespace Web.Controllers;
 [ApiController]
 [Authorize]
 [Route("[controller]/[action]")]
-public class AccountController : Controller
+public class AccountController(IMediator mediator) : Controller
 {
-    private readonly IMediator _mediator;
-
-    public AccountController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpGet]
     [AllowAnonymous]
     public IActionResult Login()
@@ -36,7 +29,7 @@ public class AccountController : Controller
     {
         try
         {
-            await _mediator.Send(signInCommand, cancellationToken);
+            await mediator.Send(signInCommand, cancellationToken);
 
             return RedirectToAction("Index", "Home");
         }
@@ -67,7 +60,7 @@ public class AccountController : Controller
     {
         try
         {
-            await _mediator.Send(registerCommand, cancellationToken);
+            await mediator.Send(registerCommand, cancellationToken);
 
             return RedirectToAction("Login");
         }
@@ -90,7 +83,7 @@ public class AccountController : Controller
     {
         try
         {
-            await _mediator.Send(new SignOutCommand(), cancellationToken);
+            await mediator.Send(new SignOutCommand(), cancellationToken);
 
             return RedirectToAction("Login");
         }
@@ -107,7 +100,7 @@ public class AccountController : Controller
     {
         try
         {
-            await _mediator.Send(new DeleteAccountCommand());
+            await mediator.Send(new DeleteAccountCommand());
 
             return RedirectToAction("Login");
         }

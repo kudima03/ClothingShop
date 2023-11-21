@@ -6,11 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Identity.IdentityContext;
 
-public class IdentityContext : IdentityDbContext<User, IdentityRole<long>, long>
+public class IdentityContext(DbContextOptions<IdentityContext> options) : IdentityDbContext<User, IdentityRole<long>, long>(options)
 {
-    public IdentityContext(DbContextOptions<IdentityContext> options)
-        : base(options) { }
-
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfiguration(new UserEntityTypeConfiguration());

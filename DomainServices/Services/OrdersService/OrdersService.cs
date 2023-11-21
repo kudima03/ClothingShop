@@ -8,27 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Services.OrdersService;
 
-public class OrdersService : IOrdersService
+public class OrdersService(IRepository<ProductOption> productOptionsRepository,
+                           IRepository<OrderStatus> orderStatusesRepository,
+                           IRepository<Order> ordersRepository,
+                           IMediator mediator,
+                           IRepository<ShoppingCartItem> shoppingCartItemsRepository)
+    : IOrdersService
 {
-    private readonly IMediator _mediator;
-    private readonly IRepository<Order> _ordersRepository;
-    private readonly IRepository<OrderStatus> _orderStatusesRepository;
-    private readonly IRepository<ProductOption> _productOptionsRepository;
-    private readonly IRepository<ShoppingCartItem> _shoppingCartItemsRepository;
-
-    public OrdersService(IRepository<ProductOption> productOptionsRepository,
-                         IRepository<OrderStatus> orderStatusesRepository,
-                         IRepository<Order> ordersRepository,
-                         IMediator mediator,
-                         IRepository<ShoppingCartItem> shoppingCartItemsRepository)
-    {
-        _productOptionsRepository = productOptionsRepository;
-        _orderStatusesRepository = orderStatusesRepository;
-        _ordersRepository = ordersRepository;
-        _mediator = mediator;
-        _shoppingCartItemsRepository = shoppingCartItemsRepository;
-    }
-
     public async Task<Order> CreateOrder(long userId,
                                          ICollection<long> shoppingCartItemsIds,
                                          CancellationToken cancellationToken = default)
@@ -38,7 +24,7 @@ public class OrdersService : IOrdersService
         List<OrderItem> orderItems =
             await ValidateAndCreateOrderItems(shoppingCartItemsIds, cancellationToken);
 
-        OrderStatus orderStatus = (await _orderStatusesRepository.GetFirstOrDefaultAsync
+        OrderStatus orderStatus = (await orderStatusesRepository.GetFirstOrDefaultAsync
                                        (predicate: x => x.Name == OrderStatusName.InReview,
                                         cancellationToken: cancellationToken))!;
 
@@ -52,10 +38,10 @@ public class OrdersService : IOrdersService
 
         try
         {
-            Order? insertedOrder = await _ordersRepository.InsertAsync(newOrder, cancellationToken);
-            await _ordersRepository.SaveChangesAsync(cancellationToken);
+            Order? insertedOrder = await ordersRepository.InsertAsync(newOrder, cancellationToken);
+            await ordersRepository.SaveChangesAsync(cancellationToken);
             await DeleteShoppingCartItems(shoppingCartItemsIds, cancellationToken);
-            await _productOptionsRepository.SaveChangesAsync(cancellationToken);
+            await productOptionsRepository.SaveChangesAsync(cancellationToken);
 
             return insertedOrder;
         }
@@ -75,15 +61,15 @@ public class OrdersService : IOrdersService
         }
 
         order.OrderStatus =
-            await _orderStatusesRepository.GetFirstOrDefaultAsync
+            await orderStatusesRepository.GetFirstOrDefaultAsync
                 (predicate: x => x.Name == OrderStatusName.Cancelled, cancellationToken: cancellationToken);
 
-        await _ordersRepository.SaveChangesAsync(cancellationToken);
+        await ordersRepository.SaveChangesAsync(cancellationToken);
     }
 
     private async Task ValidateOrderInitiator(long userId, CancellationToken cancellationToken = default)
     {
-        bool userExists = await _mediator.Send(new CheckUserExistsQuery(userId), cancellationToken);
+        bool userExists = await mediator.Send(new CheckUserExistsQuery(userId), cancellationToken);
 
         if (!userExists)
         {
@@ -95,7 +81,7 @@ public class OrdersService : IOrdersService
                                                                     CancellationToken cancellationToken = default)
     {
         IList<ShoppingCartItem>? shoppingCartItems =
-            await _shoppingCartItemsRepository.GetAllAsync
+            await shoppingCartItemsRepository.GetAllAsync
                 (predicate: x => shoppingCartItemsIds.Contains(x.Id), cancellationToken: cancellationToken);
 
         if (shoppingCartItems.Count != shoppingCartItemsIds.Count)
@@ -121,16 +107,16 @@ public class OrdersService : IOrdersService
                                                CancellationToken cancellationToken = default)
     {
         IList<ShoppingCartItem>? itemsToRemove =
-            await _shoppingCartItemsRepository.GetAllAsync
+            await shoppingCartItemsRepository.GetAllAsync
                 (predicate: x => shoppingCartItemsIds.Contains(x.Id),
                  cancellationToken: cancellationToken);
 
-        _shoppingCartItemsRepository.Delete(itemsToRemove);
+        shoppingCartItemsRepository.Delete(itemsToRemove);
     }
 
     private async Task<Order> ValidateAndGetOrder(long orderId, CancellationToken cancellationToken = default)
     {
-        Order? order = await _ordersRepository.GetFirstOrDefaultAsync
+        Order? order = await ordersRepository.GetFirstOrDefaultAsync
                            (x => x.Id == orderId,
                             x => x.Include(c => c.OrderedProductsOptionsInfo)
                                   .ThenInclude(c => c.ProductOption),

@@ -15,15 +15,8 @@ namespace Web.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize(Policy = PolicyName.Customer)]
-public class OrdersController : Controller
+public class OrdersController(IMediator mediator) : Controller
 {
-    private readonly IMediator _mediator;
-
-    public OrdersController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpGet]
     [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(IEnumerable<Order>), StatusCodes.Status200OK)]
@@ -31,12 +24,12 @@ public class OrdersController : Controller
     public async Task<ActionResult<IEnumerable<Order>>> GetAll(CancellationToken cancellationToken)
     {
         GetAllOrdersQuery query = new GetAllOrdersQuery();
-        IEnumerable<Order> orders = await _mediator.Send(query, cancellationToken);
+        IEnumerable<Order> orders = await mediator.Send(query, cancellationToken);
 
         return Ok(orders);
     }
 
-    [HttpGet("{id:long}")]
+    [HttpGet("{long:required}")]
     [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -45,7 +38,7 @@ public class OrdersController : Controller
     public async Task<ActionResult<Order>> GetById([FromRoute] long id, CancellationToken cancellationToken)
     {
         GetOrderByIdQuery query = new GetOrderByIdQuery(id);
-        Order order = await _mediator.Send(query, cancellationToken);
+        Order order = await mediator.Send(query, cancellationToken);
 
         return Ok(order);
     }
@@ -59,7 +52,7 @@ public class OrdersController : Controller
     {
         long userId = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         GetOrdersByUserIdQuery query = new GetOrdersByUserIdQuery(userId);
-        IEnumerable<Order> orders = await _mediator.Send(query, cancellationToken);
+        IEnumerable<Order> orders = await mediator.Send(query, cancellationToken);
 
         return View("Orders", orders);
     }
@@ -73,12 +66,12 @@ public class OrdersController : Controller
     {
         long userId = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         createCommand.UserId = userId;
-        Order createdOrder = await _mediator.Send(createCommand, cancellationToken);
+        Order createdOrder = await mediator.Send(createCommand, cancellationToken);
 
         return Ok(createdOrder.Id);
     }
 
-    [HttpDelete("{id:long}")]
+    [HttpDelete("{long:required}")]
     [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -86,7 +79,7 @@ public class OrdersController : Controller
     public async Task<ActionResult> Delete([FromRoute] long id, CancellationToken cancellationToken)
     {
         CancelOrderCommand command = new CancelOrderCommand(id);
-        await _mediator.Send(command, cancellationToken);
+        await mediator.Send(command, cancellationToken);
 
         return Ok();
     }

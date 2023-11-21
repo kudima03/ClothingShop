@@ -7,17 +7,9 @@ using MediatR;
 
 namespace DomainServices.Features.Categories.Commands.Create;
 
-public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, Category>
+public class CreateCategoryCommandHandler(IRepository<Category> categoriesRepository, IRepository<Section> sectionsRepository)
+    : IRequestHandler<CreateCategoryCommand, Category>
 {
-    private readonly IRepository<Category> _categoriesRepository;
-    private readonly IRepository<Section> _sectionsRepository;
-
-    public CreateCategoryCommandHandler(IRepository<Category> categoriesRepository, IRepository<Section> sectionsRepository)
-    {
-        _categoriesRepository = categoriesRepository;
-        _sectionsRepository = sectionsRepository;
-    }
-
     public async Task<Category> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
         await ValidateCategoryName(request.Name, cancellationToken);
@@ -30,9 +22,9 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
             Sections = sections
         };
 
-        Category? insertedCategory = await _categoriesRepository.InsertAsync(newCategory, cancellationToken);
+        Category? insertedCategory = await categoriesRepository.InsertAsync(newCategory, cancellationToken);
 
-        await _categoriesRepository.SaveChangesAsync(cancellationToken);
+        await categoriesRepository.SaveChangesAsync(cancellationToken);
 
         return insertedCategory;
     }
@@ -40,7 +32,7 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
     private async Task<List<Section>> ValidateAndGetSectionsAsync(ICollection<long> sectionsIds,
                                                                   CancellationToken cancellationToken = default)
     {
-        IList<Section>? existingSections = await _sectionsRepository
+        IList<Section>? existingSections = await sectionsRepository
                                                .GetAllAsync
                                                    (predicate: x => sectionsIds.Contains(x.Id),
                                                     cancellationToken: cancellationToken);
@@ -58,7 +50,7 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
 
     private async Task ValidateCategoryName(string name, CancellationToken cancellationToken = default)
     {
-        bool nameExists = await _categoriesRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+        bool nameExists = await categoriesRepository.ExistsAsync(x => x.Name == name, cancellationToken);
 
         if (nameExists)
         {

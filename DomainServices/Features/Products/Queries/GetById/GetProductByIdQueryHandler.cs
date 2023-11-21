@@ -7,18 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Products.Queries.GetById;
 
-public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, Product>
+public class GetProductByIdQueryHandler(IReadOnlyRepository<Product> repository) : IRequestHandler<GetProductByIdQuery, Product>
 {
-    private readonly IReadOnlyRepository<Product> _repository;
-
-    public GetProductByIdQueryHandler(IReadOnlyRepository<Product> repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<Product> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
-        Product? product = await _repository
+        Product? product = await repository
                                  .ApplySpecification
                                      (new ProductWithBrandSubcategoryReviewsOptionsColorsImages(x => x.Id == request.Id))
                                  .SingleOrDefaultAsync(cancellationToken);

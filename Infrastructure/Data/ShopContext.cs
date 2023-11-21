@@ -4,11 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
-public class ShopContext : DbContext
+public class ShopContext(DbContextOptions<ShopContext> options) : DbContext(options)
 {
-    public ShopContext(DbContextOptions<ShopContext> options)
-        : base(options) { }
-
     public DbSet<Brand> Brands { get; set; }
 
     public DbSet<Category> Categories { get; set; }

@@ -7,18 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Categories.Queries.GetById;
 
-public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, Category>
+public class GetCategoryByIdQueryHandler(IReadOnlyRepository<Category> categoriesRepository) : IRequestHandler<GetCategoryByIdQuery, Category>
 {
-    private readonly IReadOnlyRepository<Category> _categoriesRepository;
-
-    public GetCategoryByIdQueryHandler(IReadOnlyRepository<Category> categoriesRepository)
-    {
-        _categoriesRepository = categoriesRepository;
-    }
-
     public async Task<Category> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        Category? category = await _categoriesRepository
+        Category? category = await categoriesRepository
                                    .ApplySpecification
                                        (new CategoryWithSectionsAndSubcategories(category => category.Id == request.Id))
                                    .FirstOrDefaultAsync(cancellationToken);

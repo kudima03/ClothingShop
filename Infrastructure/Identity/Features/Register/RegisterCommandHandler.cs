@@ -6,19 +6,10 @@ using MediatR;
 
 namespace Infrastructure.Identity.Features.Register;
 
-public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Unit>
+public class RegisterCommandHandler(IAuthorizationService authorizationService,
+                                    IRepository<ShoppingCart> shoppingCartsRepository)
+    : IRequestHandler<RegisterCommand, Unit>
 {
-    private readonly IAuthorizationService _authorizationService;
-
-    private readonly IRepository<ShoppingCart> _shoppingCartsRepository;
-
-    public RegisterCommandHandler(IAuthorizationService authorizationService,
-                                  IRepository<ShoppingCart> shoppingCartsRepository)
-    {
-        _authorizationService = authorizationService;
-        _shoppingCartsRepository = shoppingCartsRepository;
-    }
-
     public async Task<Unit> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         User user = new User
@@ -33,16 +24,16 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Unit>
             PhoneNumber = request.PhoneNumber
         };
 
-        long userId = await _authorizationService.RegisterAsync(user);
+        long userId = await authorizationService.RegisterAsync(user);
 
         ShoppingCart? newShoppingCart = new ShoppingCart
         {
             UserId = userId
         };
 
-        await _shoppingCartsRepository.InsertAsync(newShoppingCart, cancellationToken);
+        await shoppingCartsRepository.InsertAsync(newShoppingCart, cancellationToken);
 
-        await _shoppingCartsRepository.SaveChangesAsync(cancellationToken);
+        await shoppingCartsRepository.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

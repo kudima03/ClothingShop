@@ -3,12 +3,7 @@ using MediatR;
 
 namespace DomainServices.Features.Brands.Queries.GetById;
 
-public class GetBrandByIdQuery : IRequest<Brand>
+public class GetBrandByIdQuery(long id) : IRequest<Brand>
 {
-    public GetBrandByIdQuery(long id)
-    {
-        Id = id;
-    }
-
-    public long Id { get; init; }
+    public long Id { get; init; } = id;
 }

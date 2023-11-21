@@ -1,6 +1,3 @@
 ﻿namespace ApplicationCore.Exceptions;
 
-public class OperationFailureException : Exception
-{
-    public OperationFailureException(string message) : base(message) { }
-}
+public class OperationFailureException(string message) : Exception(message);

@@ -7,26 +7,19 @@ using System.Linq.Expressions;
 
 namespace Infrastructure.EntityRepository;
 
-public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEntity : StorableEntity
+public class EntityFrameworkRepository<TEntity>(DbContext dbContext) : IRepository<TEntity>
+    where TEntity : StorableEntity
 {
-    private readonly DbContext _dbContext;
-
-    private readonly DbSet<TEntity> _dbSet;
-
-    public EntityFrameworkRepository(DbContext dbContext)
-    {
-        _dbContext = dbContext;
-        _dbSet = dbContext.Set<TEntity>();
-    }
+    private readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        dbContext.Dispose();
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await dbContext.DisposeAsync();
     }
 
     public IQueryable<TResult> ApplySpecification<TResult>(Specification<TEntity, TResult> specification)
@@ -329,12 +322,12 @@ public class EntityFrameworkRepository<TEntity> : IRepository<TEntity> where TEn
 
     public void SaveChanges()
     {
-        _dbContext.SaveChanges();
+        dbContext.SaveChanges();
     }
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public int Count(Expression<Func<TEntity, bool>>? predicate = null)

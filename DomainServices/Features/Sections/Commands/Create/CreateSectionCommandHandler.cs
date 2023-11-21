@@ -8,15 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Sections.Commands.Create;
 
-public class CreateSectionCommandHandler : IRequestHandler<CreateSectionCommand, Section>
+public class CreateSectionCommandHandler(IRepository<Section> sectionsRepository) : IRequestHandler<CreateSectionCommand, Section>
 {
-    private readonly IRepository<Section> _sectionsRepository;
-
-    public CreateSectionCommandHandler(IRepository<Section> sectionsRepository)
-    {
-        _sectionsRepository = sectionsRepository;
-    }
-
     public async Task<Section> Handle(CreateSectionCommand request, CancellationToken cancellationToken)
     {
         await ValidateSectionNameAsync(request.Name, cancellationToken);
@@ -28,8 +21,8 @@ public class CreateSectionCommandHandler : IRequestHandler<CreateSectionCommand,
 
         try
         {
-            Section? section = await _sectionsRepository.InsertAsync(newSection, cancellationToken);
-            await _sectionsRepository.SaveChangesAsync(cancellationToken);
+            Section? section = await sectionsRepository.InsertAsync(newSection, cancellationToken);
+            await sectionsRepository.SaveChangesAsync(cancellationToken);
 
             return section;
         }
@@ -41,7 +34,7 @@ public class CreateSectionCommandHandler : IRequestHandler<CreateSectionCommand,
 
     private async Task ValidateSectionNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        bool nameExists = await _sectionsRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+        bool nameExists = await sectionsRepository.ExistsAsync(x => x.Name == name, cancellationToken);
 
         if (nameExists)
         {

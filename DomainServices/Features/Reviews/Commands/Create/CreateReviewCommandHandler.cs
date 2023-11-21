@@ -6,15 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Reviews.Commands.Create;
 
-public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, Review>
+public class CreateReviewCommandHandler(IRepository<Review> repository) : IRequestHandler<CreateReviewCommand, Review>
 {
-    private readonly IRepository<Review> _repository;
-
-    public CreateReviewCommandHandler(IRepository<Review> repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<Review> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
     {
         Review newReview = new Review
@@ -28,8 +21,8 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, R
 
         try
         {
-            Review? review = await _repository.InsertAsync(newReview, cancellationToken);
-            await _repository.SaveChangesAsync(cancellationToken);
+            Review? review = await repository.InsertAsync(newReview, cancellationToken);
+            await repository.SaveChangesAsync(cancellationToken);
 
             return review;
         }

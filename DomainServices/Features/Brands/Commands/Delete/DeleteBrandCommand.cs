@@ -2,12 +2,7 @@
 
 namespace DomainServices.Features.Brands.Commands.Delete;
 
-public class DeleteBrandCommand : IRequest<Unit>
+public class DeleteBrandCommand(long id) : IRequest<Unit>
 {
-    public DeleteBrandCommand(long id)
-    {
-        Id = id;
-    }
-
-    public long Id { get; init; }
+    public long Id { get; init; } = id;
 }

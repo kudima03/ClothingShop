@@ -4,18 +4,11 @@ using Infrastructure.Data.Autoremove;
 
 namespace Web.HostedServices;
 
-public class AutoremoveSchedulerInitService : IHostedService
+public class AutoremoveSchedulerInitService(IServiceProvider serviceProvider) : IHostedService
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public AutoremoveSchedulerInitService(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
+        await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
 
         IReadOnlyRepository<ShoppingCartItem> repository =
             scope.ServiceProvider.GetRequiredService<IReadOnlyRepository<ShoppingCartItem>>();

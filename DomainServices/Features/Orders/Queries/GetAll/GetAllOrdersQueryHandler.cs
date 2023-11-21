@@ -4,17 +4,10 @@ using MediatR;
 
 namespace DomainServices.Features.Orders.Queries.GetAll;
 
-public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, IEnumerable<Order>>
+public class GetAllOrdersQueryHandler(IReadOnlyRepository<Order> ordersRepository) : IRequestHandler<GetAllOrdersQuery, IEnumerable<Order>>
 {
-    private readonly IReadOnlyRepository<Order> _ordersRepository;
-
-    public GetAllOrdersQueryHandler(IReadOnlyRepository<Order> ordersRepository)
-    {
-        _ordersRepository = ordersRepository;
-    }
-
     public async Task<IEnumerable<Order>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
     {
-        return await _ordersRepository.GetAllAsync(cancellationToken);
+        return await ordersRepository.GetAllAsync(cancellationToken);
     }
 }

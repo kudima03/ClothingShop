@@ -4,18 +4,11 @@ using MediatR;
 
 namespace DomainServices.Features.Orders.Commands.Create;
 
-public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Order>
+public class CreateOrderCommandHandler(IOrdersService ordersService) : IRequestHandler<CreateOrderCommand, Order>
 {
-    private readonly IOrdersService _ordersService;
-
-    public CreateOrderCommandHandler(IOrdersService ordersService)
-    {
-        _ordersService = ordersService;
-    }
-
     public async Task<Order> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        return await _ordersService.CreateOrder
+        return await ordersService.CreateOrder
                    (request.UserId,
                     request.ShoppingCartItemsIds,
                     cancellationToken);

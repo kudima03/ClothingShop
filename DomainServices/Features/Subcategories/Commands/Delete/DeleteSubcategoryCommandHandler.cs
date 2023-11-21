@@ -4,25 +4,18 @@ using MediatR;
 
 namespace DomainServices.Features.Subcategories.Commands.Delete;
 
-public class DeleteSubcategoryCommandHandler : IRequestHandler<DeleteSubcategoryCommand, Unit>
+public class DeleteSubcategoryCommandHandler(IRepository<Subcategory> subcategoriesRepository) : IRequestHandler<DeleteSubcategoryCommand, Unit>
 {
-    private readonly IRepository<Subcategory> _subcategoriesRepository;
-
-    public DeleteSubcategoryCommandHandler(IRepository<Subcategory> subcategoriesRepository)
-    {
-        _subcategoriesRepository = subcategoriesRepository;
-    }
-
     public async Task<Unit> Handle(DeleteSubcategoryCommand request, CancellationToken cancellationToken)
     {
-        Subcategory? subcategory = await _subcategoriesRepository.GetFirstOrDefaultAsync
+        Subcategory? subcategory = await subcategoriesRepository.GetFirstOrDefaultAsync
                                        (predicate: x => x.Id == request.Id,
                                         cancellationToken: cancellationToken);
 
         if (subcategory is not null)
         {
-            _subcategoriesRepository.Delete(subcategory);
-            await _subcategoriesRepository.SaveChangesAsync(cancellationToken);
+            subcategoriesRepository.Delete(subcategory);
+            await subcategoriesRepository.SaveChangesAsync(cancellationToken);
         }
 
         return Unit.Value;

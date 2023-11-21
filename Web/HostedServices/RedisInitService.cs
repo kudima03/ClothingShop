@@ -4,24 +4,17 @@ using Web.Services.Implementations;
 
 namespace Web.HostedServices;
 
-public class RedisInitService : IHostedService
+public class RedisInitService(IRedisConnectionProvider provider) : IHostedService
 {
-    private readonly IRedisConnectionProvider _provider;
-
-    public RedisInitService(IRedisConnectionProvider provider)
-    {
-        _provider = provider;
-    }
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        await _provider.Connection.DropIndexAsync(typeof(Subscribe));
-        await _provider.Connection.CreateIndexAsync(typeof(Subscribe));
+        await provider.Connection.DropIndexAsync(typeof(Subscribe));
+        await provider.Connection.CreateIndexAsync(typeof(Subscribe));
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        IList<Subscribe> itemsToDelete = await _provider.RedisCollection<Subscribe>().ToListAsync();
-        await _provider.RedisCollection<Subscribe>().DeleteAsync(itemsToDelete);
+        IList<Subscribe> itemsToDelete = await provider.RedisCollection<Subscribe>().ToListAsync();
+        await provider.RedisCollection<Subscribe>().DeleteAsync(itemsToDelete);
     }
 }

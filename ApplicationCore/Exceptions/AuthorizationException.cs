@@ -1,7 +1,3 @@
 ﻿namespace ApplicationCore.Exceptions;
 
-public class AuthorizationException : Exception
-{
-    public AuthorizationException(string message)
-        : base(message) { }
-}
+public class AuthorizationException(string message) : Exception(message);

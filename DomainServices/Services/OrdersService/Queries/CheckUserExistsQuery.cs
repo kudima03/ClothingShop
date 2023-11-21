@@ -2,12 +2,7 @@
 
 namespace DomainServices.Services.OrdersService.Queries;
 
-public class CheckUserExistsQuery : IRequest<bool>
+public class CheckUserExistsQuery(long id) : IRequest<bool>
 {
-    public CheckUserExistsQuery(long id)
-    {
-        Id = id;
-    }
-
-    public long Id { get; init; }
+    public long Id { get; init; } = id;
 }

@@ -9,18 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Subcategories.Commands.Update;
 
-public class UpdateSubcategoryCommandHandler : IRequestHandler<UpdateSubcategoryCommand, Unit>
+public class UpdateSubcategoryCommandHandler(IRepository<Subcategory> subcategoriesRepository,
+                                             IRepository<Category> categoriesRepository)
+    : IRequestHandler<UpdateSubcategoryCommand, Unit>
 {
-    private readonly IRepository<Category> _categoriesRepository;
-    private readonly IRepository<Subcategory> _subcategoriesRepository;
-
-    public UpdateSubcategoryCommandHandler(IRepository<Subcategory> subcategoriesRepository,
-                                           IRepository<Category> categoriesRepository)
-    {
-        _subcategoriesRepository = subcategoriesRepository;
-        _categoriesRepository = categoriesRepository;
-    }
-
     public async Task<Unit> Handle(UpdateSubcategoryCommand request, CancellationToken cancellationToken)
     {
         Subcategory existingSubcategory = await ValidateAndGetSubcategoryAsync(request.Id, cancellationToken);
@@ -47,7 +39,7 @@ public class UpdateSubcategoryCommandHandler : IRequestHandler<UpdateSubcategory
 
         try
         {
-            await _subcategoriesRepository.SaveChangesAsync(cancellationToken);
+            await subcategoriesRepository.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateException)
         {
@@ -60,7 +52,7 @@ public class UpdateSubcategoryCommandHandler : IRequestHandler<UpdateSubcategory
     private async Task<Subcategory> ValidateAndGetSubcategoryAsync(long subcategoryId,
                                                                    CancellationToken cancellationToken = default)
     {
-        Subcategory? subcategory = await _subcategoriesRepository.GetFirstOrDefaultAsync
+        Subcategory? subcategory = await subcategoriesRepository.GetFirstOrDefaultAsync
                                        (predicate: x => x.Id == subcategoryId,
                                         cancellationToken: cancellationToken);
 
@@ -74,7 +66,7 @@ public class UpdateSubcategoryCommandHandler : IRequestHandler<UpdateSubcategory
 
     private async Task ValidateSubcategoryNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        bool nameExists = await _subcategoriesRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+        bool nameExists = await subcategoriesRepository.ExistsAsync(x => x.Name == name, cancellationToken);
 
         if (nameExists)
         {
@@ -89,7 +81,7 @@ public class UpdateSubcategoryCommandHandler : IRequestHandler<UpdateSubcategory
     private async Task<IList<Category>> ValidateAndGetCategoriesAsync(ICollection<long> categoriesIds,
                                                                       CancellationToken cancellationToken = default)
     {
-        IList<Category>? existingCategories = await _categoriesRepository
+        IList<Category>? existingCategories = await categoriesRepository
                                                   .GetAllAsync
                                                       (predicate: x => categoriesIds.Contains(x.Id),
                                                        cancellationToken: cancellationToken);

@@ -6,18 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Web.HostedServices;
 
-public class AuthorizationRolesInitService : IHostedService
+public class AuthorizationRolesInitService(IServiceProvider serviceProvider) : IHostedService
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public AuthorizationRolesInitService(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
+        await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
 
         UserManager<User> userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 

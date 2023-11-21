@@ -8,24 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Products.Commands.Create;
 
-public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Product>
+public class CreateProductCommandHandler(IRepository<Product> productsRepository,
+                                         IRepository<Brand> brandsRepository,
+                                         IRepository<Subcategory> subcategoriesRepository,
+                                         IRepository<ProductColor> productColorsRepository)
+    : IRequestHandler<CreateProductCommand, Product>
 {
-    private readonly IRepository<Brand> _brandsRepository;
-    private readonly IRepository<ProductColor> _productColorsRepository;
-    private readonly IRepository<Product> _productsRepository;
-    private readonly IRepository<Subcategory> _subcategoriesRepository;
-
-    public CreateProductCommandHandler(IRepository<Product> productsRepository,
-                                       IRepository<Brand> brandsRepository,
-                                       IRepository<Subcategory> subcategoriesRepository,
-                                       IRepository<ProductColor> productColorsRepository)
-    {
-        _productsRepository = productsRepository;
-        _brandsRepository = brandsRepository;
-        _subcategoriesRepository = subcategoriesRepository;
-        _productColorsRepository = productColorsRepository;
-    }
-
     public async Task<Product> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
         await ValidateProductNameAsync(request.Name, cancellationToken);
@@ -47,7 +35,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
         IEnumerable<ProductColor> distinctProductColors =
             newProduct.ProductOptions.Select(x => x.ProductColor).DistinctBy(x => x.ColorHex);
 
-        await _productColorsRepository.InsertAsync(distinctProductColors, cancellationToken);
+        await productColorsRepository.InsertAsync(distinctProductColors, cancellationToken);
 
         foreach (ProductOption item in newProduct.ProductOptions)
         {
@@ -56,8 +44,8 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
 
         try
         {
-            Product? product = await _productsRepository.InsertAsync(newProduct, cancellationToken);
-            await _productsRepository.SaveChangesAsync(cancellationToken);
+            Product? product = await productsRepository.InsertAsync(newProduct, cancellationToken);
+            await productsRepository.SaveChangesAsync(cancellationToken);
 
             return product;
         }
@@ -97,7 +85,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
 
     private async Task ValidateProductNameAsync(string name, CancellationToken cancellationToken)
     {
-        bool nameExists = await _productsRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+        bool nameExists = await productsRepository.ExistsAsync(x => x.Name == name, cancellationToken);
 
         if (nameExists)
         {
@@ -111,7 +99,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
 
     private async Task ValidateBrandAsync(long brandId, CancellationToken cancellationToken = default)
     {
-        bool brandExists = await _brandsRepository.ExistsAsync(x => x.Id == brandId, cancellationToken);
+        bool brandExists = await brandsRepository.ExistsAsync(x => x.Id == brandId, cancellationToken);
 
         if (!brandExists)
         {
@@ -122,7 +110,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
     private async Task ValidateSubcategoryAsync(long subcategoryId,
                                                 CancellationToken cancellationToken = default)
     {
-        bool subcategoryExists = await _subcategoriesRepository.ExistsAsync(x => x.Id == subcategoryId, cancellationToken);
+        bool subcategoryExists = await subcategoriesRepository.ExistsAsync(x => x.Id == subcategoryId, cancellationToken);
 
         if (!subcategoryExists)
         {

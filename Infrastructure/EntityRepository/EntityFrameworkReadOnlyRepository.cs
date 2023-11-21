@@ -7,26 +7,19 @@ using System.Linq.Expressions;
 
 namespace Infrastructure.EntityRepository;
 
-public class EntityFrameworkReadOnlyRepository<TEntity> : IReadOnlyRepository<TEntity> where TEntity : StorableEntity
+public class EntityFrameworkReadOnlyRepository<TEntity>(DbContext dbContext) : IReadOnlyRepository<TEntity>
+    where TEntity : StorableEntity
 {
-    private readonly DbContext _dbContext;
-
-    private readonly DbSet<TEntity> _dbSet;
-
-    public EntityFrameworkReadOnlyRepository(DbContext dbContext)
-    {
-        _dbContext = dbContext;
-        _dbSet = dbContext.Set<TEntity>();
-    }
+    private readonly DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
 
     public void Dispose()
     {
-        _dbContext.Dispose();
+        dbContext.Dispose();
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _dbContext.DisposeAsync();
+        await dbContext.DisposeAsync();
     }
 
     public IQueryable<TResult> ApplySpecification<TResult>(Specification<TEntity, TResult> specification)

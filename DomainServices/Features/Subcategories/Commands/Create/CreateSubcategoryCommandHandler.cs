@@ -8,18 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Subcategories.Commands.Create;
 
-public class CreateSubcategoryCommandHandler : IRequestHandler<CreateSubcategoryCommand, Subcategory>
+public class CreateSubcategoryCommandHandler(IRepository<Subcategory> subcategoriesRepository,
+                                             IRepository<Category> categoriesRepository)
+    : IRequestHandler<CreateSubcategoryCommand, Subcategory>
 {
-    private readonly IRepository<Category> _categoriesRepository;
-    private readonly IRepository<Subcategory> _subcategoriesRepository;
-
-    public CreateSubcategoryCommandHandler(IRepository<Subcategory> subcategoriesRepository,
-                                           IRepository<Category> categoriesRepository)
-    {
-        _subcategoriesRepository = subcategoriesRepository;
-        _categoriesRepository = categoriesRepository;
-    }
-
     public async Task<Subcategory> Handle(CreateSubcategoryCommand request, CancellationToken cancellationToken)
     {
         await ValidateSubcategoryNameAsync(request.Name, cancellationToken);
@@ -34,8 +26,8 @@ public class CreateSubcategoryCommandHandler : IRequestHandler<CreateSubcategory
 
         try
         {
-            Subcategory? subcategory = await _subcategoriesRepository.InsertAsync(newSubcategory, cancellationToken);
-            await _subcategoriesRepository.SaveChangesAsync(cancellationToken);
+            Subcategory? subcategory = await subcategoriesRepository.InsertAsync(newSubcategory, cancellationToken);
+            await subcategoriesRepository.SaveChangesAsync(cancellationToken);
 
             return subcategory;
         }
@@ -47,7 +39,7 @@ public class CreateSubcategoryCommandHandler : IRequestHandler<CreateSubcategory
 
     private async Task ValidateSubcategoryNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        bool nameExists = await _subcategoriesRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+        bool nameExists = await subcategoriesRepository.ExistsAsync(x => x.Name == name, cancellationToken);
 
         if (nameExists)
         {
@@ -62,7 +54,7 @@ public class CreateSubcategoryCommandHandler : IRequestHandler<CreateSubcategory
     private async Task<List<Category>> ValidateAndGetCategoriesAsync(ICollection<long> categoriesIds,
                                                                      CancellationToken cancellationToken = default)
     {
-        IList<Category>? existingCategories = await _categoriesRepository
+        IList<Category>? existingCategories = await categoriesRepository
                                                   .GetAllAsync
                                                       (predicate: x => categoriesIds.Contains(x.Id),
                                                        cancellationToken: cancellationToken);

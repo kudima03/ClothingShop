@@ -5,18 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Orders.Queries.GetByUserId;
 
-public class GetOrdersByUserIdQueryHandler : IRequestHandler<GetOrdersByUserIdQuery, IEnumerable<Order>>
+public class GetOrdersByUserIdQueryHandler(IReadOnlyRepository<Order> ordersRepository) : IRequestHandler<GetOrdersByUserIdQuery, IEnumerable<Order>>
 {
-    private readonly IReadOnlyRepository<Order> _ordersRepository;
-
-    public GetOrdersByUserIdQueryHandler(IReadOnlyRepository<Order> ordersRepository)
-    {
-        _ordersRepository = ordersRepository;
-    }
-
     public async Task<IEnumerable<Order>> Handle(GetOrdersByUserIdQuery request, CancellationToken cancellationToken)
     {
-        return await _ordersRepository.GetAllAsync
+        return await ordersRepository.GetAllAsync
                    (predicate: x => x.UserId == request.UserId,
                     include: x => x.Include(c => c.OrderStatus)
                                    .Include(c => c.OrderedProductsOptionsInfo)

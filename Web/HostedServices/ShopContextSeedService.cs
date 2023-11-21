@@ -3,18 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Web.HostedServices;
 
-public class ShopContextSeedService : IHostedService
+public class ShopContextSeedService(IServiceProvider serviceProvider) : IHostedService
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public ShopContextSeedService(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
+        await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
 
         ShopContext shopContext = scope.ServiceProvider.GetRequiredService<ShopContext>();
 

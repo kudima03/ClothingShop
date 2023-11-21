@@ -4,25 +4,18 @@ using MediatR;
 
 namespace DomainServices.Features.Reviews.Commands.Delete;
 
-public class DeleteReviewCommandHandler : IRequestHandler<DeleteReviewCommand, Unit>
+public class DeleteReviewCommandHandler(IRepository<Review> reviewsRepository) : IRequestHandler<DeleteReviewCommand, Unit>
 {
-    private readonly IRepository<Review> _reviewsRepository;
-
-    public DeleteReviewCommandHandler(IRepository<Review> reviewsRepository)
-    {
-        _reviewsRepository = reviewsRepository;
-    }
-
     public async Task<Unit> Handle(DeleteReviewCommand request, CancellationToken cancellationToken)
     {
-        Review? review = await _reviewsRepository.GetFirstOrDefaultAsync
+        Review? review = await reviewsRepository.GetFirstOrDefaultAsync
                              (predicate: x => x.Id == request.Id,
                               cancellationToken: cancellationToken);
 
         if (review is not null)
         {
-            _reviewsRepository.Delete(review);
-            await _reviewsRepository.SaveChangesAsync(cancellationToken);
+            reviewsRepository.Delete(review);
+            await reviewsRepository.SaveChangesAsync(cancellationToken);
         }
 
         return Unit.Value;

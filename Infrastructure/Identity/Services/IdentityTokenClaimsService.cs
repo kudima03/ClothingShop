@@ -11,27 +11,20 @@ using System.Text;
 
 namespace Infrastructure.Identity.Services;
 
-public class IdentityTokenClaimsService : ITokenClaimsService
+public class IdentityTokenClaimsService(UserManager<User> userManager, IOptions<JwtSettings> settings) : ITokenClaimsService
 {
-    private readonly JwtSettings _jwtSettings;
-    private readonly UserManager<User> _userManager;
-
-    public IdentityTokenClaimsService(UserManager<User> userManager, IOptions<JwtSettings> settings)
-    {
-        _userManager = userManager;
-        _jwtSettings = settings.Value;
-    }
+    private readonly JwtSettings _jwtSettings = settings.Value;
 
     public async Task<string> GetTokenAsync(string userEmail)
     {
-        User? user = await _userManager.FindByEmailAsync(userEmail);
+        User? user = await userManager.FindByEmailAsync(userEmail);
 
         if (user is null)
         {
             throw new EntityNotFoundException($"User with email {userEmail} doesn't exist.");
         }
 
-        IList<string> roles = await _userManager.GetRolesAsync(user);
+        IList<string> roles = await userManager.GetRolesAsync(user);
 
         List<Claim> claims = new List<Claim>
         {

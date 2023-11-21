@@ -2,12 +2,7 @@
 
 namespace DomainServices.Features.Reviews.Commands.Delete;
 
-public class DeleteReviewCommand : IRequest<Unit>
+public class DeleteReviewCommand(long id) : IRequest<Unit>
 {
-    public DeleteReviewCommand(long id)
-    {
-        Id = id;
-    }
-
-    public long Id { get; init; }
+    public long Id { get; init; } = id;
 }

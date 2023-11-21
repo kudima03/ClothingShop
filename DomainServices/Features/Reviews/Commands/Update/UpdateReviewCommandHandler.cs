@@ -6,15 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Reviews.Commands.Update;
 
-public class UpdateReviewCommandHandler : IRequestHandler<UpdateReviewCommand, Unit>
+public class UpdateReviewCommandHandler(IRepository<Review> repository) : IRequestHandler<UpdateReviewCommand, Unit>
 {
-    private readonly IRepository<Review> _repository;
-
-    public UpdateReviewCommandHandler(IRepository<Review> repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<Unit> Handle(UpdateReviewCommand request, CancellationToken cancellationToken)
     {
         Review review = await ValidateAndGetReviewAsync(request.Id, cancellationToken);
@@ -24,7 +17,7 @@ public class UpdateReviewCommandHandler : IRequestHandler<UpdateReviewCommand, U
 
         try
         {
-            await _repository.SaveChangesAsync(cancellationToken);
+            await repository.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateException)
         {
@@ -36,7 +29,7 @@ public class UpdateReviewCommandHandler : IRequestHandler<UpdateReviewCommand, U
 
     private async Task<Review> ValidateAndGetReviewAsync(long reviewId, CancellationToken cancellationToken = default)
     {
-        Review? review = await _repository.GetFirstOrDefaultAsync
+        Review? review = await repository.GetFirstOrDefaultAsync
                              (predicate: x => x.Id == reviewId,
                               cancellationToken: cancellationToken);
 

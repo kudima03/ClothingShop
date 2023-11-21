@@ -8,15 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Sections.Commands.Update;
 
-public class UpdateSectionCommandHandler : IRequestHandler<UpdateSectionCommand, Unit>
+public class UpdateSectionCommandHandler(IRepository<Section> sectionRepository) : IRequestHandler<UpdateSectionCommand, Unit>
 {
-    private readonly IRepository<Section> _sectionRepository;
-
-    public UpdateSectionCommandHandler(IRepository<Section> sectionRepository)
-    {
-        _sectionRepository = sectionRepository;
-    }
-
     public async Task<Unit> Handle(UpdateSectionCommand request, CancellationToken cancellationToken)
     {
         Section section = await ValidateAndGetSectionAsync(request.Id, cancellationToken);
@@ -30,7 +23,7 @@ public class UpdateSectionCommandHandler : IRequestHandler<UpdateSectionCommand,
 
         try
         {
-            await _sectionRepository.SaveChangesAsync(cancellationToken);
+            await sectionRepository.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateException)
         {
@@ -43,7 +36,7 @@ public class UpdateSectionCommandHandler : IRequestHandler<UpdateSectionCommand,
     private async Task<Section> ValidateAndGetSectionAsync(long sectionId,
                                                            CancellationToken cancellationToken = default)
     {
-        Section? section = await _sectionRepository.GetFirstOrDefaultAsync
+        Section? section = await sectionRepository.GetFirstOrDefaultAsync
                                (predicate: x => x.Id == sectionId,
                                 cancellationToken: cancellationToken);
 
@@ -57,7 +50,7 @@ public class UpdateSectionCommandHandler : IRequestHandler<UpdateSectionCommand,
 
     private async Task ValidateSectionNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        bool nameExists = await _sectionRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+        bool nameExists = await sectionRepository.ExistsAsync(x => x.Name == name, cancellationToken);
 
         if (nameExists)
         {

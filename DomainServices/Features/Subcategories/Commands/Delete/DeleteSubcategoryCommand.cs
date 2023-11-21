@@ -2,12 +2,7 @@
 
 namespace DomainServices.Features.Subcategories.Commands.Delete;
 
-public class DeleteSubcategoryCommand : IRequest<Unit>
+public class DeleteSubcategoryCommand(long id) : IRequest<Unit>
 {
-    public DeleteSubcategoryCommand(long id)
-    {
-        Id = id;
-    }
-
-    public long Id { get; init; }
+    public long Id { get; init; } = id;
 }

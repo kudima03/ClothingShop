@@ -5,15 +5,8 @@ using MediatR;
 
 namespace Infrastructure.Data.Triggers;
 
-public class AfterProductOptionSavedTrigger : IAfterSaveTrigger<ProductOption>
+public class AfterProductOptionSavedTrigger(IMediator mediator) : IAfterSaveTrigger<ProductOption>
 {
-    private readonly IMediator _mediator;
-
-    public AfterProductOptionSavedTrigger(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     public Task AfterSave(ITriggerContext<ProductOption> context, CancellationToken cancellationToken)
     {
         if (context.ChangeType != ChangeType.Modified)
@@ -28,7 +21,7 @@ public class AfterProductOptionSavedTrigger : IAfterSaveTrigger<ProductOption>
 
         if (oldQuantity != newQuantity)
         {
-            return _mediator.Publish
+            return mediator.Publish
                 (new ProductOptionQuantityChangedNotification(productOptionId, productId, newQuantity),
                  cancellationToken);
         }

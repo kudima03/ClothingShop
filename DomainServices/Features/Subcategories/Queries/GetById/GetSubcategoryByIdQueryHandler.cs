@@ -5,18 +5,11 @@ using MediatR;
 
 namespace DomainServices.Features.Subcategories.Queries.GetById;
 
-public class GetSubcategoryByIdQueryHandler : IRequestHandler<GetSubcategoryByIdQuery, Subcategory>
+public class GetSubcategoryByIdQueryHandler(IReadOnlyRepository<Subcategory> subcategoriesRepository) : IRequestHandler<GetSubcategoryByIdQuery, Subcategory>
 {
-    private readonly IReadOnlyRepository<Subcategory> _subcategoriesRepository;
-
-    public GetSubcategoryByIdQueryHandler(IReadOnlyRepository<Subcategory> subcategoriesRepository)
-    {
-        _subcategoriesRepository = subcategoriesRepository;
-    }
-
     public async Task<Subcategory> Handle(GetSubcategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        Subcategory? subcategory = await _subcategoriesRepository.GetFirstOrDefaultAsync
+        Subcategory? subcategory = await subcategoriesRepository.GetFirstOrDefaultAsync
                                        (predicate: x => x.Id == request.Id,
                                         cancellationToken: cancellationToken);
 

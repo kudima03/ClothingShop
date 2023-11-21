@@ -6,15 +6,8 @@ using MediatR;
 
 namespace DomainServices.Features.Brands.Commands.Create;
 
-public class CreateBrandCommandHandler : IRequestHandler<CreateBrandCommand, Brand>
+public class CreateBrandCommandHandler(IRepository<Brand> brandsRepository) : IRequestHandler<CreateBrandCommand, Brand>
 {
-    private readonly IRepository<Brand> _brandsRepository;
-
-    public CreateBrandCommandHandler(IRepository<Brand> brandsRepository)
-    {
-        _brandsRepository = brandsRepository;
-    }
-
     public async Task<Brand> Handle(CreateBrandCommand request, CancellationToken cancellationToken)
     {
         await ValidateBrandNameAsync(request.Name, cancellationToken);
@@ -24,15 +17,15 @@ public class CreateBrandCommandHandler : IRequestHandler<CreateBrandCommand, Bra
             Name = request.Name
         };
 
-        Brand? insertedBrand = await _brandsRepository.InsertAsync(newBrand, cancellationToken);
-        await _brandsRepository.SaveChangesAsync(cancellationToken);
+        Brand? insertedBrand = await brandsRepository.InsertAsync(newBrand, cancellationToken);
+        await brandsRepository.SaveChangesAsync(cancellationToken);
 
         return insertedBrand;
     }
 
     private async Task ValidateBrandNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        bool nameExists = await _brandsRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+        bool nameExists = await brandsRepository.ExistsAsync(x => x.Name == name, cancellationToken);
 
         if (nameExists)
         {

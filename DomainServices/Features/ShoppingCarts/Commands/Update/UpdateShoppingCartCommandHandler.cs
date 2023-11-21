@@ -9,18 +9,10 @@ using static DomainServices.Features.ShoppingCarts.Commands.UpdateShoppingCartDt
 
 namespace DomainServices.Features.ShoppingCarts.Commands.Update;
 
-public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCartCommand, Unit>
+public class UpdateShoppingCartCommandHandler(IRepository<ShoppingCart> shoppingCartRepository,
+                                              IRepository<ProductOption> productOptionsRepository)
+    : IRequestHandler<UpdateShoppingCartCommand, Unit>
 {
-    private readonly IRepository<ProductOption> _productOptionsRepository;
-    private readonly IRepository<ShoppingCart> _shoppingCartRepository;
-
-    public UpdateShoppingCartCommandHandler(IRepository<ShoppingCart> shoppingCartRepository,
-                                            IRepository<ProductOption> productOptionsRepository)
-    {
-        _shoppingCartRepository = shoppingCartRepository;
-        _productOptionsRepository = productOptionsRepository;
-    }
-
     public async Task<Unit> Handle(UpdateShoppingCartCommand request, CancellationToken cancellationToken)
     {
         ShoppingCart shoppingCart = await ValidateAndGetShoppingCart(request.UserId, cancellationToken);
@@ -37,10 +29,10 @@ public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCa
 
         try
         {
-            await _shoppingCartRepository.SaveChangesAsync(cancellationToken);
+            await shoppingCartRepository.SaveChangesAsync(cancellationToken);
             DecrementQuantityInRepository(itemsToAdd);
             IncrementQuantityInRepository(itemsToRemove);
-            await _productOptionsRepository.SaveChangesAsync(cancellationToken);
+            await productOptionsRepository.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateException)
         {
@@ -56,7 +48,7 @@ public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCa
         IEnumerable<ShoppingCartItemDto> newItems = requestedItems.Where
             (x => !shoppingCart.Items.Select(c => c.ProductOptionId).Contains(x.ProductOptionId));
 
-        IList<ProductOption>? productOptions = await _productOptionsRepository.GetAllAsync
+        IList<ProductOption>? productOptions = await productOptionsRepository.GetAllAsync
                                                    (predicate: x => newItems.Select(c => c.ProductOptionId).Contains(x.Id));
 
         if (productOptions.Count != newItems.Count())
@@ -154,7 +146,7 @@ public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCa
     private async Task<ShoppingCart> ValidateAndGetShoppingCart(long userId, CancellationToken cancellationToken = default)
     {
         ShoppingCart? shoppingCart =
-            await _shoppingCartRepository.GetFirstOrDefaultAsync
+            await shoppingCartRepository.GetFirstOrDefaultAsync
                 (x => x.UserId == userId,
                  x => x.Include(c => c.Items).ThenInclude(c => c.ProductOption),
                  cancellationToken);

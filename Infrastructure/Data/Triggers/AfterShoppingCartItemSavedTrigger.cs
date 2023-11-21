@@ -8,26 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data.Triggers;
 
-public class AfterShoppingCartItemSavedTrigger : IAfterSaveTrigger<ShoppingCartItem>
+public class AfterShoppingCartItemSavedTrigger(ShoppingCartItemsAutoremoveScheduler scheduler,
+                                               IMediator mediator,
+                                               IReadOnlyRepository<ProductOption> productOptionsRepository)
+    : IAfterSaveTrigger<ShoppingCartItem>
 {
-    private readonly IMediator _mediator;
-
-    private readonly IReadOnlyRepository<ProductOption> _productOptionsRepository;
-
-    private readonly ShoppingCartItemsAutoremoveScheduler _scheduler;
-
-    public AfterShoppingCartItemSavedTrigger(ShoppingCartItemsAutoremoveScheduler scheduler,
-                                             IMediator mediator,
-                                             IReadOnlyRepository<ProductOption> productOptionsRepository)
-    {
-        _scheduler = scheduler;
-        _mediator = mediator;
-        _productOptionsRepository = productOptionsRepository;
-    }
-
     public async Task AfterSave(ITriggerContext<ShoppingCartItem> context, CancellationToken cancellationToken)
     {
-        ProductOption? relatedProductOption = await _productOptionsRepository.GetFirstOrDefaultAsync
+        ProductOption? relatedProductOption = await productOptionsRepository.GetFirstOrDefaultAsync
                                                   (x => x.Id == context.Entity.ProductOptionId,
                                                    x => x.Include(c => c.ReservedProductOptions),
                                                    cancellationToken);
@@ -39,20 +27,20 @@ public class AfterShoppingCartItemSavedTrigger : IAfterSaveTrigger<ShoppingCartI
                  relatedProductOption.ProductId,
                  relatedProductOption.ReservedProductOptions.Sum(x => x.Amount));
 
-            _mediator.Publish(notification);
+            mediator.Publish(notification);
         }
 
         switch (context.ChangeType)
         {
             case ChangeType.Added:
                 {
-                    await _scheduler.AddToSchedule(context.Entity, cancellationToken);
+                    await scheduler.AddToSchedule(context.Entity, cancellationToken);
 
                     break;
                 }
             case ChangeType.Deleted:
                 {
-                    await _scheduler.RemoveFromSchedule(context.Entity.Id, cancellationToken);
+                    await scheduler.RemoveFromSchedule(context.Entity.Id, cancellationToken);
 
                     break;
                 }

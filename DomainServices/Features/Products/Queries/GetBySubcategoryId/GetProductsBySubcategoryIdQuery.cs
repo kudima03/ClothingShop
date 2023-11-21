@@ -3,12 +3,7 @@ using MediatR;
 
 namespace DomainServices.Features.Products.Queries.GetBySubcategoryId;
 
-public class GetProductsBySubcategoryIdQuery : IRequest<IEnumerable<Product>>
+public class GetProductsBySubcategoryIdQuery(long subcategoryId) : IRequest<IEnumerable<Product>>
 {
-    public GetProductsBySubcategoryIdQuery(long subcategoryId)
-    {
-        SubcategoryId = subcategoryId;
-    }
-
-    public long SubcategoryId { get; init; }
+    public long SubcategoryId { get; init; } = subcategoryId;
 }

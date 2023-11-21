@@ -3,12 +3,7 @@ using MediatR;
 
 namespace DomainServices.Features.Orders.Queries.GetById;
 
-public class GetOrderByIdQuery : IRequest<Order>
+public class GetOrderByIdQuery(long id) : IRequest<Order>
 {
-    public GetOrderByIdQuery(long id)
-    {
-        Id = id;
-    }
-
-    public long Id { get; init; }
+    public long Id { get; init; } = id;
 }

@@ -3,12 +3,7 @@ using MediatR;
 
 namespace DomainServices.Features.Categories.Queries.GetById;
 
-public class GetCategoryByIdQuery : IRequest<Category>
+public class GetCategoryByIdQuery(long id) : IRequest<Category>
 {
-    public GetCategoryByIdQuery(long id)
-    {
-        Id = id;
-    }
-
-    public long Id { get; init; }
+    public long Id { get; init; } = id;
 }

@@ -6,22 +6,14 @@ using Quartz;
 
 namespace Infrastructure.Data.Autoremove;
 
-public class RemoveTimedOutShoppingCartItemsJob : IJob
+public class RemoveTimedOutShoppingCartItemsJob(IMediator mediator, ILogger<RemoveTimedOutShoppingCartItemsJob> logger)
+    : IJob
 {
-    private readonly ILogger<RemoveTimedOutShoppingCartItemsJob> _logger;
-    private readonly IMediator _mediator;
-
-    public RemoveTimedOutShoppingCartItemsJob(IMediator mediator, ILogger<RemoveTimedOutShoppingCartItemsJob> logger)
-    {
-        _logger = logger;
-        _mediator = mediator;
-    }
-
     public async Task Execute(IJobExecutionContext context)
     {
         long itemId = (long)(context.MergedJobDataMap.Get(JobIdentityName.Id) ?? 0L);
-        _logger.LogInformation($"Deleting timed out {nameof(ShoppingCartItem)} with id:{itemId}");
-        await _mediator.Send(new DeleteAndReturnToStockShoppingCartItemCommand(itemId));
-        _logger.LogInformation($"Deleted timed out {nameof(ShoppingCartItem)} with id:{itemId}");
+        logger.LogInformation($"Deleting timed out {nameof(ShoppingCartItem)} with id:{itemId}");
+        await mediator.Send(new DeleteAndReturnToStockShoppingCartItemCommand(itemId));
+        logger.LogInformation($"Deleted timed out {nameof(ShoppingCartItem)} with id:{itemId}");
     }
 }

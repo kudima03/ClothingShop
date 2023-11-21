@@ -7,15 +7,8 @@ using MediatR;
 
 namespace DomainServices.Features.Brands.Commands.Update;
 
-public class UpdateBrandCommandHandler : IRequestHandler<UpdateBrandCommand, Unit>
+public class UpdateBrandCommandHandler(IRepository<Brand> brandsRepository) : IRequestHandler<UpdateBrandCommand, Unit>
 {
-    private readonly IRepository<Brand> _brandsRepository;
-
-    public UpdateBrandCommandHandler(IRepository<Brand> brandsRepository)
-    {
-        _brandsRepository = brandsRepository;
-    }
-
     public async Task<Unit> Handle(UpdateBrandCommand request, CancellationToken cancellationToken)
     {
         Brand brand = await GetBrandToUpdateAsync(request.Id, cancellationToken);
@@ -29,14 +22,14 @@ public class UpdateBrandCommandHandler : IRequestHandler<UpdateBrandCommand, Uni
 
         brand.Name = request.Name;
 
-        await _brandsRepository.SaveChangesAsync(cancellationToken);
+        await brandsRepository.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }
 
     private async Task<Brand> GetBrandToUpdateAsync(long id, CancellationToken cancellationToken = default)
     {
-        Brand? brand = await _brandsRepository.GetFirstOrDefaultAsync
+        Brand? brand = await brandsRepository.GetFirstOrDefaultAsync
                            (predicate: brand => brand.Id == id,
                             cancellationToken: cancellationToken);
 
@@ -50,7 +43,7 @@ public class UpdateBrandCommandHandler : IRequestHandler<UpdateBrandCommand, Uni
 
     private async Task ValidateBrandNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        bool nameExists = await _brandsRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+        bool nameExists = await brandsRepository.ExistsAsync(x => x.Name == name, cancellationToken);
 
         if (nameExists)
         {

@@ -6,14 +6,9 @@ using Web.Services.Interfaces;
 
 namespace Web.Services.Implementations;
 
-public class SubscribesToProductsManager : ISubscribesToProductsManager
+public class SubscribesToProductsManager(IRedisConnectionProvider redisConnection) : ISubscribesToProductsManager
 {
-    private readonly IRedisCollection<Subscribe> _subscriptions;
-
-    public SubscribesToProductsManager(IRedisConnectionProvider redisConnection)
-    {
-        _subscriptions = redisConnection.RedisCollection<Subscribe>();
-    }
+    private readonly IRedisCollection<Subscribe> _subscriptions = redisConnection.RedisCollection<Subscribe>();
 
     public Task AddSubscribeAsync(long userId, long productId, string connectionId)
     {
@@ -50,22 +45,15 @@ public class SubscribesToProductsManager : ISubscribesToProductsManager
 }
 
 [Document(StorageType = StorageType.Json)]
-public class Subscribe
+public class Subscribe(long userId, long productId, string connectionId)
 {
-    public Subscribe(long userId, long productId, string connectionId)
-    {
-        UserId = userId;
-        ProductId = productId;
-        ConnectionId = connectionId;
-    }
-
     [Indexed]
     [RedisIdField]
-    public string ConnectionId { get; }
+    public string ConnectionId { get; } = connectionId;
 
     [Indexed]
-    public long UserId { get; }
+    public long UserId { get; } = userId;
 
     [Indexed]
-    public long ProductId { get; }
+    public long ProductId { get; } = productId;
 }

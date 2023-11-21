@@ -2,12 +2,7 @@
 
 namespace DomainServices.Features.Orders.Commands.Cancel;
 
-public class CancelOrderCommand : IRequest<Unit>
+public class CancelOrderCommand(long id) : IRequest<Unit>
 {
-    public CancelOrderCommand(long id)
-    {
-        Id = id;
-    }
-
-    public long Id { get; init; }
+    public long Id { get; init; } = id;
 }

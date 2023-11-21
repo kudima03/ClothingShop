@@ -13,15 +13,8 @@ namespace Web.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize(Policy = PolicyName.Customer)]
-public class ReviewsController : ControllerBase
+public class ReviewsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public ReviewsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
@@ -29,7 +22,7 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] CreateReviewCommand createCommand, CancellationToken cancellationToken)
     {
-        Review createdReview = await _mediator.Send(createCommand, cancellationToken);
+        Review createdReview = await mediator.Send(createCommand, cancellationToken);
 
         return Ok(createdReview.Id);
     }
@@ -42,19 +35,19 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] UpdateReviewCommand updateCommand, CancellationToken cancellationToken)
     {
-        await _mediator.Send(updateCommand, cancellationToken);
+        await mediator.Send(updateCommand, cancellationToken);
 
         return Ok();
     }
 
-    [HttpDelete("{id:long}")]
+    [HttpDelete("{long:required}")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Delete([FromRoute] long id, CancellationToken cancellationToken)
     {
         DeleteReviewCommand command = new DeleteReviewCommand(id);
-        await _mediator.Send(command, cancellationToken);
+        await mediator.Send(command, cancellationToken);
 
         return Ok();
     }

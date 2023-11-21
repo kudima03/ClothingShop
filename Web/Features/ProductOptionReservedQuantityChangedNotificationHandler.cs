@@ -7,25 +7,16 @@ using Web.SignalR;
 
 namespace Web.Features;
 
-public class ProductOptionReservedQuantityChangedNotificationHandler
+public class ProductOptionReservedQuantityChangedNotificationHandler(ISubscribesToProductsManager subscribesToProductsManager,
+                                                                     IHubContext<RealTimeProductInfoHub> hubContext)
     : INotificationHandler<ProductOptionReservedQuantityChangedNotification>
 {
-    private readonly IHubContext<RealTimeProductInfoHub> _hubContext;
-    private readonly ISubscribesToProductsManager _subscribesToProductsManager;
-
-    public ProductOptionReservedQuantityChangedNotificationHandler(ISubscribesToProductsManager subscribesToProductsManager,
-                                                                   IHubContext<RealTimeProductInfoHub> hubContext)
-    {
-        _subscribesToProductsManager = subscribesToProductsManager;
-        _hubContext = hubContext;
-    }
-
     public async Task Handle(ProductOptionReservedQuantityChangedNotification notification, CancellationToken cancellationToken)
     {
-        IEnumerable<string> connectionsWatchingProduct = await _subscribesToProductsManager
+        IEnumerable<string> connectionsWatchingProduct = await subscribesToProductsManager
                                                              .GetConnectionsSubscribedToProductAsync(notification.ProductId);
 
-        _hubContext.Clients.Clients(connectionsWatchingProduct)
+        hubContext.Clients.Clients(connectionsWatchingProduct)
                    .SendAsync
                        (SignalRConstants.ProductOptionReservedQuantityChanged,
                         notification.ProductOptionId,

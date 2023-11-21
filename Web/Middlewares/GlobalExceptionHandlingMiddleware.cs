@@ -3,15 +3,8 @@ using FluentValidation;
 
 namespace Web.Middlewares;
 
-public class GlobalExceptionHandlingMiddleware : IMiddleware
+public class GlobalExceptionHandlingMiddleware(ILogger<GlobalExceptionHandlingMiddleware> logger) : IMiddleware
 {
-    private readonly ILogger<GlobalExceptionHandlingMiddleware> _logger;
-
-    public GlobalExceptionHandlingMiddleware(ILogger<GlobalExceptionHandlingMiddleware> logger)
-    {
-        _logger = logger;
-    }
-
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         try
@@ -40,12 +33,12 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
         }
         catch (OperationCanceledException e)
         {
-            _logger.LogInformation($"Request to {context.Request.Path} was cancelled");
+            logger.LogInformation($"Request to {context.Request.Path} was cancelled");
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
         }
         catch (Exception e)
         {
-            _logger.LogError(e, e.Message);
+            logger.LogError(e, e.Message);
             context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
         }
     }

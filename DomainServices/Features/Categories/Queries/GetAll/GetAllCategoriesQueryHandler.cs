@@ -4,18 +4,11 @@ using MediatR;
 
 namespace DomainServices.Features.Categories.Queries.GetAll;
 
-public class GetAllCategoriesQueryHandler : IRequestHandler<GetAllCategoriesQuery, IEnumerable<Category>>
+public class GetAllCategoriesQueryHandler(IReadOnlyRepository<Category> categoriesRepository) : IRequestHandler<GetAllCategoriesQuery, IEnumerable<Category>>
 {
-    private readonly IReadOnlyRepository<Category> _categoriesRepository;
-
-    public GetAllCategoriesQueryHandler(IReadOnlyRepository<Category> categoriesRepository)
-    {
-        _categoriesRepository = categoriesRepository;
-    }
-
     public async Task<IEnumerable<Category>> Handle(GetAllCategoriesQuery request,
                                                     CancellationToken cancellationToken)
     {
-        return await _categoriesRepository.GetAllAsync(cancellationToken);
+        return await categoriesRepository.GetAllAsync(cancellationToken);
     }
 }

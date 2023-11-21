@@ -15,27 +15,20 @@ namespace Web.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize(Policy = PolicyName.Customer)]
-public class BrandsController : ControllerBase
+public class BrandsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public BrandsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Brand>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<Brand>>> GetAll(CancellationToken cancellationToken)
     {
         GetAllBrandsQuery query = new GetAllBrandsQuery();
-        IEnumerable<Brand> brands = await _mediator.Send(query, cancellationToken);
+        IEnumerable<Brand> brands = await mediator.Send(query, cancellationToken);
 
         return Ok(brands);
     }
 
-    [HttpGet("{id:long}")]
+    [HttpGet("{long:required}")]
     [ProducesResponseType(typeof(Brand), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
@@ -43,7 +36,7 @@ public class BrandsController : ControllerBase
     public async Task<ActionResult<Brand>> GetById([FromRoute] long id, CancellationToken cancellationToken)
     {
         GetBrandByIdQuery query = new GetBrandByIdQuery(id);
-        Brand brand = await _mediator.Send(query, cancellationToken);
+        Brand brand = await mediator.Send(query, cancellationToken);
 
         return Ok(brand);
     }
@@ -56,7 +49,7 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Create([FromBody] CreateBrandCommand createCommand, CancellationToken cancellationToken)
     {
-        Brand createdBrand = await _mediator.Send(createCommand, cancellationToken);
+        Brand createdBrand = await mediator.Send(createCommand, cancellationToken);
 
         return Ok(createdBrand.Id);
     }
@@ -70,12 +63,12 @@ public class BrandsController : ControllerBase
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult> Update([FromBody] UpdateBrandCommand updateCommand, CancellationToken cancellationToken)
     {
-        await _mediator.Send(updateCommand, cancellationToken);
+        await mediator.Send(updateCommand, cancellationToken);
 
         return Ok();
     }
 
-    [HttpDelete("{id:long}")]
+    [HttpDelete("{long:required}")]
     [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -83,7 +76,7 @@ public class BrandsController : ControllerBase
     public async Task<ActionResult> Delete([FromRoute] long id, CancellationToken cancellationToken)
     {
         DeleteBrandCommand command = new DeleteBrandCommand(id);
-        await _mediator.Send(command, cancellationToken);
+        await mediator.Send(command, cancellationToken);
 
         return Ok();
     }

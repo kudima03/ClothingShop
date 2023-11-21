@@ -9,24 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.Products.Commands.Update;
 
-public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Unit>
+public class UpdateProductCommandHandler(IRepository<Product> productRepository,
+                                         IRepository<Brand> brandsRepository,
+                                         IRepository<Subcategory> subcategoriesRepository,
+                                         IRepository<ProductColor> productColorsRepository)
+    : IRequestHandler<UpdateProductCommand, Unit>
 {
-    private readonly IRepository<Brand> _brandsRepository;
-    private readonly IRepository<ProductColor> _productColorsRepository;
-    private readonly IRepository<Product> _productRepository;
-    private readonly IRepository<Subcategory> _subcategoriesRepository;
-
-    public UpdateProductCommandHandler(IRepository<Product> productRepository,
-                                       IRepository<Brand> brandsRepository,
-                                       IRepository<Subcategory> subcategoriesRepository,
-                                       IRepository<ProductColor> productColorsRepository)
-    {
-        _productRepository = productRepository;
-        _brandsRepository = brandsRepository;
-        _subcategoriesRepository = subcategoriesRepository;
-        _productColorsRepository = productColorsRepository;
-    }
-
     public async Task<Unit> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
         Product product = await ValidateAndGetProduct(request.Id, cancellationToken);
@@ -50,9 +38,9 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
 
         try
         {
-            await _productRepository.SaveChangesAsync(cancellationToken);
+            await productRepository.SaveChangesAsync(cancellationToken);
             await DeleteUnusedProductColors(cancellationToken);
-            await _productColorsRepository.SaveChangesAsync(cancellationToken);
+            await productColorsRepository.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateException)
         {
@@ -93,7 +81,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
     private async Task<Product> ValidateAndGetProduct(long productId, CancellationToken cancellationToken = default)
     {
         Product? product = await
-                               _productRepository.GetFirstOrDefaultAsync
+                               productRepository.GetFirstOrDefaultAsync
                                    (x => x.Id == productId,
                                     x => x.Include(c => c.ProductOptions)
                                           .ThenInclude(c => c.ProductColor)
@@ -110,7 +98,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
 
     private async Task ValidateProductNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        bool nameExists = await _productRepository.ExistsAsync(x => x.Name == name, cancellationToken);
+        bool nameExists = await productRepository.ExistsAsync(x => x.Name == name, cancellationToken);
 
         if (nameExists)
         {
@@ -124,7 +112,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
 
     private async Task ValidateBrandAsync(long brandId, CancellationToken cancellationToken = default)
     {
-        bool brandExists = await _brandsRepository.ExistsAsync(x => x.Id == brandId, cancellationToken);
+        bool brandExists = await brandsRepository.ExistsAsync(x => x.Id == brandId, cancellationToken);
 
         if (!brandExists)
         {
@@ -135,7 +123,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
     private async Task ValidateSubcategoryAsync(long subcategoryId,
                                                 CancellationToken cancellationToken = default)
     {
-        bool subcategoryExists = await _subcategoriesRepository.ExistsAsync(x => x.Id == subcategoryId, cancellationToken);
+        bool subcategoryExists = await subcategoriesRepository.ExistsAsync(x => x.Id == subcategoryId, cancellationToken);
 
         if (!subcategoryExists)
         {
@@ -145,11 +133,11 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
 
     private async Task DeleteUnusedProductColors(CancellationToken cancellationToken = default)
     {
-        IList<ProductColor>? productColorsToRemove = await _productColorsRepository.GetAllAsync
+        IList<ProductColor>? productColorsToRemove = await productColorsRepository.GetAllAsync
                                                          (predicate: x => x.ProductOptions.Count == 0,
                                                           cancellationToken: cancellationToken);
 
-        _productColorsRepository.Delete(productColorsToRemove);
+        productColorsRepository.Delete(productColorsToRemove);
     }
 
     private void CreateOrUpdateRelatedImages(ProductColor productColor,
@@ -191,7 +179,7 @@ public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand,
             if (existingProductColor is null)
             {
                 ProductColor? newProductColor =
-                    await _productColorsRepository.InsertAsync(item.ProductColor, cancellationToken);
+                    await productColorsRepository.InsertAsync(item.ProductColor, cancellationToken);
 
                 existingProductColors.Add(newProductColor);
                 item.ProductColor = newProductColor;

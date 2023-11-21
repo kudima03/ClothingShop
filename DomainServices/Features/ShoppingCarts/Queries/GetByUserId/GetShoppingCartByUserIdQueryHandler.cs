@@ -5,18 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DomainServices.Features.ShoppingCarts.Queries.GetByUserId;
 
-public class GetShoppingCartByUserIdQueryHandler : IRequestHandler<GetShoppingCartByUserIdQuery, ShoppingCart>
+public class GetShoppingCartByUserIdQueryHandler(IReadOnlyRepository<ShoppingCart?> shoppingCartsRepository) : IRequestHandler<GetShoppingCartByUserIdQuery, ShoppingCart>
 {
-    private readonly IReadOnlyRepository<ShoppingCart?> _shoppingCartsRepository;
-
-    public GetShoppingCartByUserIdQueryHandler(IReadOnlyRepository<ShoppingCart?> shoppingCartsRepository)
-    {
-        _shoppingCartsRepository = shoppingCartsRepository;
-    }
-
     public async Task<ShoppingCart> Handle(GetShoppingCartByUserIdQuery request, CancellationToken cancellationToken)
     {
-        return await _shoppingCartsRepository.GetFirstOrDefaultAsync
+        return await shoppingCartsRepository.GetFirstOrDefaultAsync
                    (x => x.UserId == request.UserId,
                     x => x.Include(shoppingCart => shoppingCart.Items)
                           .ThenInclude(cartItem => cartItem.ProductOption.ProductColor.ImagesInfos)

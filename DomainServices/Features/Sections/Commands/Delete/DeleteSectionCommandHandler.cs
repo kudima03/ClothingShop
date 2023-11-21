@@ -4,25 +4,18 @@ using MediatR;
 
 namespace DomainServices.Features.Sections.Commands.Delete;
 
-public class DeleteSectionCommandHandler : IRequestHandler<DeleteSectionCommand, Unit>
+public class DeleteSectionCommandHandler(IRepository<Section> sectionsRepository) : IRequestHandler<DeleteSectionCommand, Unit>
 {
-    private readonly IRepository<Section> _sectionsRepository;
-
-    public DeleteSectionCommandHandler(IRepository<Section> sectionsRepository)
-    {
-        _sectionsRepository = sectionsRepository;
-    }
-
     public async Task<Unit> Handle(DeleteSectionCommand request, CancellationToken cancellationToken)
     {
-        Section? section = await _sectionsRepository.GetFirstOrDefaultAsync
+        Section? section = await sectionsRepository.GetFirstOrDefaultAsync
                                (predicate: x => x.Id == request.Id,
                                 cancellationToken: cancellationToken);
 
         if (section is not null)
         {
-            _sectionsRepository.Delete(section);
-            await _sectionsRepository.SaveChangesAsync(cancellationToken);
+            sectionsRepository.Delete(section);
+            await sectionsRepository.SaveChangesAsync(cancellationToken);
         }
 
         return Unit.Value;

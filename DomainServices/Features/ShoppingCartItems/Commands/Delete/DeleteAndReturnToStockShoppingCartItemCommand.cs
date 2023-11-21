@@ -2,12 +2,7 @@
 
 namespace DomainServices.Features.ShoppingCartItems.Commands.Delete;
 
-public class DeleteAndReturnToStockShoppingCartItemCommand : IRequest<Unit>
+public class DeleteAndReturnToStockShoppingCartItemCommand(long shoppingCartItemId) : IRequest<Unit>
 {
-    public DeleteAndReturnToStockShoppingCartItemCommand(long shoppingCartItemId)
-    {
-        ShoppingCartItemId = shoppingCartItemId;
-    }
-
-    public long ShoppingCartItemId { get; init; }
+    public long ShoppingCartItemId { get; init; } = shoppingCartItemId;
 }

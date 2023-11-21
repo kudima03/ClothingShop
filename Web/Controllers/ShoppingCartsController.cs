@@ -11,15 +11,8 @@ namespace Web.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize(Policy = PolicyName.Customer)]
-public class ShoppingCartsController : Controller
+public class ShoppingCartsController(IMediator mediator) : Controller
 {
-    private readonly IMediator _mediator;
-
-    public ShoppingCartsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpGet("[action]")]
     [ProducesResponseType(typeof(ShoppingCart), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -29,7 +22,7 @@ public class ShoppingCartsController : Controller
     {
         long id = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         GetShoppingCartByUserIdQuery query = new GetShoppingCartByUserIdQuery(id);
-        ShoppingCart shoppingCart = await _mediator.Send(query, cancellationToken);
+        ShoppingCart shoppingCart = await mediator.Send(query, cancellationToken);
 
         return Ok(shoppingCart);
     }
@@ -43,7 +36,7 @@ public class ShoppingCartsController : Controller
     {
         long id = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         GetShoppingCartByUserIdQuery query = new GetShoppingCartByUserIdQuery(id);
-        ShoppingCart shoppingCart = await _mediator.Send(query, cancellationToken);
+        ShoppingCart shoppingCart = await mediator.Send(query, cancellationToken);
 
         return View("ShoppingCart", shoppingCart);
     }
@@ -57,7 +50,7 @@ public class ShoppingCartsController : Controller
     {
         long userId = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         command.UserId = userId;
-        await _mediator.Send(command, cancellationToken);
+        await mediator.Send(command, cancellationToken);
 
         return Ok();
     }

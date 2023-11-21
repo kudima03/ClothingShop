@@ -9,45 +9,33 @@ using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Infrastructure.Identity.Services;
 
-public class AuthorizationService : IAuthorizationService
+public class AuthorizationService(ITokenClaimsService tokenClaimsService,
+                                  UserManager<User> userManager,
+                                  IHttpContextAccessor contextAccessor,
+                                  IOptions<JwtSettings> settings)
+    : IAuthorizationService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly JwtSettings _jwtSettings;
-
-    private readonly ITokenClaimsService _tokenClaimsService;
-
-    private readonly UserManager<User> _userManager;
-
-    public AuthorizationService(ITokenClaimsService tokenClaimsService,
-                                UserManager<User> userManager,
-                                IHttpContextAccessor contextAccessor,
-                                IOptions<JwtSettings> settings)
-    {
-        _tokenClaimsService = tokenClaimsService;
-        _userManager = userManager;
-        _httpContextAccessor = contextAccessor;
-        _jwtSettings = settings.Value;
-    }
+    private readonly JwtSettings _jwtSettings = settings.Value;
 
     public async Task SignInAsync(string email, string password)
     {
-        User? user = await _userManager.FindByEmailAsync(email);
+        User? user = await userManager.FindByEmailAsync(email);
 
         if (user is null || user.DeletionDateTime is not null)
         {
             throw new AuthorizationException("Invalid login or password.");
         }
 
-        bool passwordCorrect = await _userManager.CheckPasswordAsync(user, password);
+        bool passwordCorrect = await userManager.CheckPasswordAsync(user, password);
 
         if (!passwordCorrect)
         {
             throw new AuthorizationException("Invalid login or password.");
         }
 
-        string token = await _tokenClaimsService.GetTokenAsync(user.Email);
+        string token = await tokenClaimsService.GetTokenAsync(user.Email);
 
-        _httpContextAccessor.HttpContext?.Response.Cookies.Append
+        contextAccessor.HttpContext?.Response.Cookies.Append
             (JwtConstants.TokenType,
              token,
              new CookieOptions
@@ -59,7 +47,7 @@ public class AuthorizationService : IAuthorizationService
 
     public async Task<long> RegisterAsync(User user)
     {
-        IdentityResult result = await _userManager.CreateAsync(user, user.PasswordHash);
+        IdentityResult result = await userManager.CreateAsync(user, user.PasswordHash);
 
         if (!result.Succeeded)
         {
@@ -67,14 +55,14 @@ public class AuthorizationService : IAuthorizationService
                 ($"Unable to register such user. Reasons: {string.Join(',', result.Errors.Select(x => x.Description))}");
         }
 
-        await _userManager.AddToRoleAsync(user, RoleName.Customer);
+        await userManager.AddToRoleAsync(user, RoleName.Customer);
 
         return user.Id;
     }
 
     public Task SingOutAsync()
     {
-        _httpContextAccessor.HttpContext?.Response.Cookies.Delete(JwtConstants.TokenType);
+        contextAccessor.HttpContext?.Response.Cookies.Delete(JwtConstants.TokenType);
 
         return Task.CompletedTask;
     }
