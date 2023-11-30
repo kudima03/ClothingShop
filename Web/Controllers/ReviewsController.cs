@@ -40,7 +40,7 @@ public class ReviewsController(IMediator mediator) : ControllerBase
         return Ok();
     }
 
-    [HttpDelete("{long:required}")]
+    [HttpDelete("{id:required}")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]

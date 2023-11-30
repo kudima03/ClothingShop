@@ -29,7 +29,7 @@ public class OrdersController(IMediator mediator) : Controller
         return Ok(orders);
     }
 
-    [HttpGet("{long:required}")]
+    [HttpGet("{id:required}")]
     [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -62,16 +62,16 @@ public class OrdersController(IMediator mediator) : Controller
     [ProducesResponseType(typeof(long), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult> Create([FromBody] CreateOrderCommand createCommand, CancellationToken cancellationToken)
+    public async Task<ActionResult> Create([FromBody] CreateOrderCommand createCommand)
     {
         long userId = long.Parse(User.Claims.Single(x => x.Type == CustomClaimName.Id).Value);
         createCommand.UserId = userId;
-        Order createdOrder = await mediator.Send(createCommand, cancellationToken);
+        Order createdOrder = await mediator.Send(createCommand);
 
         return Ok(createdOrder.Id);
     }
 
-    [HttpDelete("{long:required}")]
+    [HttpDelete("{id:required}")]
     [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

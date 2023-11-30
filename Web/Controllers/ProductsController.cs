@@ -30,7 +30,7 @@ public class ProductsController(IMediator mediator) : Controller
         return View("Products", products);
     }
 
-    [HttpGet("{long:required}")]
+    [HttpGet("{id:required}")]
     [ProducesResponseType(typeof(Brand), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
@@ -100,7 +100,7 @@ public class ProductsController(IMediator mediator) : Controller
         return Ok();
     }
 
-    [HttpDelete("{long:required}")]
+    [HttpDelete("{id:required}")]
     [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

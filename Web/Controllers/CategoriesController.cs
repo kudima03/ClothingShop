@@ -28,7 +28,7 @@ public class CategoriesController(IMediator mediator) : ControllerBase
         return Ok(categories);
     }
 
-    [HttpGet("{long:required}")]
+    [HttpGet("{id:required}")]
     [ProducesResponseType(typeof(Category), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
@@ -68,7 +68,7 @@ public class CategoriesController(IMediator mediator) : ControllerBase
         return Ok();
     }
 
-    [HttpDelete("{long:required}")]
+    [HttpDelete("{id:required}")]
     [Authorize(Policy = PolicyName.Administrator)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
